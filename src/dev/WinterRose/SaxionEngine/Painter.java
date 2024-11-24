@@ -99,9 +99,76 @@ public class Painter
 
         affineTransform.scale(transform.getScale().x, transform.getScale().y);
 
-        // Draw the image using the transform
         graphics.drawImage(sprite.getImage(), affineTransform, null);
     }
+
+    public void drawText(String text, Transform transform, Vector2 origin, Color color)
+    {
+        DrawableCharacter[] characters = new DrawableCharacter[text.length()];
+        for(int i = 0; i < text.length(); i++)
+            characters[i] = new DrawableCharacter(text.charAt(i), color);
+
+        drawTextInternal(characters, text, transform, origin);
+    }
+
+    public void drawText(DrawableCharacter[] characters, Transform transform, Vector2 origin)
+    {
+        String text = getStringFromDrawableCharacters(characters);
+        drawTextInternal(characters, text, transform, origin);
+    }
+
+    private void drawTextInternal(DrawableCharacter[] characters, String text, Transform transform, Vector2 origin)
+    {
+        Vector2 position = transform.getPosition();
+        Vector2 scale = transform.getScale();
+        Rotation rotation = transform.getRotation();
+
+
+
+        int fontSize = (int)(graphics.getFont().getSize() * scale.y);
+        graphics.setFont(new Font(graphics.getFont().getFontName(), Font.PLAIN, fontSize));
+
+        FontMetrics metric = graphics.getFontMetrics(graphics.getFont());
+
+        int textHeight = metric.getAscent() - metric.getDescent();
+        float adjustedX = position.x - metric.stringWidth(text) * origin.x;
+        float adjustedY = position.y - textHeight * origin.y;
+
+        Color prevColor = graphics.getColor();
+        AffineTransform beforeTransform = graphics.getTransform();
+
+        AffineTransform affineTransform = new AffineTransform();
+        affineTransform.translate(adjustedX, adjustedY);
+        Vector2 rotationAnchor = new Vector2(metric.stringWidth(text) * origin.x, textHeight * origin.y);
+        affineTransform.rotate(rotation.getRadians(), rotationAnchor.x, rotationAnchor.y);
+        affineTransform.scale(scale.x, scale.y);
+
+        graphics.setTransform(affineTransform);
+
+        float xOffset = 0;
+        int padding = 1;
+        for (DrawableCharacter c : characters)
+        {
+            String character = String.valueOf(c.character);
+            graphics.setColor(c.color);
+            graphics.drawString(character, (int)xOffset, 0);
+            xOffset += metric.stringWidth(character) + padding;
+        }
+
+        graphics.setTransform(beforeTransform);
+        graphics.setColor(prevColor);
+    }
+
+    private String getStringFromDrawableCharacters(DrawableCharacter[] characters)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        for(var c : characters)
+            sb.append(c.character);
+
+        return sb.toString();
+    }
+
 
     private Vector2 CalculateOrigin(Transform transform, Vector2 size, Vector2 origin)
     {
@@ -154,8 +221,6 @@ public class Painter
     private void ensureStarted()
     {
         if (!isStarted)
-        {
             throw new IllegalStateException("Frame not yet started. Call start() first.");
-        }
     }
 }

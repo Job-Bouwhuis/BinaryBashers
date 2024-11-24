@@ -1,11 +1,10 @@
 package dev.WinterRose.SaxionEngine;
 
-
 import java.util.ArrayList;
 
 public class Transform extends Component
 {
-    private Vector2 position; // the position of the object. may be relative to the parent
+    private Vector2 position;
     private Rotation rotation;
     private Vector2 scale;
 
@@ -24,11 +23,21 @@ public class Transform extends Component
         return calculateRelativePositionToParent();
     }
 
+    public Vector2 getWorldPosition()
+    {
+        return position;
+    }
+
+    public Vector2 setPosition(Vector2 newPos)
+    {
+        position.set(newPos);
+        return position;
+    }
+
     public Rotation getRotation()
     {
         if (parent == null) return rotation;
 
-        // TODO: fix back into not cursed form. its now cursed so it doesnt call .subtract()
         return new Rotation(parent.getRotation().getDegrees() - rotation.getDegrees());
     }
 
@@ -44,7 +53,11 @@ public class Transform extends Component
 
     public void setParent(Transform newParent)
     {
-        if (parent != null) parent.removeChild(this);
+        if (newParent == null && parent != null)
+            parent.removeChild(this);
+        if(newParent == this)
+            throw new IllegalStateException("Cant assign this transform as its own parent");
+
         newParent.addChild(this);
         parent = newParent;
     }

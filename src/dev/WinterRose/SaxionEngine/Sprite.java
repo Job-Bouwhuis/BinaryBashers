@@ -8,10 +8,9 @@ import java.io.IOException;
 
 public class Sprite
 {
-    public final int width;
-    public final int height;
-    private final Vector2 size;
-    public String texturePath;
+    private Vector2 size;
+    private String texturePath;
+    private BufferedImage createdImage;
 
     public Sprite(String path)
     {
@@ -26,65 +25,62 @@ public class Sprite
             throw new RuntimeException(e);
         }
 
-        if (image != null)
-        {
-            this.width = image.getWidth();
-            this.height = image.getHeight();
-            size = new Vector2(width, height);
-        }
-        else
-        {
-            width = 0;
-            height = 0;
-            size = new Vector2(0, 0);
-        }
+        initializeSprite(image);
     }
 
-    public static Sprite Square(int sizeX, int sizeY, Color color)
+    Sprite(BufferedImage image)
     {
-        String cacheFolder = "CachedSprites";
-        File folder = new File(cacheFolder);
-        if (!folder.exists())
-        {
-            folder.mkdirs();
-        }
+        createdImage = image;
+        initializeSprite(image);
+    }
 
-        String fileName = String.format("%s/Square_%dx%d_%d_%d_%d.png", cacheFolder, sizeX, sizeY, color.getRed(), color.getGreen(), color.getBlue());
-        File file = new File(fileName);
+    private void initializeSprite(BufferedImage image)
+    {
+        if (image != null)
+            size = new Vector2(image.getWidth(), image.getHeight());
+        else
+            size = new Vector2(0, 0);
+    }
 
-        if (!file.exists())
-        {
-            try
-            {
-                BufferedImage image = new BufferedImage(sizeX, sizeY, BufferedImage.TYPE_INT_ARGB);
-                Graphics2D g = image.createGraphics();
-                g.setColor(color);
-                g.fillRect(0, 0, sizeX, sizeY);
-                g.dispose();
-
-                ImageIO.write(image, "png", file);
-            }
-            catch (IOException e)
-            {
-                System.err.println("Error creating square texture: " + fileName);
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        return new Sprite(file.getPath());
+    public static Sprite square(int sizeX, int sizeY, Color color)
+    {
+        BufferedImage image = new BufferedImage(sizeX, sizeY, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = image.createGraphics();
+        g.setColor(color);
+        g.fillRect(0, 0, sizeX, sizeY);
+        g.dispose();
+        return new Sprite(image);
     }
 
     public Vector2 getSize()
     {
         return size;
     }
+    public String getFilePath()
+    {
+        if(createdImage != null)
+            return "This image was generated";
+        return texturePath;
+    }
+    public int getwidth()
+    {
+        return (int)getSize().x;
+    }
+    public int getHeight()
+    {
+        return (int)getSize().y;
+    }
 
     public Image getImage()
     {
         try
         {
-            BufferedImage originalImage = ImageIO.read(new File(texturePath));
+            BufferedImage originalImage;
+            if(createdImage != null)
+                originalImage = createdImage;
+            else
+                originalImage = ImageIO.read(new File(texturePath));
+
             if (originalImage != null)
             {
                 BufferedImage copy = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);

@@ -15,7 +15,7 @@ public class App extends Application
     @Override
     public Scene createScene()
     {
-        Sprite sprite = Sprite.Square(10, 10, Color.RED);
+        Sprite sprite = Sprite.square(10, 10, Color.RED);
 
         Scene scene = new Scene("test scene");
         GameObject obj = new GameObject("obj1");
@@ -25,10 +25,11 @@ public class App extends Application
         scene.addObject(obj);
 
         GameObject obj2 = new GameObject("obj2");
-        obj2.transform.getPosition().set(new Vector2(10, 15));
-        Sprite sprite2 = Sprite.Square(10, 10, Color.BLUE);
-        obj2.addComponent(new SpriteRenderer(sprite2));
-
+        obj2.transform.getPosition().set(new Vector2(0, 5));
+        var t = new InputRenderer("1011");
+        t.onCorrectTextComplete = ir -> System.out.println("correct text!");
+        t.acceptedCharacters = new Character[] {'1', '0'};
+        obj2.addComponent(t);
         obj2.transform.setParent(obj.transform);
         scene.addObject(obj2);
         return scene;
