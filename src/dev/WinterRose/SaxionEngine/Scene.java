@@ -26,15 +26,14 @@ public class Scene
     public void updateScene()
     {
         for (var obj : objects)
-            obj.updateObject();
+            if (obj.isActive) obj.updateObject();
     }
 
     public void drawScene()
     {
-
         scenePainter.begin();
         for (var obj : objects)
-            obj.drawObject(scenePainter);
+            if (obj.isActive) obj.drawObject(scenePainter);
 
         nl.saxion.app.SaxionApp.clear();
         scenePainter.end();

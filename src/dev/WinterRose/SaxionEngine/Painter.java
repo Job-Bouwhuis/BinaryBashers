@@ -86,7 +86,7 @@ public class Painter
 
         Vector2 originRelativePosition = CalculateOrigin(transform, size, origin);
 
-        // learned existence of AffineTransform gotten from ChatGPT. code itself written manually
+        // learned existence of AffineTransform from ChatGPT. code itself written manually
         // used chatGPT to search the internet to ways to use a double or float for positional and
         // scaling values using java's build in Graphics2D class
         AffineTransform affineTransform = new AffineTransform();

@@ -29,6 +29,9 @@ public class App extends Application
         var t = new InputRenderer("1011");
         t.onCorrectTextComplete = ir -> System.out.println("correct text!");
         t.acceptedCharacters = new Character[] {'1', '0'};
+        t.correctCharacterColor = Color.green;
+        t.wrongCharacterColor = Color.green;
+        t.placeholderCharacterColor = Color.darkGray;
         obj2.addComponent(t);
         obj2.transform.setParent(obj.transform);
         scene.addObject(obj2);
