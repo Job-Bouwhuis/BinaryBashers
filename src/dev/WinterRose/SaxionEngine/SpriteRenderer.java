@@ -1,9 +1,12 @@
 package dev.WinterRose.SaxionEngine;
 
+import java.awt.*;
+
 public class SpriteRenderer extends Renderer
 {
     public Sprite sprite;
     public Vector2 origin;
+    public Color tint = Color.white;
 
     public SpriteRenderer(Sprite sprite)
     {
@@ -14,6 +17,6 @@ public class SpriteRenderer extends Renderer
     @Override
     public void render(Painter painter)
     {
-        painter.drawSprite(sprite, transform, sprite.getSize(), origin);
+        painter.drawSprite(sprite, transform, sprite.getSize(), origin, tint);
     }
 }

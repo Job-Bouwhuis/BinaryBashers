@@ -13,6 +13,8 @@ public class Painter
     private Graphics2D graphics;
     private boolean isStarted = false;
 
+    private TintedSpriteCache tintedSpriteCache = new TintedSpriteCache();
+
     Painter() { }
 
     /**
@@ -78,7 +80,7 @@ public class Painter
     /**
      * Renders the given sprite at the given position, with the given scale. (1, 1) scale renders the sprite at the image width x height.
      */
-    public void drawSprite(Sprite sprite, Transform transform, Vector2 size, Vector2 origin)
+    public void drawSprite(Sprite sprite, Transform transform, Vector2 size, Vector2 origin, Color tint)
     {
         ensureStarted();
 
@@ -97,7 +99,13 @@ public class Painter
 
         affineTransform.scale(transform.getScale().x, transform.getScale().y);
 
-        graphics.drawImage(sprite.getImage(), affineTransform, null);
+        if(tint.equals(Color.white))
+        {
+            graphics.drawImage(sprite.getImageRaw(), affineTransform, null);
+            return;
+        }
+        BufferedImage image = tintedSpriteCache.getTintedSprite(sprite, tint).getImageRaw();
+        graphics.drawImage(image, affineTransform, null);
     }
 
     public void drawText(String text, Transform transform, Vector2 origin, Color color, FontType fontType)

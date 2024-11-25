@@ -3,6 +3,7 @@ package dev.WinterRose.SaxionEngine;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
 import java.io.File;
 import java.io.IOException;
 
@@ -32,6 +33,11 @@ public class Sprite
     {
         createdImage = image;
         initializeSprite(image);
+    }
+
+    public Sprite(Sprite original)
+    {
+
     }
 
     private void initializeSprite(BufferedImage image)
@@ -71,7 +77,11 @@ public class Sprite
         return (int)getSize().y;
     }
 
-    public Image getImage()
+    /**
+     * Gets the image as a BufferedImage, makes a copy of the stored image when called. see getImageRaw for getting the backing image directly
+     * @return
+     */
+    public BufferedImage getImage()
     {
         try
         {
@@ -87,6 +97,12 @@ public class Sprite
                 Graphics g = copy.getGraphics();
                 g.drawImage(originalImage, 0, 0, null);
                 g.dispose();
+
+                // keep track of created image if in case this call was reading from a file.
+                // so that getImageRaw can successfully return this exact instance instead of needing to read from the file each time.
+                if (createdImage == null)
+                    createdImage = copy;
+
                 return copy;
             }
             else
@@ -101,4 +117,38 @@ public class Sprite
             return null;
         }
     }
+
+    /**
+     * If this image was generated, it will return the image that is stored instead of making a copy of it. If this is a file reference image, it still loads it into memory
+     * @return
+     */
+    public BufferedImage getImageRaw()
+    {
+        if(createdImage == null)
+            return getImage();
+        return createdImage;
+    }
+
+    /**
+     * Applies the tint color over this sprite.
+     *
+     * Method was heavily inspired by ChatGPT due to my lack of knowledge in efficient image altering code in java -job
+     * @param tint
+     * @return A copy of this sprite where the tint color has been applied.
+     */
+    public Sprite applyTint(Color tint)
+    {
+        BufferedImage image = getImageRaw();
+
+        float scaleFactorR = tint.getRed() / 255.0f;
+        float scaleFactorG = tint.getGreen() / 255.0f;
+        float scaleFactorB = tint.getBlue() / 255.0f;
+        float[] scales = {scaleFactorR, scaleFactorG, scaleFactorB, 1.0f};
+        float[] offsets = {0.0f, 0.0f, 0.0f, 0.0f};
+
+        RescaleOp op = new RescaleOp(scales, offsets, null);
+        return new Sprite(op.filter(image, null));
+    }
+
+
 }

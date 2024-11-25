@@ -15,13 +15,14 @@ public class App extends Application
     @Override
     public Scene createScene()
     {
-        Sprite sprite = Sprite.square(10, 10, Color.RED);
+        Sprite sprite = Sprite.square(10, 10, Color.white);
 
         Scene scene = new Scene("test scene");
 
         GameObject obj = new GameObject("obj1");
         obj.transform.getPosition().set(new Vector2(100, 100));
-        obj.addComponent(new SpriteRenderer(sprite));
+        var sr = new SpriteRenderer(sprite);
+        obj.addComponent(sr);
         obj.addComponent(new MoveTest());
         scene.addObject(obj);
 
