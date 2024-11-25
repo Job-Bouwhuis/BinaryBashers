@@ -22,14 +22,16 @@ public class App extends Application
 
         GameObject obj = new GameObject("obj1");
         obj.transform.getPosition().set(new Vector2(100, 100));
-        var sr = new SpriteRenderer(sprite);
-        obj.addComponent(sr);
-        obj.addComponent(new MoveTest());
+//        var sr = new SpriteRenderer(sprite);
+//        obj.addComponent(sr);
+        var ir = new InputRenderer("101");
+        ir.onCorrectTextComplete.add(renderer -> renderer.owner.destroy());
+        obj.addComponent(ir);
         scene.addObject(obj);
 
         GameObject button = new GameObject("button");
-        obj.transform.getPosition().set(new Vector2(200, 100));
-        obj.addComponent(new Button(Sprite.square(30, 20, Color.white)));
+        button.transform.getPosition().set(new Vector2(200, 100));
+        button.addComponent(new Button(Sprite.square(30, 20, Color.white)));
 
         scene.addObject(button);
 

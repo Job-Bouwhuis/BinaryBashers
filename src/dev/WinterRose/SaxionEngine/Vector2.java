@@ -30,9 +30,7 @@ public class Vector2
     @Override
     public boolean equals(Object obj)
     {
-        if(obj instanceof Vector2 other)
-            if(x == other.x)
-                return y == other.y;
+        if (obj instanceof Vector2 other) if (x == other.x) return y == other.y;
         return false;
     }
 
@@ -45,12 +43,15 @@ public class Vector2
     }
 
     /**
-     * Not implemented yet.
+     * Gets the distance between this vector, and the other
      * @return 0
      */
-    public float distance()
+    public float distance(Vector2 other)
     {
-        return 0;
+        float deltaX = other.x - x;
+        float deltaY = other.y - y;
+
+        return (float) Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
     }
 
     /**

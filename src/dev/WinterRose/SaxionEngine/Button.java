@@ -63,9 +63,5 @@ public class Button extends ActiveRenderer
             drawingColor = clickColor;
 
         painter.drawSprite(sprite, transform, origin, drawingColor);
-
-        Vector2 mousePos = Input.getMousePosition();
-        painter.drawCircle(mousePos, 1, Color.magenta);
-        painter.drawRectangle(bounds);
     }
 }

@@ -12,13 +12,15 @@ public class GameObject
     public String name;
     public String flag;
     public boolean isActive = true;
-    ArrayList<Component> components; // these hold just data, nothing more
-    ArrayList<Behavior> behaviors; // these have an update method
-    ArrayList<Renderer> renderers; // these have a render method, but no update method
-    ArrayList<ActiveRenderer> activeRenderers; // renderers that both have a render method and a update method
-    ArrayList<IKeystrokeCallback> keystrokeCallbacks; // these components want to know when any key is pressed on the keyboard
-    ArrayList<IMouseCallback> mouseCallbacks; // these components want to know when mouse information changes
-    Scene scene;
+    public boolean isDestroyed = false;
+
+    private ArrayList<Component> components; // these hold just data, nothing more
+    private ArrayList<Behavior> behaviors; // these have an update method
+    private ArrayList<Renderer> renderers; // these have a render method, but no update method
+    private ArrayList<ActiveRenderer> activeRenderers; // renderers that both have a render method and a update method
+    private ArrayList<IKeystrokeCallback> keystrokeCallbacks; // these components want to know when any key is pressed on the keyboard
+    private ArrayList<IMouseCallback> mouseCallbacks; // these components want to know when mouse information changes
+    /*internal*/ Scene scene;
 
     public GameObject(String name)
     {
@@ -39,6 +41,7 @@ public class GameObject
      */
     public void addComponent(Component component)
     {
+        assertDestroyed();
         if (component instanceof Transform) return; // ignore transform additions to this object. that is illegal
 
         component.transform = transform;
@@ -59,6 +62,7 @@ public class GameObject
 
     public <T> T getComponent(Class<T> componentType)
     {
+        assertDestroyed();
         for (var comp : components)
             if (componentType.isInstance(comp)) // << i hate java generics. C# generics are far superior... -job
                 return (T) comp;
@@ -68,6 +72,7 @@ public class GameObject
 
     public <T> ArrayList<T> getComponents(Class<T> componentType)
     {
+        assertDestroyed();
         ArrayList<T> foundComponents = new ArrayList<>();
         for (var comp : components)
             if (componentType.isInstance(comp)) foundComponents.add((T) comp);
@@ -83,6 +88,7 @@ public class GameObject
      */
     public <T> void removeComponent(Class<T> componentType)
     {
+        assertDestroyed();
         for (int i = components.size() - 1; i >= 0; i--)
             if (componentType.isInstance(components.get(i))) components.remove(i);
     }
@@ -99,6 +105,7 @@ public class GameObject
      */
     public Scene getScene()
     {
+        assertDestroyed();
         return scene;
     }
 
@@ -116,6 +123,7 @@ public class GameObject
 
     void updateObject()
     {
+        assertDestroyed();
         for (var behavior : behaviors)
             behavior.update();
         for (var activeRenderer : activeRenderers)
@@ -124,6 +132,7 @@ public class GameObject
 
     void drawObject(Painter painter)
     {
+        assertDestroyed();
         for (var renderer : renderers)
             renderer.render(painter);
         for(var renderer : activeRenderers)
@@ -132,13 +141,33 @@ public class GameObject
 
     public void wakeObject()
     {
+        assertDestroyed();
         for (var comp : components)
             comp.awake();
     }
 
-    public void destroyed()
+    public void destroy()
     {
+        assertDestroyed();
+        scene.destroy(this);
+    }
+
+    public void destroyImmediate()
+    {
+        assertDestroyed();
+        scene.destroyImmediate(this);
+    }
+
+    void onDestroyInternal()
+    {
+        assertDestroyed();
         for (var comp : components)
             comp.onDestroyed();
+    }
+
+    private void assertDestroyed()
+    {
+        if(isDestroyed)
+            throw new IllegalStateException("Object %s is destroyed, while trying to access it");
     }
 }

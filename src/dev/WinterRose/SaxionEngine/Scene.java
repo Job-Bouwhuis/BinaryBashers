@@ -8,6 +8,7 @@ public class Scene
 {
     public String name;
     ArrayList<GameObject> objects = new ArrayList<>();
+    private ArrayList<GameObject> objectsToDestroy = new ArrayList<>();
     Painter scenePainter;
 
     public Scene(String name)
@@ -18,21 +19,38 @@ public class Scene
 
     public void wakeScene()
     {
-        for (var obj : objects)
+        for (int i = 0, objectsSize = objects.size(); i < objectsSize; i++)
+        {
+            GameObject obj = objects.get(i);
             obj.wakeObject();
+        }
     }
 
     public void updateScene()
     {
-        for (var obj : objects)
+        for (int i = 0, objectsSize = objects.size(); i < objectsSize; i++)
+        {
+            var obj = objects.get(i);
             if (obj.isActive) obj.updateObject();
+        }
+
+        for(var obj : objectsToDestroy)
+        {
+            if(!objects.contains(obj))
+                continue;
+            obj.onDestroyInternal();
+            objects.remove(obj);
+        }
     }
 
     public void drawScene()
     {
         scenePainter.begin();
-        for (var obj : objects)
+        for (int i = 0, objectsSize = objects.size(); i < objectsSize; i++)
+        {
+            var obj = objects.get(i);
             if (obj.isActive) obj.drawObject(scenePainter);
+        }
 
         nl.saxion.app.SaxionApp.clear();
         scenePainter.end();
@@ -54,6 +72,20 @@ public class Scene
     {
         for (var obj : objects)
             obj.handleMouseCallbacks(mouseEvent);
+    }
+
+    public void destroy(GameObject gameObject)
+    {
+        objectsToDestroy.add(gameObject);
+    }
+
+    public void destroyImmediate(GameObject gameObject)
+    {
+        if(objects.contains(gameObject))
+        {
+            gameObject.onDestroyInternal();
+            objects.remove(gameObject);
+        }
     }
 }
 
