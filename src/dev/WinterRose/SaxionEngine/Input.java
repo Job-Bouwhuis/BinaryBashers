@@ -1,9 +1,7 @@
 package dev.WinterRose.SaxionEngine;
 
 import nl.saxion.app.interaction.KeyboardEvent;
-import nl.saxion.app.interaction.MouseEvent;
 
-import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,11 +30,11 @@ public class Input
     public static void mouseEvent(MouseEvent event)
     {
         lastMousePosition = mousePosition;
-        mousePosition = new Vector2(event.getX(), event.getY());
+        mousePosition = event.location;
 
-        if (event.isLeftMouseButton())
+        if (event.button == MouseButton.Left)
         {
-            if (event.isMouseDown())
+            if (event.clicked)
             {
                 mouseLeftClick = true;
             }
@@ -47,9 +45,9 @@ public class Input
             }
         }
 
-        if (event.isRightMouseButton())
+        if (event.button == MouseButton.Right)
         {
-            if (event.isMouseDown())
+            if (event.clicked)
             {
                 mouseRightClick = true;
             }
@@ -60,9 +58,9 @@ public class Input
             }
         }
 
-        if (event.isMiddleMouseButton())
+        if (event.button == MouseButton.Middle)
         {
-            if (event.isMouseDown())
+            if (event.clicked)
             {
                 mouseMiddleClick = true;
             }
@@ -184,6 +182,7 @@ public class Input
             case Left -> mouseLeftClick;
             case Middle -> mouseMiddleClick;
             case Right -> mouseRightClick;
+            case None -> false;
         };
     }
 
@@ -194,6 +193,7 @@ public class Input
             case Left -> mouseLeftHold;
             case Middle -> mouseMiddleHold;
             case Right -> mouseRightHold;
+            case None -> false;
         };
     }
 
@@ -204,6 +204,7 @@ public class Input
             case Left -> mouseLeftRelease;
             case Middle -> mouseMiddleRelease;
             case Right -> mouseRightRelease;
+            case None -> false;
         };
     }
 }

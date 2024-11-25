@@ -1,6 +1,6 @@
 package dev.WinterRose.SaxionEngine.Callbacks;
 
-import nl.saxion.app.interaction.MouseEvent;
+import dev.WinterRose.SaxionEngine.MouseEvent;
 
 public interface IMouseCallback extends ICallback
 {

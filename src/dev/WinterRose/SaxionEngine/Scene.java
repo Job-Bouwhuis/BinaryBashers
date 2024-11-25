@@ -1,7 +1,6 @@
 package dev.WinterRose.SaxionEngine;
 
 import nl.saxion.app.interaction.KeyboardEvent;
-import nl.saxion.app.interaction.MouseEvent;
 
 import java.util.ArrayList;
 

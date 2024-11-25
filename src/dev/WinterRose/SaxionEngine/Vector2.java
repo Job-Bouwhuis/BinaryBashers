@@ -118,4 +118,10 @@ public class Vector2
         x = value.x;
         y = value.y;
     }
+
+    @Override
+    public String toString()
+    {
+        return "X: %s - Y: %s".formatted(x, y);
+    }
 }

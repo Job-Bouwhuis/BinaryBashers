@@ -17,6 +17,6 @@ public class SpriteRenderer extends Renderer
     @Override
     public void render(Painter painter)
     {
-        painter.drawSprite(sprite, transform, sprite.getSize(), origin, tint);
+        painter.drawSprite(sprite, transform, origin, tint);
     }
 }

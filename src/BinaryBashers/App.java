@@ -1,6 +1,7 @@
 package BinaryBashers;
 
 import dev.WinterRose.SaxionEngine.*;
+import dev.WinterRose.SaxionEngine.Button;
 import nl.saxion.app.SaxionApp;
 
 import java.awt.*;
@@ -26,25 +27,11 @@ public class App extends Application
         obj.addComponent(new MoveTest());
         scene.addObject(obj);
 
-        GameObject obj2 = new GameObject("obj2");
-        obj2.transform.getPosition().set(new Vector2(0, 5));
-        var t = new InputRenderer("101");
-        t.onCorrectTextComplete.add(ir -> System.out.println("correct text!"));
-        t.acceptedCharacters = new Character[]{ '1', '0' };
-        t.correctCharacterColor = Color.green;
-        t.wrongCharacterColor = Color.green;
-        t.placeholderCharacterColor = Color.lightGray;
-        t.placeholderChar = ' ';
+        GameObject button = new GameObject("button");
+        obj.transform.getPosition().set(new Vector2(200, 100));
+        obj.addComponent(new Button(Sprite.square(30, 20, Color.white)));
 
-        GameObject obj3 = new GameObject("obj3");
-        obj3.addComponent(new TextRenderer("5"));
-        obj3.transform.getPosition().set(new Vector2(0, -20));
-
-        obj2.addComponent(t);
-        obj2.transform.setParent(obj.transform);
-        obj3.transform.setParent(obj.transform);
-        scene.addObject(obj2);
-        scene.addObject(obj3);
+        scene.addObject(button);
 
         return scene;
     }

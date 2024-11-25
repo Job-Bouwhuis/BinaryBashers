@@ -3,7 +3,6 @@ package dev.WinterRose.SaxionEngine;
 import dev.WinterRose.SaxionEngine.Callbacks.IKeystrokeCallback;
 import dev.WinterRose.SaxionEngine.Callbacks.IMouseCallback;
 import nl.saxion.app.interaction.KeyboardEvent;
-import nl.saxion.app.interaction.MouseEvent;
 
 import java.util.ArrayList;
 

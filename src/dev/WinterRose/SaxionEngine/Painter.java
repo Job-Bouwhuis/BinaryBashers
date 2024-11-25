@@ -4,11 +4,17 @@ import nl.saxion.app.SaxionApp;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.Constructor;
 
 public class Painter
 {
+    public static final int renderWidth = 640;
+    public static final int renderHeight = 360;
+    public static final int windowWidth = SaxionApp.getWidth();
+    public static final int windowHeight = SaxionApp.getHeight();
+
     private BufferedImage renderCanvas;
     private Graphics2D graphics;
     private boolean isStarted = false;
@@ -64,6 +70,12 @@ public class Painter
         graphics.fillRect((int)position.x, (int)position.y, scale.x, scale.y);
     }
 
+    public void drawRectangle(Rectangle2D rect)
+    {
+        ensureStarted();
+        graphics.drawRect((int)rect.getX(), (int)rect.getY(), (int)rect.getWidth(), (int)rect.getHeight());
+    }
+
     /**
      * Renders a circle to the screen on the given position
      * @param position
@@ -80,10 +92,11 @@ public class Painter
     /**
      * Renders the given sprite at the given position, with the given scale. (1, 1) scale renders the sprite at the image width x height.
      */
-    public void drawSprite(Sprite sprite, Transform transform, Vector2 size, Vector2 origin, Color tint)
+    public void drawSprite(Sprite sprite, Transform transform, Vector2 origin, Color tint)
     {
         ensureStarted();
 
+        Vector2 size = sprite.getSize();
         Vector2 originRelativePosition = CalculateOrigin(transform, size, origin);
 
         // learned existence of AffineTransform from ChatGPT. code itself written manually
