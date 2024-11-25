@@ -3,7 +3,6 @@ package dev.WinterRose.SaxionEngine;
 import nl.saxion.app.SaxionApp;
 import nl.saxion.app.interaction.GameLoop;
 import nl.saxion.app.interaction.KeyboardEvent;
-import org.w3c.dom.DOMError;
 
 import java.awt.*;
 import java.awt.event.MouseListener;
@@ -11,25 +10,32 @@ import java.awt.event.MouseMotionListener;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
 public abstract class Application implements GameLoop
 {
-    ArrayList<Scene> allScenes = new ArrayList<>();
+    Map<String, Consumer<Scene>> scenes = new HashMap<>();
     Scene activeScene;
     private long lastFrameTime = System.nanoTime(); // last time is also time of app creation.
 
-    public abstract Scene createScene();
-
-    public abstract Scene[] preLoadOtherScenes();
+    /**
+     * Use method createScene(String, Consumer) to add scenes. then loadScene(String) to load the first scene.
+     */
+    public abstract void createScenes();
+    public abstract void createPrefabs();
 
     @Override
     public void init()
     {
         subscribeToMouseMoveEventBecauseSaxionAppDevsWereTooLazyToMakeAGoodOne();
-        activeScene = createScene();
-        allScenes.add(activeScene);
-        allScenes.addAll(Arrays.asList(preLoadOtherScenes()));
-        activeScene.wakeScene();
+        createScenes();
+    }
+
+    public void createScene(String name, Consumer<Scene> sceneConfigurer)
+    {
+        scenes.put(name, sceneConfigurer);
     }
 
     @Override
@@ -47,21 +53,17 @@ public abstract class Application implements GameLoop
         Input.update();
     }
 
-    public void changeScene(String sceneName) throws Exception
+    public void loadScene(String sceneName)
     {
-        Scene target = findScene(sceneName);
+        Consumer<Scene> sceneConfigurer = scenes.get(sceneName);
+        if (sceneConfigurer == null)
+            throw new RuntimeException("No scene with name: " + sceneName);
 
-        if (target == null) throw new Exception("No scene with name: " + sceneName);
+        Scene scene = new Scene(sceneName);
+        sceneConfigurer.accept(scene);
 
-        activeScene = target;
+        activeScene = scene;
         activeScene.wakeScene();
-    }
-
-    public Scene findScene(String sceneName)
-    {
-        for (Scene scene : allScenes)
-            if (scene.name.equals(sceneName)) return scene;
-        return null;
     }
 
     @Override

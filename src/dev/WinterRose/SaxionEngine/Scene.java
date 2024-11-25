@@ -6,9 +6,9 @@ import java.util.ArrayList;
 
 public class Scene
 {
-    public String name;
-    ArrayList<GameObject> objects = new ArrayList<>();
-    private ArrayList<GameObject> objectsToDestroy = new ArrayList<>();
+    public final String name;
+    private final ArrayList<GameObject> objects = new ArrayList<>();
+    private final ArrayList<GameObject> objectsToDestroy = new ArrayList<>();
     Painter scenePainter;
 
     public Scene(String name)
@@ -41,6 +41,7 @@ public class Scene
             obj.onDestroyInternal();
             objects.remove(obj);
         }
+        objectsToDestroy.clear();
     }
 
     public void drawScene()
