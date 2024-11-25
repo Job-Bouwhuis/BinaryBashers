@@ -27,9 +27,7 @@ public class Painter
             Constructor<nl.saxion.app.canvas.drawable.Image> constructor = nl.saxion.app.canvas.drawable.Image.class.getDeclaredConstructor(BufferedImage.class, int.class, int.class, int.class, int.class);
 
             if (!constructor.canAccess(null))
-            {
                 constructor.setAccessible(true);
-            }
 
             return constructor.newInstance(image, x, y, width, height);
         }
@@ -102,31 +100,37 @@ public class Painter
         graphics.drawImage(sprite.getImage(), affineTransform, null);
     }
 
-    public void drawText(String text, Transform transform, Vector2 origin, Color color)
+    public void drawText(String text, Transform transform, Vector2 origin, Color color, FontType fontType)
     {
         DrawableCharacter[] characters = new DrawableCharacter[text.length()];
         for(int i = 0; i < text.length(); i++)
             characters[i] = new DrawableCharacter(text.charAt(i), color);
 
-        drawTextInternal(characters, text, transform, origin);
+        drawTextInternal(characters, text, transform, origin, fontType);
     }
 
-    public void drawText(DrawableCharacter[] characters, Transform transform, Vector2 origin)
+    public void drawText(DrawableCharacter[] characters, Transform transform, Vector2 origin, FontType fontType)
     {
         String text = getStringFromDrawableCharacters(characters);
-        drawTextInternal(characters, text, transform, origin);
+        drawTextInternal(characters, text, transform, origin, fontType);
     }
 
-    private void drawTextInternal(DrawableCharacter[] characters, String text, Transform transform, Vector2 origin)
+    private void drawTextInternal(DrawableCharacter[] characters, String text, Transform transform, Vector2 origin, FontType fontType)
     {
         Vector2 position = transform.getPosition();
         Vector2 scale = transform.getScale();
         Rotation rotation = transform.getRotation();
 
-
+        var prevFont = graphics.getFont();
 
         int fontSize = (int)(graphics.getFont().getSize() * scale.y);
-        graphics.setFont(new Font(graphics.getFont().getFontName(), Font.PLAIN, fontSize));
+        int fType = switch (fontType)
+        {
+            case Normal -> Font.PLAIN;
+            case Bold -> Font.BOLD;
+            case Italic -> Font.ITALIC;
+        };
+        graphics.setFont(new Font(graphics.getFont().getFontName(), fType, fontSize));
 
         FontMetrics metric = graphics.getFontMetrics(graphics.getFont());
 
@@ -157,6 +161,7 @@ public class Painter
 
         graphics.setTransform(beforeTransform);
         graphics.setColor(prevColor);
+        graphics.setFont(prevFont);
     }
 
     private String getStringFromDrawableCharacters(DrawableCharacter[] characters)

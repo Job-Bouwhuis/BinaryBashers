@@ -26,6 +26,7 @@ public class GameObject
         components = new ArrayList<>();
         behaviors = new ArrayList<>();
         renderers = new ArrayList<>();
+        activeRenderers = new ArrayList<>();
         keystrokeCallbacks = new ArrayList<>();
         mouseCallbacks = new ArrayList<>();
         transform = new Transform();

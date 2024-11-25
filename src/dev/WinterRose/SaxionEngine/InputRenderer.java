@@ -16,6 +16,7 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
     public Vector2 origin = new Vector2(0.5f, 0.5f);
     public Character[] acceptedCharacters;
     public Action<InputRenderer> onCorrectTextComplete = new Action<>();
+    public FontType fontType = FontType.Normal;
 
     public Color correctCharacterColor = Color.cyan;
     public Color wrongCharacterColor = Color.red;
@@ -38,7 +39,7 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
                 chars[i] = inputText.get(i);
         }
 
-        painter.drawText(chars, transform, origin);
+        painter.drawText(chars, transform, origin, fontType);
     }
 
     @Override

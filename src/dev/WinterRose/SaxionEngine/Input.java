@@ -13,8 +13,8 @@ public class Input
     private static final Set<Integer> keysPressed = new HashSet<>();
     private static final Set<Integer> keysReleased = new HashSet<>();
 
-    private static Point mousePosition = new Point(0, 0);
-    private static Point lastMousePosition = new Point(0, 0);
+    private static Vector2 mousePosition = new Vector2(0, 0);
+    private static Vector2 lastMousePosition = new Vector2(0, 0);
     private static int scrollDelta = 0;
 
     private static boolean mouseLeftHold;
@@ -31,6 +31,9 @@ public class Input
 
     public static void mouseEvent(MouseEvent event)
     {
+        lastMousePosition = mousePosition;
+        mousePosition = new Vector2(event.getX(), event.getY());
+
         if (event.isLeftMouseButton())
         {
             if (event.isMouseDown())
@@ -89,9 +92,14 @@ public class Input
         }
     }
 
-    public static Point getMousePosition()
+    public static Vector2 getMousePosition()
     {
-        return new Point(mousePosition);
+        return mousePosition.clone();
+    }
+
+    public static Vector2 getMouseMoveDelta()
+    {
+        return lastMousePosition.clone().subtract(mousePosition);
     }
 
     public static boolean mousePositionChanged()

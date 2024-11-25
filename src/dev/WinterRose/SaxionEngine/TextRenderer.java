@@ -7,6 +7,7 @@ public class TextRenderer extends Renderer
     public String text;
     public Vector2 origin;
     public Color textColor = Color.WHITE;
+    public FontType fontType = FontType.Normal;
 
     public TextRenderer()
     {
@@ -23,6 +24,6 @@ public class TextRenderer extends Renderer
     @Override
     public void render(Painter painter)
     {
-        painter.drawText(text, transform, origin, textColor);
+        painter.drawText(text, transform, origin, textColor, fontType);
     }
 }
