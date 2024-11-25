@@ -15,7 +15,7 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
     public ArrayList<DrawableCharacter> inputText = new ArrayList<>();
     public Vector2 origin = new Vector2(0.5f, 0.5f);
     public Character[] acceptedCharacters;
-    public Consumer<InputRenderer> onCorrectTextComplete;
+    public Action<InputRenderer> onCorrectTextComplete = new Action<>();
 
     public Color correctCharacterColor = Color.cyan;
     public Color wrongCharacterColor = Color.red;
@@ -68,7 +68,7 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
         }
         finally
         {
-            if (buildStringFromInputText().equals(targetText) && onCorrectTextComplete != null) onCorrectTextComplete.accept(this);
+            if (buildStringFromInputText().equals(targetText) && onCorrectTextComplete != null) onCorrectTextComplete.invoke(this);
         }
     }
 

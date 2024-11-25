@@ -27,7 +27,7 @@ public class App extends Application
         GameObject obj2 = new GameObject("obj2");
         obj2.transform.getPosition().set(new Vector2(0, 5));
         var t = new InputRenderer("1011");
-        t.onCorrectTextComplete = ir -> System.out.println("correct text!");
+        t.onCorrectTextComplete.add(ir -> System.out.println("correct text!"));
         t.acceptedCharacters = new Character[] {'1', '0'};
         t.correctCharacterColor = Color.green;
         t.wrongCharacterColor = Color.green;
