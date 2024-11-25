@@ -5,21 +5,25 @@ import java.util.function.Consumer;
 
 public class Action<T>
 {
-    private ArrayList<Consumer<T>> consumers;
+    private ArrayList<Consumer<T>> consumers = new ArrayList<>();
 
     public void invoke(T arg)
     {
-        for(var consumer : consumers)
+        for (var consumer : consumers)
             consumer.accept(arg);
     }
 
     public void add(Consumer<T> consumer)
     {
+        if(consumer == null)
+            return;
         consumers.add(consumer);
     }
 
     public void remove(Consumer<T> consumer)
     {
+        if(consumer == null)
+            return;
         consumers.remove(consumer);
     }
 }

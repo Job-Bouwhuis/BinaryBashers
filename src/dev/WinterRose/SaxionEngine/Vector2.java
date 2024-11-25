@@ -87,10 +87,17 @@ public class Vector2
         return this;
     }
 
-    public Vector2 multilply(float value)
+    public Vector2 multiply(float value)
     {
         x *= value;
         y *= value;
+        return this;
+    }
+
+    public Vector2 multiply(Vector2 value)
+    {
+        x *= value.x;
+        y *= value.y;
         return this;
     }
 

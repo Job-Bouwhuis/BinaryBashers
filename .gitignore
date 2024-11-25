@@ -27,4 +27,4 @@ replay_pid*
 /CachedSprites/*
 
 # specifically allow SaxionApp.Jar
-!resources/SaxionApp.jar
+!lib/SaxionApp.jar
