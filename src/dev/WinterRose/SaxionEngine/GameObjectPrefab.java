@@ -23,5 +23,6 @@ public class GameObjectPrefab
         GameObject obj = new GameObject(name);
         configurer.accept(obj);
         scene.addObject(obj);
+        return obj;
     }
 }
