@@ -8,8 +8,6 @@ import java.awt.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -24,6 +22,7 @@ public abstract class Application implements GameLoop
      * Use method createScene(String, Consumer) to add scenes. then loadScene(String) to load the first scene.
      */
     public abstract void createScenes();
+
     public abstract void createPrefabs();
 
     @Override
@@ -56,11 +55,19 @@ public abstract class Application implements GameLoop
     public void loadScene(String sceneName)
     {
         Consumer<Scene> sceneConfigurer = scenes.get(sceneName);
-        if (sceneConfigurer == null)
-            throw new RuntimeException("No scene with name: " + sceneName);
+        if (sceneConfigurer == null) throw new RuntimeException("No scene with name: " + sceneName);
 
         Scene scene = new Scene(sceneName);
-        sceneConfigurer.accept(scene);
+
+        try
+        {
+            sceneConfigurer.accept(scene);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to create scene", e);
+        }
 
         activeScene = scene;
         activeScene.wakeScene();
@@ -96,9 +103,9 @@ public abstract class Application implements GameLoop
 
             Panel canvas = (Panel) canvasField.get(null);
 
-            for(var mouseListener : canvas.getMouseListeners())
+            for (var mouseListener : canvas.getMouseListeners())
                 canvas.removeMouseListener(mouseListener);
-            for(var mouseMotion : canvas.getMouseMotionListeners())
+            for (var mouseMotion : canvas.getMouseMotionListeners())
                 canvas.removeMouseMotionListener(mouseMotion);
 
             canvas.addMouseListener(new MouseListener()
@@ -159,7 +166,8 @@ public abstract class Application implements GameLoop
 
             });
 
-            canvas.addMouseMotionListener(new MouseMotionListener() {
+            canvas.addMouseMotionListener(new MouseMotionListener()
+            {
                 @Override
                 public void mouseDragged(java.awt.event.MouseEvent e)
                 {

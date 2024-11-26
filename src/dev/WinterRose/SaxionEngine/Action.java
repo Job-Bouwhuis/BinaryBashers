@@ -10,7 +10,16 @@ public class Action<T>
     public void invoke(T arg)
     {
         for (var consumer : consumers)
-            consumer.accept(arg);
+        {
+            try
+            {
+                consumer.accept(arg);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void add(Consumer<T> consumer)
