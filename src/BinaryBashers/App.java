@@ -27,6 +27,9 @@ public class App extends Application
             scene.addObject(obj);
 
             GameObject button = new GameObject("button");
+            Timer t = new Timer(5, true, true);
+            t.onTimeAction.add(tt -> System.out.println("TIME"));
+            button.addComponent(t);
             button.transform.getPosition().set(new Vector2(200, 100));
             button.addComponent(new Button(Sprite.square(30, 20, Color.white)));
 
