@@ -20,11 +20,9 @@ public class App extends Application
             Sprite sprite = Sprite.square(10, 10, Color.white);
 
             GameObject obj = new GameObject("obj1");
-            obj.transform.getPosition().set(new Vector2(100, 100));
-            //        var sr = new SpriteRenderer(sprite);
-            //        obj.addComponent(sr);
-            var ir = new InputRenderer("101");
-            ir.onCorrectTextComplete.add(renderer -> renderer.owner.destroy());
+            obj.transform.getPosition().set(new Vector2(200, 300));
+            var ir = new InputRenderer(40);
+            ir.onEnterKeyPressed.add(renderer -> renderer.owner.destroy());
             obj.addComponent(ir);
             scene.addObject(obj);
 

@@ -4,39 +4,57 @@ import dev.WinterRose.SaxionEngine.Callbacks.IKeystrokeCallback;
 import nl.saxion.app.interaction.KeyboardEvent;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.function.Consumer;
 
 public class InputRenderer extends Renderer implements IKeystrokeCallback
 {
+    public int characterMax;
     public Character placeholderChar = '_';
-    public String targetText;
     public ArrayList<DrawableCharacter> inputText = new ArrayList<>();
     public Vector2 origin = new Vector2(0.5f, 0.5f);
+    public Action<InputRenderer> onEnterKeyPressed = new Action<>();
     public Character[] acceptedCharacters;
-    public Action<InputRenderer> onCorrectTextComplete = new Action<>();
+    /**
+     * A predefined collection of characters that cant be typed in as a character
+     */
+    public Character[] blacklistedCharacters = new Character[]{
+            KeyEvent.VK_SHIFT,
+            KeyEvent.VK_CONTROL,
+            KeyEvent.VK_ALT,
+            KeyEvent.VK_META,
+            KeyEvent.VK_CAPS_LOCK,
+            KeyEvent.VK_ESCAPE,
+            KeyEvent.VK_ENTER,
+            KeyEvent.VK_BACK_SPACE,
+            KeyEvent.VK_TAB,
+            KeyEvent.VK_DELETE,
+            KeyEvent.VK_HOME,
+            KeyEvent.VK_END,
+            KeyEvent.VK_PAGE_UP,
+            KeyEvent.VK_PAGE_DOWN,
+            KeyEvent.VK_INSERT,
+            KeyEvent.VK_NUM_LOCK,
+            KeyEvent.VK_SCROLL_LOCK };
     public FontType fontType = FontType.Normal;
 
-    public Color correctCharacterColor = Color.cyan;
-    public Color wrongCharacterColor = Color.red;
+    public Color typedCharacterColor = Color.cyan;
     public Color placeholderCharacterColor = Color.white;
 
-    public InputRenderer(String targetText)
+    public InputRenderer(int characterMax)
     {
-        this.targetText = targetText;
+        this.characterMax = characterMax;
     }
 
     @Override
     public void render(Painter painter)
     {
-        DrawableCharacter[] chars = new DrawableCharacter[targetText.length()];
-        for(int i = 0; i < chars.length; i++)
+        DrawableCharacter[] chars = new DrawableCharacter[characterMax];
+        for (int i = 0; i < chars.length; i++)
         {
-            if(inputText.size() <= i)
-                chars[i] = new DrawableCharacter(placeholderChar, placeholderCharacterColor);
-            else
-                chars[i] = inputText.get(i);
+            if (inputText.size() <= i) chars[i] = new DrawableCharacter(placeholderChar, placeholderCharacterColor);
+            else chars[i] = inputText.get(i);
         }
 
         painter.drawText(chars, transform, origin, fontType);
@@ -47,53 +65,35 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
     {
         if (!key.isKeyPressed()) return;
 
-        try
+        int keyCode = key.getKeyCode();
+        if (keyCode == KeyboardEvent.VK_ENTER)
         {
-            int keyCode = key.getKeyCode();
-            if (keyCode == KeyboardEvent.VK_BACK_SPACE)
-            {
-                if (inputText.isEmpty()) return;
-                inputText.removeLast();
-                return;
-            }
-
-            if (acceptedCharacters == null)
-            {
-                addCharacter((char)keyCode);
-                return;
-            }
-
-            if (!Arrays.stream(acceptedCharacters).anyMatch(c -> ((int) c.charValue()) == keyCode)) return;
-
-            addCharacter((char)keyCode);
+            onEnterKeyPressed.invoke(this);
+            return;
         }
-        finally
+        if (keyCode == KeyboardEvent.VK_BACK_SPACE)
         {
-            if (buildStringFromInputText().equals(targetText) && onCorrectTextComplete != null) onCorrectTextComplete.invoke(this);
+            if (inputText.isEmpty()) return;
+            inputText.removeLast();
+            return;
         }
-    }
+        if (Arrays.stream(blacklistedCharacters).anyMatch(blacklistedChar -> blacklistedChar.charValue() == keyCode))
+            return;
 
-    private String buildStringFromInputText()
-    {
-        StringBuilder sb = new StringBuilder();
+        if (acceptedCharacters == null)
+        {
+            addCharacter((char) keyCode);
+            return;
+        }
 
-        for(var c : inputText)
-            sb.append(c.character);
+        if (!Arrays.stream(acceptedCharacters).anyMatch(c -> ((int) c.charValue()) == keyCode)) return;
 
-        return sb.toString();
+        addCharacter((char) keyCode);
     }
 
     private void addCharacter(Character c)
     {
-        if(inputText.size() == targetText.length())
-            return; // already max size.
-
-        boolean valid = targetText.charAt(inputText.size()) == c;
-        Color col;
-        if(valid)
-            col = correctCharacterColor;
-        else
-            col = wrongCharacterColor;
-        inputText.add(new DrawableCharacter(c, col));
+        if (inputText.size() == characterMax) return; // already max size.
+        inputText.add(new DrawableCharacter(c, typedCharacterColor));
     }
 }
