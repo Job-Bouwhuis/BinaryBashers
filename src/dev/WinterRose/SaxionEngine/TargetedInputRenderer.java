@@ -4,6 +4,7 @@ import dev.WinterRose.SaxionEngine.Callbacks.IKeystrokeCallback;
 import nl.saxion.app.interaction.KeyboardEvent;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -15,6 +16,27 @@ public class TargetedInputRenderer extends Renderer implements IKeystrokeCallbac
     public Vector2 origin = new Vector2(0.5f, 0.5f);
     public Character[] acceptedCharacters;
     public Action<TargetedInputRenderer> onCorrectTextComplete = new Action<>();
+    /**
+     * A predefined collection of characters that cant be typed in as a character
+     */
+    public Character[] blacklistedCharacters = new Character[]{
+            KeyEvent.VK_SHIFT,
+            KeyEvent.VK_CONTROL,
+            KeyEvent.VK_ALT,
+            KeyEvent.VK_META,
+            KeyEvent.VK_CAPS_LOCK,
+            KeyEvent.VK_ESCAPE,
+            KeyEvent.VK_ENTER,
+            KeyEvent.VK_BACK_SPACE,
+            KeyEvent.VK_TAB,
+            KeyEvent.VK_DELETE,
+            KeyEvent.VK_HOME,
+            KeyEvent.VK_END,
+            KeyEvent.VK_PAGE_UP,
+            KeyEvent.VK_PAGE_DOWN,
+            KeyEvent.VK_INSERT,
+            KeyEvent.VK_NUM_LOCK,
+            KeyEvent.VK_SCROLL_LOCK };
     public FontType fontType = FontType.Normal;
 
     public Color correctCharacterColor = Color.cyan;
@@ -55,6 +77,8 @@ public class TargetedInputRenderer extends Renderer implements IKeystrokeCallbac
                 inputText.removeLast();
                 return;
             }
+            if(Arrays.stream(blacklistedCharacters).anyMatch(c -> c.charValue() == keyCode))
+                return;
 
             if (acceptedCharacters == null)
             {
