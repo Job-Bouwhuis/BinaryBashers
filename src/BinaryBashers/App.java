@@ -2,9 +2,14 @@ package BinaryBashers;
 
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.Button;
+import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
+import dev.WinterRose.SaxionEngine.ColorPallets.SpritePalletChanger;
 import nl.saxion.app.SaxionApp;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 public class App extends Application
 {
@@ -17,20 +22,28 @@ public class App extends Application
     public void createScenes()
     {
         createScene("testScene", scene -> {
-            Sprite sprite = Sprite.square(10, 10, Color.white);
+            ColorPallet pallet = new ColorPallet(
+                    new Sprite("resources\\colorPallets\\main.png"),
+                    new Sprite("resources\\colorPallets\\midnightAblaze\\midnight-ablaze.png"));
+
+            Sprite original = new Sprite("resources\\testing\\Decimal Demon.png");
+            Sprite palletChanged = SpritePalletChanger.changePallet(original, pallet);
+
+            File file = new File("test.png");
+            try
+            {
+                ImageIO.write(palletChanged.getImageRaw(), "png", file);
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException(e);
+            }
 
             GameObject obj = new GameObject("obj1");
             obj.transform.getPosition().set(new Vector2(200, 300));
-            var ir = new InputRenderer(40);
-            ir.onEnterKeyPressed.add(renderer -> renderer.owner.destroy());
-            obj.addComponent(ir);
+            obj.addComponent(new SpriteRenderer(palletChanged));
+
             scene.addObject(obj);
-
-            GameObject button = new GameObject("button");
-            button.transform.getPosition().set(new Vector2(200, 100));
-            button.addComponent(new Button(Sprite.square(30, 20, Color.white)));
-
-            scene.addObject(button);
         });
 
         loadScene("testScene");
