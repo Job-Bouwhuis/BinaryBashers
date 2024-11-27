@@ -30,7 +30,7 @@ public class Sprite
         initializeSprite(image);
     }
 
-    Sprite(BufferedImage image)
+    public Sprite(BufferedImage image)
     {
         createdImage = image;
         initializeSprite(image);
@@ -137,7 +137,7 @@ public class Sprite
         for (int i = 0; i < data.getWidth() * data.getHeight(); i++)
         {
             int[] colorValues = new int[4];
-            data.getPixel(i, i / width, colorValues);
+            data.getPixel(i % width, i / width, colorValues);
             resultingColors[i] = new Color(colorValues[0], colorValues[1], colorValues[2], colorValues[3]);
         }
 

@@ -35,6 +35,21 @@ public class ColorPallet
         colorMappings.add(new ColorMap(from, to));
     }
 
+    /**
+     * Gets the mapped color
+     * @param from what color should the mapping of be returned
+     * @param fallback if no mapping of the 'from' color exists, return fallback
+     * @return the mapped color for 'from' or 'fallback' if no mapping was found*/
+    public Color get(Color from, Color fallback)
+    {
+        for (var map : colorMappings)
+        {
+            if(map.eval(from))
+                return map.to;
+        }
+        return fallback;
+    }
+
     public Color get(Color from)
     {
         for (var map : colorMappings)
