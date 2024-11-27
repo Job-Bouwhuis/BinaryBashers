@@ -1,11 +1,32 @@
 package dev.WinterRose.SaxionEngine.ColorPallets;
 
+import dev.WinterRose.SaxionEngine.Sprite;
+
 import java.awt.*;
 import java.util.ArrayList;
 
 public class ColorPallet
 {
     private ArrayList<ColorMap> colorMappings = new ArrayList<>();
+
+    public ColorPallet() {}
+
+    /**
+     * The two input sprites must be a texture of 1 single row of pixels. the same index of color in each image is mapped.
+     * @param from The color in the pallet cha
+     * @param to
+     */
+    public ColorPallet(Sprite from, Sprite to)
+    {
+        Color[] fromColors = from.getColorData();
+        Color[] toColors = to.getColorData();
+
+        if(fromColors.length != toColors.length)
+            throw new IllegalStateException("Given sprites do not have the same size. Cant map these two to each other");
+
+        for (int i = 0; i < fromColors.length; i++)
+            add(fromColors[i], toColors[i]);
+    }
 
     public void add(Color from, Color to)
     {

@@ -2,6 +2,7 @@ package BinaryBashers;
 
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.Button;
+import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 import nl.saxion.app.SaxionApp;
 
 import java.awt.*;
@@ -16,6 +17,8 @@ public class App extends Application
     @Override
     public void createScenes()
     {
+        ColorPallet pallet = new ColorPallet(new Sprite("resources\\colorPallets\\main.png"), new Sprite("resources\\colorPallets\\midnightAblaze\\midnight-ablaze.png"));
+
         createScene("testScene", scene -> {
             Sprite sprite = Sprite.square(10, 10, Color.white);
 
