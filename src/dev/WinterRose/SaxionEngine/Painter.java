@@ -76,6 +76,21 @@ public class Painter
         graphics.drawRect((int)rect.getX(), (int)rect.getY(), (int)rect.getWidth(), (int)rect.getHeight());
     }
 
+    public void drawText(String text, Transform transform, Vector2 origin, Color color, FontType fontType)
+    {
+        DrawableCharacter[] characters = new DrawableCharacter[text.length()];
+        for(int i = 0; i < text.length(); i++)
+            characters[i] = new DrawableCharacter(text.charAt(i), color);
+
+        drawTextInternal(characters, text, transform, origin, fontType);
+    }
+
+    public void drawText(DrawableCharacter[] characters, Transform transform, Vector2 origin, FontType fontType)
+    {
+        String text = getStringFromDrawableCharacters(characters);
+        drawTextInternal(characters, text, transform, origin, fontType);
+    }
+
     /**
      * Renders a circle to the screen on the given position
      * @param position
@@ -99,15 +114,15 @@ public class Painter
         Vector2 size = sprite.getSize();
         Vector2 originRelativePosition = CalculateOrigin(transform, size, origin);
 
-        // learned existence of AffineTransform from ChatGPT. code itself written manually
-        // used chatGPT to search the internet to ways to use a double or float for positional and
-        // scaling values using java's build in Graphics2D class
+        Vector2 parentPosition = transform.getParent() != null ? transform.getParent().getWorldPosition() : transform.getWorldPosition();
+        originRelativePosition.add(parentPosition);
+
         AffineTransform affineTransform = new AffineTransform();
         affineTransform.translate(originRelativePosition.x, originRelativePosition.y);
 
         Vector2 rotationAnchor = new Vector2(size.x * origin.x, size.y * origin.y);
 
-        double rotationRadians = transform.getRotation().getRadians();
+        double rotationRadians = transform.getRotationRadians();
         affineTransform.rotate(rotationRadians, rotationAnchor.x, rotationAnchor.y);
 
         affineTransform.scale(transform.getScale().x, transform.getScale().y);
@@ -121,26 +136,13 @@ public class Painter
         graphics.drawImage(image, affineTransform, null);
     }
 
-    public void drawText(String text, Transform transform, Vector2 origin, Color color, FontType fontType)
-    {
-        DrawableCharacter[] characters = new DrawableCharacter[text.length()];
-        for(int i = 0; i < text.length(); i++)
-            characters[i] = new DrawableCharacter(text.charAt(i), color);
 
-        drawTextInternal(characters, text, transform, origin, fontType);
-    }
-
-    public void drawText(DrawableCharacter[] characters, Transform transform, Vector2 origin, FontType fontType)
-    {
-        String text = getStringFromDrawableCharacters(characters);
-        drawTextInternal(characters, text, transform, origin, fontType);
-    }
 
     private void drawTextInternal(DrawableCharacter[] characters, String text, Transform transform, Vector2 origin, FontType fontType)
     {
         Vector2 position = transform.getPosition();
         Vector2 scale = transform.getScale();
-        Rotation rotation = transform.getRotation();
+        float rotationRads = transform.getRotationRadians();
 
         var prevFont = graphics.getFont();
 
@@ -165,7 +167,7 @@ public class Painter
         AffineTransform affineTransform = new AffineTransform();
         affineTransform.translate(adjustedX, adjustedY);
         Vector2 rotationAnchor = new Vector2(metric.stringWidth(text) * origin.x, textHeight * origin.y);
-        affineTransform.rotate(rotation.getRadians(), rotationAnchor.x, rotationAnchor.y);
+        affineTransform.rotate(rotationRads, rotationAnchor.x, rotationAnchor.y);
         affineTransform.scale(scale.x, scale.y);
 
         graphics.setTransform(affineTransform);

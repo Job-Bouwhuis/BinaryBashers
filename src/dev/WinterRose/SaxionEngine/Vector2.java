@@ -5,6 +5,8 @@ public class Vector2
     public float x;
     public float y;
 
+    public Action<Vector2> onPositionChanged = new Action<>();
+
     public Vector2()
     {
         this(0);
@@ -44,7 +46,7 @@ public class Vector2
 
     /**
      * Gets the distance between this vector, and the other
-     * @return 0
+     * @return The distance between the two vectors
      */
     public float distance(Vector2 other)
     {
@@ -73,51 +75,38 @@ public class Vector2
         float length = length();
         x = x / length;
         y = y / length;
+        onPositionChanged.invoke(this);
         return this;
     }
 
-    public Vector2 clone()
-    {
-        return new Vector2(this);
-    }
+//    public Vector2 clone()
+//    {
+//        return new Vector2(this);
+//    }
 
     public Vector2 add(Vector2 other)
     {
-        x += other.x;
-        y += other.y;
-        return this;
+        return new Vector2(x + other.x, y + other.y);
     }
 
     public Vector2 multiply(float value)
     {
-        x *= value;
-        y *= value;
-        return this;
+        return new Vector2(x * value, y * value);
     }
 
     public Vector2 multiply(Vector2 value)
     {
-        x *= value.x;
-        y *= value.y;
-        return this;
+        return new Vector2(x * value.x, y * value.y);
     }
 
-    public Vector2 subtract(Vector2 vector2)
+    public Vector2 subtract(Vector2 value)
     {
-        Vector2 inverted = vector2.invert();
-        add(inverted);
-        return this;
+        return new Vector2(x - value.x, y - value.y);
     }
 
     private Vector2 invert()
     {
         return new Vector2(-x, -y);
-    }
-
-    public void set(Vector2 value)
-    {
-        x = value.x;
-        y = value.y;
     }
 
     @Override

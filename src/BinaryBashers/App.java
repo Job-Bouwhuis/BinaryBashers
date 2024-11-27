@@ -1,15 +1,9 @@
 package BinaryBashers;
 
 import dev.WinterRose.SaxionEngine.*;
-import dev.WinterRose.SaxionEngine.Button;
-import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
-import dev.WinterRose.SaxionEngine.ColorPallets.SpritePalletChanger;
 import nl.saxion.app.SaxionApp;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 
 public class App extends Application
 {
@@ -21,32 +15,20 @@ public class App extends Application
     @Override
     public void createScenes()
     {
-        createScene("testScene", scene -> {
-            ColorPallet pallet = new ColorPallet(
-                    new Sprite("resources\\colorPallets\\main.png"),
-                    new Sprite("resources\\colorPallets\\midnightAblaze\\midnight-ablaze.png"));
+        createScene("jobTestScene", scene -> {
+            GameObject parent = new GameObject("parent");
+            parent.addComponent(new SpriteRenderer(Sprite.square(20, 20, Color.white)));
+            parent.addComponent(new MoveTest());
+            scene.addObject(parent);
 
-            Sprite original = new Sprite("resources\\testing\\Decimal Demon.png");
-            Sprite palletChanged = SpritePalletChanger.changePallet(original, pallet);
-
-            File file = new File("test.png");
-            try
-            {
-                ImageIO.write(palletChanged.getImageRaw(), "png", file);
-            }
-            catch (IOException e)
-            {
-                throw new RuntimeException(e);
-            }
-
-            GameObject obj = new GameObject("obj1");
-            obj.transform.getPosition().set(new Vector2(200, 300));
-            obj.addComponent(new SpriteRenderer(palletChanged));
-
-            scene.addObject(obj);
+            GameObject child = new GameObject("child");
+            child.addComponent(new SpriteRenderer(Sprite.square(15, 15, Color.blue)));
+            child.transform.setPosition(new Vector2(0, 25));
+            child.transform.setParent(parent.transform);
+            scene.addObject(child);
         });
 
-        loadScene("testScene");
+        loadScene("jobTestScene");
     }
 
     @Override
