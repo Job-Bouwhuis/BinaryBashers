@@ -41,7 +41,7 @@ public class App extends Application
 
             GameObject obj = new GameObject("obj1");
             obj.transform.getPosition().set(new Vector2(200, 300));
-
+            obj.addComponent(new SpriteRenderer(palletChanged));
 
             scene.addObject(obj);
         });
