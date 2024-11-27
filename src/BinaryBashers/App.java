@@ -27,7 +27,7 @@ public class App extends Application
             scene.addObject(obj);
 
             GameObject button = new GameObject("button");
-            Timer t = new Timer(5, true, true);
+            Timer t = new Timer(5, true, true, 1);
             t.onTimeAction.add(tt -> System.out.println("TIME"));
             button.addComponent(t);
             button.transform.getPosition().set(new Vector2(200, 100));
