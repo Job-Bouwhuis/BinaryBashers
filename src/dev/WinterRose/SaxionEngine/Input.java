@@ -92,12 +92,12 @@ public class Input
 
     public static Vector2 getMousePosition()
     {
-        return mousePosition.clone();
+        return new Vector2(mousePosition);
     }
 
     public static Vector2 getMouseMoveDelta()
     {
-        return lastMousePosition.clone().subtract(mousePosition);
+        return lastMousePosition.subtract(mousePosition);
     }
 
     public static boolean mousePositionChanged()

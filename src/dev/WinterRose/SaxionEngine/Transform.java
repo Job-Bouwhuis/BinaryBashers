@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Transform extends Component
 {
     private Vector2 position;
-    private Rotation rotation;
+    private float rotation;
     private Vector2 scale;
 
     private Transform parent;
@@ -14,13 +14,22 @@ public class Transform extends Component
     Transform()
     {
         position = new Vector2();
-        rotation = new Rotation();
+        rotation = 0;
         scale = new Vector2(1, 1);
+        transform = this;
     }
 
     public Vector2 getPosition()
     {
-        return calculateRelativePositionToParent();
+        return position;
+    }
+
+    public Vector2 getLocalPosition()
+    {
+        if (parent == null) return position;
+
+        Vector2 result = parent.position.subtract(position);
+        return result;
     }
 
     public Vector2 getWorldPosition()
@@ -28,17 +37,74 @@ public class Transform extends Component
         return position;
     }
 
-    public Vector2 setPosition(Vector2 newPos)
+    public void setPosition(Vector2 newPos)
     {
-        position.set(newPos);
-        return position;
+        Vector2 delta = newPos.subtract(position);
+        position = newPos;
+
+        for (Transform child : children)
+        {
+            child.position = child.position.add(delta);
+        }
     }
 
-    public Rotation getRotation()
+    public float getRotationRadians()
+    {
+        return (float) Math.toRadians(rotation);
+    }
+
+    public float getWorldRotation()
+    {
+        return rotation;
+    }
+
+    public float getWorldRotationRadians()
+    {
+        return (float) Math.toRadians(rotation);
+    }
+
+    public float getRotation()
     {
         if (parent == null) return rotation;
 
-        return new Rotation(parent.getRotation().getDegrees() - rotation.getDegrees());
+        return parent.rotation - rotation;
+    }
+
+    public void setRotation(float newRotation) {
+        if (newRotation == rotation) return;
+
+        double deltaRotation = Math.toRadians(newRotation - rotation);
+        this.rotation = newRotation;
+
+        // Rotate children accordingly
+        for (Transform child : children) {
+            Vector2 relativePosition = child.position.subtract(position);
+            Vector2 rotatedPosition = rotateVector(relativePosition, deltaRotation);
+            child.position = position.add(rotatedPosition);
+            child.rotation += (float)Math.toDegrees(deltaRotation);
+        }
+    }
+
+    public void addRotation(float delta)
+    {
+        setRotation(rotation + delta);
+    }
+
+    private Vector2 rotateVector(Vector2 vector, double angleInRadians)
+    {
+        double cos = Math.cos(angleInRadians);
+        double sin = Math.sin(angleInRadians);
+        double x = vector.x * cos - vector.y * sin;
+        double y = vector.x * sin + vector.y * cos;
+        return new Vector2((float)x, (float)y);
+    }
+
+    // stolen from WinterRose.Monogame framework for C#
+    public void lookAt(Vector2 targetPosition)
+    {
+        Vector2 direction = targetPosition.subtract(position).normalize();
+        float angle = (float) Math.toDegrees(Math.atan2(direction.y, direction.x));
+        setRotation(angle);
     }
 
     public Vector2 getScale()
@@ -53,10 +119,8 @@ public class Transform extends Component
 
     public void setParent(Transform newParent)
     {
-        if (newParent == null && parent != null)
-            parent.removeChild(this);
-        if(newParent == this)
-            throw new IllegalStateException("Cant assign this transform as its own parent");
+        if (newParent == null && parent != null) parent.removeChild(this);
+        if (newParent == this) throw new IllegalStateException("Cant assign this transform as its own parent");
 
         newParent.addChild(this);
         parent = newParent;
@@ -72,41 +136,43 @@ public class Transform extends Component
         children.remove(child);
     }
 
-    public void moveX(int newX)
+    public void moveX(float newX)
     {
-        position = new Vector2(newX, position.y);
+        setPosition(new Vector2(newX, position.y));
     }
 
-    public void moveY(int newY)
+    public void moveY(float newY)
     {
-        position = new Vector2(position.x, newY);
+        setPosition(new Vector2(position.x, newY));
     }
 
-    public void moveXY(int newX, int newY)
+    public void moveXY(float newX, float newY)
     {
-        position = new Vector2(newX, newY);
+        setPosition(new Vector2(newX, newY));
     }
 
-    public void translateX(int translation)
+    public void moveXY(Vector2 newPos)
     {
-        position = new Vector2(position.x + translation, position.y);
+        setPosition(newPos);
     }
 
-    public void translateY(int translation)
+    public void translateX(float translation)
     {
-        position = new Vector2(position.x, position.y + translation);
+        setPosition(new Vector2(position.x + translation, position.y));
     }
 
-    public void translationXY(int translationX, int translationY)
+    public void translateY(float translation)
     {
-        position = new Vector2(position.x + translationX, position.y + translationY);
+       setPosition(new Vector2(position.x, position.y + translation));
     }
 
-    private Vector2 calculateRelativePositionToParent()
+    public void translateXY(float translationX, float translationY)
     {
-        if (parent == null) return position;
+        setPosition(new Vector2(position.x + translationX, position.y + translationY));
+    }
 
-        Vector2 result = parent.position.clone().subtract(position);
-        return result;
+    public void translateXY(Vector2 delta)
+    {
+        translateXY(delta.x, delta.y);
     }
 }
