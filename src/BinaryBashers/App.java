@@ -10,7 +10,7 @@ public class App extends Application
 {
     public static void main(String[] args)
     {
-        SaxionApp.startGameLoop(new App(), 1920, 1080, 1);
+        SaxionApp.startGameLoop(new App(), 1280, 720, 1);
     }
 
     @Override
@@ -33,7 +33,17 @@ public class App extends Application
             scene.addObject(button);
         });
 
-        loadScene("testScene");
+        createScene("levelScene", scene -> {
+            Sprite backgroundSprite = new Sprite("resources/sprites/background/background01.png");
+            var spriteRenderer = new SpriteRenderer(backgroundSprite);
+            spriteRenderer.origin = new Vector2(0,0);
+            GameObject backgroundObject = new GameObject("background");
+            backgroundObject.addComponent(spriteRenderer);
+            scene.addObject(backgroundObject);
+
+
+        });
+        loadScene("levelScene");
     }
 
     @Override

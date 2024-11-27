@@ -3,6 +3,7 @@ package dev.WinterRose.SaxionEngine;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.awt.image.RescaleOp;
 import java.io.File;
 import java.io.IOException;
@@ -129,6 +130,24 @@ public class Sprite
         return createdImage;
     }
 
+    public Color[] getColorData()
+    {
+        BufferedImage image = getImageRaw();
+        Raster data = image.getData();
+
+        int width = data.getWidth();
+        Color[] resultingColors = new Color[width * data.getHeight()];
+
+        for (int i = 0; i < data.getWidth() * data.getHeight(); i++)
+        {
+            int[] colorValues = new int[4];
+            data.getPixel(i % width, i / width, colorValues);
+            resultingColors[i] = new Color(colorValues[0], colorValues[1], colorValues[2], colorValues[3]);
+        }
+
+        return resultingColors;
+    }
+
     /**
      * Applies the tint color over this sprite.
      *
@@ -148,6 +167,30 @@ public class Sprite
 
         RescaleOp op = new RescaleOp(scales, offsets, null);
         return new Sprite(op.filter(image, null));
+    }
+
+    public Sprite getSolid()
+    {
+        final Color transparentColor = new Color(0, 0, 0, 0);
+        final Color solidColor = Color.white;
+        Color[] spriteColors = getColorData();
+        int width = getwidth();
+
+        BufferedImage result = new BufferedImage(getwidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics g = result.getGraphics();
+
+        for (int i = 0, spriteColorsLength = spriteColors.length; i < spriteColorsLength; i++)
+        {
+            if(spriteColors[i].equals(transparentColor))
+                continue;
+
+            g.setColor(solidColor);
+            int x = i & width;
+            int y = i / width;
+            g.drawLine(x, y, x, y);
+        }
+
+        return new Sprite(result);
     }
 
 
