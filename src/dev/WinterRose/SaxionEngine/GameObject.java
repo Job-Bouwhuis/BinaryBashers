@@ -31,6 +31,7 @@ public class GameObject
         keystrokeCallbacks = new ArrayList<>();
         mouseCallbacks = new ArrayList<>();
         transform = new Transform();
+        transform.owner = this;
         components.add(transform);
         this.name = name;
     }

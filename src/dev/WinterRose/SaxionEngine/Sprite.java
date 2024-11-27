@@ -30,7 +30,7 @@ public class Sprite
         initializeSprite(image);
     }
 
-    Sprite(BufferedImage image)
+    public Sprite(BufferedImage image)
     {
         createdImage = image;
         initializeSprite(image);
@@ -43,10 +43,8 @@ public class Sprite
 
     private void initializeSprite(BufferedImage image)
     {
-        if (image != null)
-            size = new Vector2(image.getWidth(), image.getHeight());
-        else
-            size = new Vector2(0, 0);
+        if (image != null) size = new Vector2(image.getWidth(), image.getHeight());
+        else size = new Vector2(0, 0);
     }
 
     public static Sprite square(int sizeX, int sizeY, Color color)
@@ -63,19 +61,21 @@ public class Sprite
     {
         return size;
     }
+
     public String getFilePath()
     {
-        if(createdImage != null)
-            return "This image was generated";
+        if (createdImage != null) return "This image was generated";
         return texturePath;
     }
+
     public int getwidth()
     {
-        return (int)getSize().x;
+        return (int) getSize().x;
     }
+
     public int getHeight()
     {
-        return (int)getSize().y;
+        return (int) getSize().y;
     }
 
     /**
@@ -87,10 +87,8 @@ public class Sprite
         try
         {
             BufferedImage originalImage;
-            if(createdImage != null)
-                originalImage = createdImage;
-            else
-                originalImage = ImageIO.read(new File(texturePath));
+            if (createdImage != null) originalImage = createdImage;
+            else originalImage = ImageIO.read(new File(texturePath));
 
             if (originalImage != null)
             {
@@ -101,8 +99,7 @@ public class Sprite
 
                 // keep track of created image if in case this call was reading from a file.
                 // so that getImageRaw can successfully return this exact instance instead of needing to read from the file each time.
-                if (createdImage == null)
-                    createdImage = copy;
+                if (createdImage == null) createdImage = copy;
 
                 return copy;
             }
@@ -125,8 +122,7 @@ public class Sprite
      */
     public BufferedImage getImageRaw()
     {
-        if(createdImage == null)
-            return getImage();
+        if (createdImage == null) return getImage();
         return createdImage;
     }
 
@@ -162,8 +158,8 @@ public class Sprite
         float scaleFactorR = tint.getRed() / 255.0f;
         float scaleFactorG = tint.getGreen() / 255.0f;
         float scaleFactorB = tint.getBlue() / 255.0f;
-        float[] scales = {scaleFactorR, scaleFactorG, scaleFactorB, 1.0f};
-        float[] offsets = {0.0f, 0.0f, 0.0f, 0.0f};
+        float[] scales = { scaleFactorR, scaleFactorG, scaleFactorB, 1.0f };
+        float[] offsets = { 0.0f, 0.0f, 0.0f, 0.0f };
 
         RescaleOp op = new RescaleOp(scales, offsets, null);
         return new Sprite(op.filter(image, null));
