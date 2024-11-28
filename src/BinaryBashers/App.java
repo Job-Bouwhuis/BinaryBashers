@@ -1,9 +1,9 @@
 package BinaryBashers;
 
+import BinaryBashers.UI.DialogBoxes.DialogBoxManager;
+import BinaryBashers.Utils.Util;
 import dev.WinterRose.SaxionEngine.*;
 import nl.saxion.app.SaxionApp;
-
-import java.awt.*;
 
 public class App extends Application
 {
@@ -17,15 +17,13 @@ public class App extends Application
     {
         createScene("jobTestScene", scene -> {
             GameObject parent = new GameObject("parent");
-            parent.addComponent(new SpriteRenderer(Sprite.square(20, 20, Color.white)));
-            parent.addComponent(new MoveTest());
+            parent.transform.setPosition(Util.screenCenter());
+//            var boxRenderer = new BoxRenderer(new Vector2(250, 160));
+//            boxRenderer.backgroundColor = Color.pink;
+//            parent.addComponent(boxRenderer);
+            var dialogManager = new DialogBoxManager();
+            parent.addComponent(dialogManager);
             scene.addObject(parent);
-
-            GameObject child = new GameObject("child");
-            child.addComponent(new SpriteRenderer(Sprite.square(15, 15, Color.blue)));
-            child.transform.setPosition(new Vector2(0, 25));
-            child.transform.setParent(parent.transform);
-            scene.addObject(child);
         });
 
         loadScene("jobTestScene");
