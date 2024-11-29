@@ -16,12 +16,12 @@ public class MoveTest extends Behavior
         if (Input.getKey(Keys.S)) moveVec.y = 1;
 
         moveVec.normalize().multiply(Time.deltaTime).multiply(speed);
-        transform.getPosition().add(moveVec);
+        transform.translateXY(moveVec);
 
         if (Input.getKey(Keys.E))
-            transform.getRotation().add(1);
+            transform.addRotation(1);
         if (Input.getKey(Keys.Q))
-            transform.getRotation().subtract(1);
+            transform.addRotation(-1);
 
         if (Input.getKey(Keys.T))
             transform.getScale().add(new Vector2(1, 1).multiply(Time.deltaTime));

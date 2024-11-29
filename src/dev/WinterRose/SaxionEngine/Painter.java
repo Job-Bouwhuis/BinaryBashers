@@ -1,5 +1,6 @@
 package dev.WinterRose.SaxionEngine;
 
+import dev.WinterRose.SaxionEngine.TextProviders.TextProvider;
 import nl.saxion.app.SaxionApp;
 
 import java.awt.*;
@@ -22,6 +23,33 @@ public class Painter
     private TintedSpriteCache tintedSpriteCache = new TintedSpriteCache();
 
     Painter() { }
+
+    /**
+     * This is a rather expensive call relatively speaking. Do not call repeatedly in the Update loop.
+     * @param text
+     * @return a Vector2 representing the size of the text when drawn using Painter.drawText
+     */
+    public static Vector2 measureString(String text)
+    {
+        var chars = getDrawableCharactersFromString(text, Color.white);
+
+        var img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+        var graphics = img.createGraphics();
+        Font font = graphics.getFont();
+        FontMetrics fontMetrics = graphics.getFontMetrics(font);
+
+        float width = 0;
+        float height = fontMetrics.getAscent() - fontMetrics.getDescent();;
+
+        final float padding = 1;
+
+        for (var c : chars)
+        {
+            width += fontMetrics.stringWidth("" + c.character) + padding;
+        }
+
+        return new Vector2(width, height);
+    }
 
     /**
      * Workaround to still be able to make an instance of the SaxionApp Image class, since this is a SaxionApp.Drawiable kind. which
@@ -70,10 +98,50 @@ public class Painter
         graphics.fillRect((int)position.x, (int)position.y, scale.x, scale.y);
     }
 
-    public void drawRectangle(Rectangle2D rect)
+    public void drawRectangle(Rectangle2D rect, Color color)
+    {
+        Color prevColor = graphics.getColor();
+        ensureStarted();
+        graphics.setColor(color);
+        graphics.drawRect((int)rect.getX(), (int)rect.getY(), (int)rect.getWidth(), (int)rect.getHeight());
+        graphics.setColor(prevColor);
+    }
+
+    public void drawAndFillRectangle(Rectangle2D rect, Color borderColor, Color fillColor)
     {
         ensureStarted();
-        graphics.drawRect((int)rect.getX(), (int)rect.getY(), (int)rect.getWidth(), (int)rect.getHeight());
+
+        // inside
+        Color prevColor = graphics.getColor();
+        graphics.setColor(fillColor);
+        graphics.fillRect((int)rect.getX(), (int)rect.getY(), (int)rect.getWidth(), (int)rect.getHeight());
+        graphics.setColor(prevColor);
+
+        // outside
+        drawRectangle(rect, borderColor);
+    }
+
+    public void drawText(String text, Transform transform, Vector2 origin, Color color, FontType fontType)
+    {
+        drawTextInternal(getDrawableCharactersFromString(text, color), text, transform, origin, fontType);
+    }
+
+    public void drawText(TextProvider text, Transform transform, Vector2 origin){
+        drawTextInternal(text.getCharacters(), text.getText(), transform, origin, text.getFontType());
+    }
+
+    private static DrawableCharacter[] getDrawableCharactersFromString(String text, Color color)
+    {
+        DrawableCharacter[] characters = new DrawableCharacter[text.length()];
+        for(int i = 0; i < text.length(); i++)
+            characters[i] = new DrawableCharacter(text.charAt(i), color);
+        return characters;
+    }
+
+    public void drawText(DrawableCharacter[] characters, Transform transform, Vector2 origin, FontType fontType)
+    {
+        String text = getStringFromDrawableCharacters(characters);
+        drawTextInternal(characters, text, transform, origin, fontType);
     }
 
     /**
@@ -84,9 +152,11 @@ public class Painter
      */
     public void drawCircle(Vector2 position, int radius, Color color)
     {
+        Color prevColor = graphics.getColor();
         ensureStarted();
         graphics.setColor(color);
         graphics.fillOval((int)position.x - radius, (int)position.y - radius, radius * 2, radius * 2);
+        graphics.setColor(prevColor);
     }
 
     /**
@@ -99,15 +169,15 @@ public class Painter
         Vector2 size = sprite.getSize();
         Vector2 originRelativePosition = CalculateOrigin(transform, size, origin);
 
-        // learned existence of AffineTransform from ChatGPT. code itself written manually
-        // used chatGPT to search the internet to ways to use a double or float for positional and
-        // scaling values using java's build in Graphics2D class
+        Vector2 parentPosition = transform.getParent() != null ? transform.getParent().getWorldPosition() : transform.getWorldPosition();
+        originRelativePosition.add(parentPosition);
+
         AffineTransform affineTransform = new AffineTransform();
         affineTransform.translate(originRelativePosition.x, originRelativePosition.y);
 
         Vector2 rotationAnchor = new Vector2(size.x * origin.x, size.y * origin.y);
 
-        double rotationRadians = transform.getRotation().getRadians();
+        double rotationRadians = transform.getRotationRadians();
         affineTransform.rotate(rotationRadians, rotationAnchor.x, rotationAnchor.y);
 
         affineTransform.scale(transform.getScale().x, transform.getScale().y);
@@ -121,26 +191,13 @@ public class Painter
         graphics.drawImage(image, affineTransform, null);
     }
 
-    public void drawText(String text, Transform transform, Vector2 origin, Color color, FontType fontType)
-    {
-        DrawableCharacter[] characters = new DrawableCharacter[text.length()];
-        for(int i = 0; i < text.length(); i++)
-            characters[i] = new DrawableCharacter(text.charAt(i), color);
 
-        drawTextInternal(characters, text, transform, origin, fontType);
-    }
-
-    public void drawText(DrawableCharacter[] characters, Transform transform, Vector2 origin, FontType fontType)
-    {
-        String text = getStringFromDrawableCharacters(characters);
-        drawTextInternal(characters, text, transform, origin, fontType);
-    }
 
     private void drawTextInternal(DrawableCharacter[] characters, String text, Transform transform, Vector2 origin, FontType fontType)
     {
         Vector2 position = transform.getPosition();
         Vector2 scale = transform.getScale();
-        Rotation rotation = transform.getRotation();
+        float rotationRads = transform.getRotationRadians();
 
         var prevFont = graphics.getFont();
 
@@ -165,7 +222,7 @@ public class Painter
         AffineTransform affineTransform = new AffineTransform();
         affineTransform.translate(adjustedX, adjustedY);
         Vector2 rotationAnchor = new Vector2(metric.stringWidth(text) * origin.x, textHeight * origin.y);
-        affineTransform.rotate(rotation.getRadians(), rotationAnchor.x, rotationAnchor.y);
+        affineTransform.rotate(rotationRads, rotationAnchor.x, rotationAnchor.y);
         affineTransform.scale(scale.x, scale.y);
 
         graphics.setTransform(affineTransform);

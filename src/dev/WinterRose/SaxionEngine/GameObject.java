@@ -31,6 +31,7 @@ public class GameObject
         keystrokeCallbacks = new ArrayList<>();
         mouseCallbacks = new ArrayList<>();
         transform = new Transform();
+        transform.owner = this;
         components.add(transform);
         this.name = name;
     }
@@ -63,9 +64,12 @@ public class GameObject
     public <T> T getComponent(Class<T> componentType)
     {
         assertDestroyed();
-        for (var comp : components)
+        for (int i = 0; i < components.size(); i++)
+        {
+            var comp = components.get(i);
             if (componentType.isInstance(comp)) // << i hate java generics. C# generics are far superior... -job
                 return (T) comp;
+        }
 
         return null; // no component of type T was found.
     }
@@ -74,8 +78,11 @@ public class GameObject
     {
         assertDestroyed();
         ArrayList<T> foundComponents = new ArrayList<>();
-        for (var comp : components)
+        for (int i = 0; i < components.size(); i++)
+        {
+            var comp = components.get(i);
             if (componentType.isInstance(comp)) foundComponents.add((T) comp);
+        }
 
         return foundComponents;
     }
@@ -95,8 +102,11 @@ public class GameObject
 
     public <T> boolean hasComponent(Class<T> componentType)
     {
-        for (var comp : components)
+        for (int i = 0; i < components.size(); i++)
+        {
+            var comp = components.get(i);
             if (componentType.isInstance(comp)) return true;
+        }
         return false;
     }
 
@@ -111,39 +121,55 @@ public class GameObject
 
     void handleKeystrokeCallbacks(KeyboardEvent eventArgs)
     {
-        for (IKeystrokeCallback callback : keystrokeCallbacks)
+        for (int i = 0; i < keystrokeCallbacks.size(); i++)
+        {
+            IKeystrokeCallback callback = keystrokeCallbacks.get(i);
             callback.keyPress(eventArgs);
+        }
     }
 
     void handleMouseCallbacks(MouseEvent eventArgs)
     {
-        for (IMouseCallback callback : mouseCallbacks)
+        for (int i = 0; i < mouseCallbacks.size(); i++)
+        {
+            IMouseCallback callback = mouseCallbacks.get(i);
             callback.mouseUpdate(eventArgs);
+        }
     }
 
     void updateObject()
     {
         assertDestroyed();
-        for (var behavior : behaviors)
+        for (int i = 0; i < behaviors.size(); i++)
+        {
+            var behavior = behaviors.get(i);
             behavior.update();
-        for (var activeRenderer : activeRenderers)
-            activeRenderer.update();
+        }
     }
 
     void drawObject(Painter painter)
     {
         assertDestroyed();
-        for (var renderer : renderers)
+        for (int i = 0; i < renderers.size(); i++)
+        {
+            var renderer = renderers.get(i);
             renderer.render(painter);
-        for(var renderer : activeRenderers)
+        }
+        for (int i = 0; i < activeRenderers.size(); i++)
+        {
+            var renderer = activeRenderers.get(i);
             renderer.render(painter);
+        }
     }
 
     public void wakeObject()
     {
         assertDestroyed();
-        for (var comp : components)
+        for (int i = 0; i < components.size(); i++)
+        {
+            var comp = components.get(i);
             comp.awake();
+        }
     }
 
     public void destroy()
@@ -161,8 +187,11 @@ public class GameObject
     void onDestroyInternal()
     {
         assertDestroyed();
-        for (var comp : components)
+        for (int i = 0; i < components.size(); i++)
+        {
+            var comp = components.get(i);
             comp.onDestroyed();
+        }
     }
 
     private void assertDestroyed()
