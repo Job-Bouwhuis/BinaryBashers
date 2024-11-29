@@ -3,8 +3,6 @@ package BinaryBashers;
 import dev.WinterRose.SaxionEngine.*;
 import nl.saxion.app.SaxionApp;
 
-import java.awt.*;
-
 public class App extends Application
 {
     public static void main(String[] args)
@@ -41,8 +39,8 @@ public class App extends Application
             scene.addObject(backgroundObject);
 
             EnemySprite enemySprite = new EnemySprite();
-            enemySprite.SetSpriteId(1);
-            enemySprite.startEnteringAnimation();
+            enemySprite.setSpriteId(SaxionApp.getRandomValueBetween(0, 2));
+//            enemySprite.startEnteringAnimation();
             GameObject enemyObject = new GameObject("TestEnemySprite");
             enemyObject.addComponent(enemySprite);
             enemyObject.transform.setPosition(new Vector2(200, 200));

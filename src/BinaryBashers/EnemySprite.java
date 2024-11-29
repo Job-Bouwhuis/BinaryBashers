@@ -1,7 +1,6 @@
 package BinaryBashers;
 
 import dev.WinterRose.SaxionEngine.*;
-import nl.saxion.app.SaxionApp;
 
 import java.awt.*;
 
@@ -14,10 +13,12 @@ public class EnemySprite extends ActiveRenderer {
 
     private final String BASE_SPRITE_DIR = "resources\\sprites\\enemies\\";
 
-    private final float timerDuration = 10;
+    private final float timerDuration = 4;
     public boolean timerActive;
     private float timer;
     private float timeBetweenSprites;
+
+    private boolean hidden = true;
 
     // TODO: Rework into ColorPallete type
     private final Color[] introColors = {
@@ -26,7 +27,7 @@ public class EnemySprite extends ActiveRenderer {
             new Color(31, 44, 61),
     };
 
-    public void SetSpriteId(int id) {
+    public void setSpriteId(int id) {
         switch (id) {
             case 0:
                 enemySprite = new Sprite(BASE_SPRITE_DIR + "Mathematical Mage.png");
@@ -41,45 +42,54 @@ public class EnemySprite extends ActiveRenderer {
         solidEnemySprite = enemySprite.getSolid();
     }
 
-    private void SetIntoProgress(int progress) {
-        solidColorTint = introColors[progress];
+    private void setIntoProgress(int progress) {
+        if (progress < introColors.length)
+            solidColorTint = introColors[progress];
     }
 
     public void startEnteringAnimation() {
+        hidden = false;
         timer = 0;
         timerActive = true;
         timeBetweenSprites = timerDuration / introColors.length;
-        SetIntoProgress(0);
+        setIntoProgress(0);
         activeSprite = solidEnemySprite;
 
     }
 
     private void finishEnteringAnimation() {
-
+        timerActive = false;
+        solidColorTint = Color.white;
+        activeSprite = enemySprite;
     }
 
     public void hide() {
-
+        hidden = true;
     }
 
     @Override
     public void render(Painter painter) {
-        painter.drawSprite(activeSprite, transform, new Vector2(0.5f, 0.5f), solidColorTint);
+        if (!hidden) {
+            painter.drawSprite(activeSprite, transform, new Vector2(0.5f, 0.5f), solidColorTint);
+        }
     }
 
     @Override
     public void update() {
         if (timerActive && timer >= timerDuration) {
-            timerActive = false;
-            solidColorTint = Color.white;
-            activeSprite = enemySprite;
+            finishEnteringAnimation();
         }
-        if (timerActive) {
-            timer += 1 * Time.deltaTime;
-            int animationProgress = (int) Math.floor(timer / timeBetweenSprites);
-            System.out.println(Math.floor(timer / timeBetweenSprites));
-            SetIntoProgress(animationProgress);
+        else if (timerActive) {
+
         }
+    }
+
+    private void updateIntroAnimation() {
+        timer += 1 * Time.deltaTime;
+        // Something is not correct in this calculation. The first color is on screen for less frames.
+        // I may be stupid
+        int animationProgress = (int) Math.floor(timer / timeBetweenSprites);
+        setIntoProgress(animationProgress);
     }
 
 }

@@ -181,7 +181,7 @@ public class Sprite
                 continue;
 
             g.setColor(solidColor);
-            int x = i & width;
+            int x = i % width;
             int y = i / width;
             g.drawLine(x, y, x, y);
         }
