@@ -89,4 +89,9 @@ public class DialogBoxManager extends ActiveRenderer
     }
 
 
+    @Override
+    public void onDestroyed()
+    {
+        instance = null;
+    }
 }

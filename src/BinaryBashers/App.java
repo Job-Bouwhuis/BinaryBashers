@@ -45,6 +45,12 @@ public class App extends Application
             enemyObject.addComponent(enemySprite);
             enemyObject.transform.setPosition(new Vector2(200, 200));
             scene.addObject(enemyObject);
+
+            GameObject in = new GameObject("input");
+            in.transform.setPosition(new Vector2(200, 200));
+            var inrend = new InputRenderer(6);
+            in.addComponent(inrend);
+            scene.addObject(in);
         });
         loadScene("levelScene");
     }
