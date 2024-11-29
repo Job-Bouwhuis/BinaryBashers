@@ -165,5 +165,29 @@ public class Sprite
         return new Sprite(op.filter(image, null));
     }
 
+    public Sprite getSolid()
+    {
+        final Color transparentColor = new Color(0, 0, 0, 0);
+        final Color solidColor = Color.white;
+        Color[] spriteColors = getColorData();
+        int width = getwidth();
+
+        BufferedImage result = new BufferedImage(getwidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics g = result.getGraphics();
+
+        for (int i = 0, spriteColorsLength = spriteColors.length; i < spriteColorsLength; i++)
+        {
+            if(spriteColors[i].equals(transparentColor))
+                continue;
+
+            g.setColor(solidColor);
+            int x = i % width;
+            int y = i / width;
+            g.drawLine(x, y, x, y);
+        }
+
+        return new Sprite(result);
+    }
+
 
 }
