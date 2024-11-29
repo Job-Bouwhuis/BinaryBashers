@@ -1,4 +1,6 @@
-﻿public class Enemy extends Entity {
+﻿package dev.WinterRose.SaxionEngine.Entities;
+
+public class Enemy extends Entity {
     int entityID;
     
     @Override public void death() {
