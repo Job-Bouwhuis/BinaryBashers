@@ -1,4 +1,4 @@
-﻿package dev.WinterRose.SaxionEngine.Entities;
+package dev.WinterRose.SaxionEngine.Entities;
 
 public class Player extends Entity {
     

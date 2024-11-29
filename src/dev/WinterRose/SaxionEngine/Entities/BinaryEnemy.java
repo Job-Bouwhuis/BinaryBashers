@@ -1,5 +1,15 @@
-﻿package dev.WinterRose.SaxionEngine.Entities;
+package dev.WinterRose.SaxionEngine.Entities;
 
 public class BinaryEnemy extends Enemy {
-    int binaryNum = 0;
+    private int binaryNum = 0;
+
+    public BinaryEnemy(int id) {
+        super(id);
+
+        
+    }
+
+
+
+    // get maken voor binarynum
 }
