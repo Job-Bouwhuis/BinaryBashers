@@ -1,4 +1,4 @@
-﻿package dev.WinterRose.SaxionEngine.Entities;
+package dev.WinterRose.SaxionEngine.Entities;
 
 import java.util.ArrayList;
 import java.util.List;
