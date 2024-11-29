@@ -40,11 +40,24 @@ public class App extends Application
 
             EnemySprite enemySprite = new EnemySprite();
             enemySprite.setSpriteId(SaxionApp.getRandomValueBetween(0, 2));
-//            enemySprite.startEnteringAnimation();
+            enemySprite.startEnteringAnimation();
             GameObject enemyObject = new GameObject("TestEnemySprite");
             enemyObject.addComponent(enemySprite);
             enemyObject.transform.setPosition(new Vector2(200, 200));
             scene.addObject(enemyObject);
+
+
+            Sprite[] timerSprites = {
+                    new Sprite("resources/sprites/ui/timer/Timer1.png"),
+                    new Sprite("resources/sprites/ui/timer/Timer2.png"),
+                    new Sprite("resources/sprites/ui/timer/Timer3.png"),
+                    new Sprite("resources/sprites/ui/timer/Timer4.png")
+            };
+            AnimatedSpriteRenderer timerSprite = new AnimatedSpriteRenderer(timerSprites, 0.5f);
+            GameObject timerObject = new GameObject("TimerObject");
+            timerObject.addComponent(timerSprite);
+            timerObject.transform.setPosition(new Vector2(500, 200));
+            scene.addObject(timerObject);
         });
         loadScene("levelScene");
     }
