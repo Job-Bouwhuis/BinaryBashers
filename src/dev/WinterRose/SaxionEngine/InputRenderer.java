@@ -91,6 +91,11 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
         addCharacter((char) keyCode);
     }
 
+    public String getInputAsString()
+    {
+        return EngineUtil.getStringFromDrawableCharacters(inputText);
+    }
+
     private void addCharacter(Character c)
     {
         if (inputText.size() == characterMax) return; // already max size.
