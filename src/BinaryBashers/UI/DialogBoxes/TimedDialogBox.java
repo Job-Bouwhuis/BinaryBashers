@@ -1,6 +1,6 @@
 package BinaryBashers.UI.DialogBoxes;
 
-import BinaryBashers.UI.TextProviders.TextProvider;
+import dev.WinterRose.SaxionEngine.TextProviders.TextProvider;
 import dev.WinterRose.SaxionEngine.Time;
 
 public class TimedDialogBox extends DialogBox
