@@ -140,7 +140,7 @@ public class Painter
 
     public void drawText(DrawableCharacter[] characters, Transform transform, Vector2 origin, FontType fontType)
     {
-        String text = getStringFromDrawableCharacters(characters);
+        String text = EngineUtil.getStringFromDrawableCharacters(characters);
         drawTextInternal(characters, text, transform, origin, fontType);
     }
 
@@ -241,17 +241,6 @@ public class Painter
         graphics.setColor(prevColor);
         graphics.setFont(prevFont);
     }
-
-    private String getStringFromDrawableCharacters(DrawableCharacter[] characters)
-    {
-        StringBuilder sb = new StringBuilder();
-
-        for(var c : characters)
-            sb.append(c.character);
-
-        return sb.toString();
-    }
-
 
     private Vector2 CalculateOrigin(Transform transform, Vector2 size, Vector2 origin)
     {
