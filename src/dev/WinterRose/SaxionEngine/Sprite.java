@@ -3,6 +3,7 @@ package dev.WinterRose.SaxionEngine;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.awt.image.RescaleOp;
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class Sprite
         initializeSprite(image);
     }
 
-    Sprite(BufferedImage image)
+    public Sprite(BufferedImage image)
     {
         createdImage = image;
         initializeSprite(image);
@@ -42,10 +43,8 @@ public class Sprite
 
     private void initializeSprite(BufferedImage image)
     {
-        if (image != null)
-            size = new Vector2(image.getWidth(), image.getHeight());
-        else
-            size = new Vector2(0, 0);
+        if (image != null) size = new Vector2(image.getWidth(), image.getHeight());
+        else size = new Vector2(0, 0);
     }
 
     public static Sprite square(int sizeX, int sizeY, Color color)
@@ -62,19 +61,21 @@ public class Sprite
     {
         return size;
     }
+
     public String getFilePath()
     {
-        if(createdImage != null)
-            return "This image was generated";
+        if (createdImage != null) return "This image was generated";
         return texturePath;
     }
+
     public int getwidth()
     {
-        return (int)getSize().x;
+        return (int) getSize().x;
     }
+
     public int getHeight()
     {
-        return (int)getSize().y;
+        return (int) getSize().y;
     }
 
     /**
@@ -86,10 +87,8 @@ public class Sprite
         try
         {
             BufferedImage originalImage;
-            if(createdImage != null)
-                originalImage = createdImage;
-            else
-                originalImage = ImageIO.read(new File(texturePath));
+            if (createdImage != null) originalImage = createdImage;
+            else originalImage = ImageIO.read(new File(texturePath));
 
             if (originalImage != null)
             {
@@ -100,8 +99,7 @@ public class Sprite
 
                 // keep track of created image if in case this call was reading from a file.
                 // so that getImageRaw can successfully return this exact instance instead of needing to read from the file each time.
-                if (createdImage == null)
-                    createdImage = copy;
+                if (createdImage == null) createdImage = copy;
 
                 return copy;
             }
@@ -124,9 +122,26 @@ public class Sprite
      */
     public BufferedImage getImageRaw()
     {
-        if(createdImage == null)
-            return getImage();
+        if (createdImage == null) return getImage();
         return createdImage;
+    }
+
+    public Color[] getColorData()
+    {
+        BufferedImage image = getImageRaw();
+        Raster data = image.getData();
+
+        int width = data.getWidth();
+        Color[] resultingColors = new Color[width * data.getHeight()];
+
+        for (int i = 0; i < data.getWidth() * data.getHeight(); i++)
+        {
+            int[] colorValues = new int[4];
+            data.getPixel(i % width, i / width, colorValues);
+            resultingColors[i] = new Color(colorValues[0], colorValues[1], colorValues[2], colorValues[3]);
+        }
+
+        return resultingColors;
     }
 
     /**
@@ -143,11 +158,35 @@ public class Sprite
         float scaleFactorR = tint.getRed() / 255.0f;
         float scaleFactorG = tint.getGreen() / 255.0f;
         float scaleFactorB = tint.getBlue() / 255.0f;
-        float[] scales = {scaleFactorR, scaleFactorG, scaleFactorB, 1.0f};
-        float[] offsets = {0.0f, 0.0f, 0.0f, 0.0f};
+        float[] scales = { scaleFactorR, scaleFactorG, scaleFactorB, 1.0f };
+        float[] offsets = { 0.0f, 0.0f, 0.0f, 0.0f };
 
         RescaleOp op = new RescaleOp(scales, offsets, null);
         return new Sprite(op.filter(image, null));
+    }
+
+    public Sprite getSolid()
+    {
+        final Color transparentColor = new Color(0, 0, 0, 0);
+        final Color solidColor = Color.white;
+        Color[] spriteColors = getColorData();
+        int width = getwidth();
+
+        BufferedImage result = new BufferedImage(getwidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics g = result.getGraphics();
+
+        for (int i = 0, spriteColorsLength = spriteColors.length; i < spriteColorsLength; i++)
+        {
+            if(spriteColors[i].equals(transparentColor))
+                continue;
+
+            g.setColor(solidColor);
+            int x = i % width;
+            int y = i / width;
+            g.drawLine(x, y, x, y);
+        }
+
+        return new Sprite(result);
     }
 
 

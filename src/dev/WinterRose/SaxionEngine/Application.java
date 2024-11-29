@@ -90,7 +90,8 @@ public abstract class Application implements GameLoop
     private void mouseEvent(MouseEvent event)
     {
         Input.mouseEvent(event);
-        activeScene.handleCallbacks(event);
+        if (activeScene != null)
+            activeScene.handleCallbacks(event);
     }
 
     private void subscribeToMouseMoveEventBecauseSaxionAppDevsWereTooLazyToMakeAGoodOne()
