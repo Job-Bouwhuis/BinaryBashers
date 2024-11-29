@@ -1,4 +1,4 @@
-﻿package dev.WinterRose.SaxionEngine.Entities;
+package dev.WinterRose.SaxionEngine.Entities;
 
 public class Enemy extends Entity {
     int entityID;
