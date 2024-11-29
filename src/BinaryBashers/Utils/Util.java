@@ -10,7 +10,7 @@ public class Util
         return new Vector2(Painter.renderWidth / 2, Painter.renderHeight / 2);
     }
 
-    public static int[] decimalToBinary(int num)
+    public static Integer calculateBitSize(int num)
     {
         if (num == 0)
             return 1;
@@ -24,7 +24,7 @@ public class Util
         return bitSize;
     }
 
-    public static int decimalToBinary(int num)
+    public static Integer decimalToBinary(int num)
     {
         // To store the binary number
         int binaryNumber = 0;
@@ -48,5 +48,26 @@ public class Util
         decimal = Integer.parseInt(temp,2);
 
         return decimal;
+    }
+
+    public static String decimalToHex(int decimal){
+        return Integer.toHexString(decimal).toUpperCase();
+    }
+
+    public static int hexToDecimal(String hex)
+    {
+//1A3
+        int decimal = 0;
+        int length = hex.length();
+        int base = 1;
+
+        for (int i = length; i >= 0 ; i--)
+        {
+            if(hex.charAt(i) >= '0' && hex.charAt(i) <= '9'){
+                decimal += (hex.charAt(i) - 48) * base;
+                base = base * 16;
+            }
+            else if(hex.charAt(i) >= 'A' && hex.charAt(i) <= 'F'){}
+        }
     }
 }
