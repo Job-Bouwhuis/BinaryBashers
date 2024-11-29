@@ -1,7 +1,6 @@
-package BinaryBashers.UI.TextProviders;
+package dev.WinterRose.SaxionEngine.TextProviders;
 
 import dev.WinterRose.SaxionEngine.DrawableCharacter;
-import dev.WinterRose.SaxionEngine.FontType;
 
 import java.awt.*;
 

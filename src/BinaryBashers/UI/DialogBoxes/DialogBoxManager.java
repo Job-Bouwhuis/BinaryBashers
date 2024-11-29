@@ -1,11 +1,7 @@
 package BinaryBashers.UI.DialogBoxes;
 
-import BinaryBashers.UI.TextProviders.TextProvider;
+import dev.WinterRose.SaxionEngine.TextProviders.TextProvider;
 import dev.WinterRose.SaxionEngine.*;
-
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.PriorityQueue;
 
 public class DialogBoxManager extends ActiveRenderer
 {

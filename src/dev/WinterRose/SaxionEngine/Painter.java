@@ -1,6 +1,6 @@
 package dev.WinterRose.SaxionEngine;
 
-import BinaryBashers.UI.TextProviders.TextProvider;
+import dev.WinterRose.SaxionEngine.TextProviders.TextProvider;
 import nl.saxion.app.SaxionApp;
 
 import java.awt.*;
