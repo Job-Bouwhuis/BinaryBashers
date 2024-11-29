@@ -1,4 +1,6 @@
-﻿import java.util.ArrayList;
+﻿package dev.WinterRose.SaxionEngine.Entities;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class EnemySpawner {
@@ -11,6 +13,8 @@ public class EnemySpawner {
     public void spawnEnemy() {
         Enemy newEnemy = new Enemy();
         enemies.add(newEnemy);
+        
+        
         System.out.println("Enemy spawned. Total enemies: " + enemies.size());
     }
 

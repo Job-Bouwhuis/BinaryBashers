@@ -1,5 +1,10 @@
-﻿public class Player extends Entity {
+﻿package dev.WinterRose.SaxionEngine.Entities;
+
+public class Player extends Entity {
+    
     private int health = 3;
+    
+    private int score = 0; // NOTE: has to be moved to scoreboard eventually
 
     public Player(int health) {
         this.health = health;
