@@ -62,6 +62,11 @@ public class TextRenderer extends Renderer
     @Override
     public void render(Painter painter)
     {
-        painter.drawText(text, transform, origin);
+        painter.drawText(text, transform, origin, Painter.windowBounds);
+    }
+
+    public TextProvider getTextProvider()
+    {
+        return text;
     }
 }

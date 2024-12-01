@@ -72,10 +72,10 @@ public class DialogBoxManager extends ActiveRenderer
         if(currentDialog == null)
             return;
 
-        final Vector2 origin = new Vector2(0, .5f); // make it so the text placement is in the middle left of the text element.
-        // some logic that smoothly and letter by letter types out the text and title
+        final Vector2 origin = new Vector2(0, .5f);
+
         TextProvider text = currentDialog.text;
-        painter.drawText(text, transform, origin);
+//        painter.drawText(text, transform, origin);
     }
 
     public void enqueue(DialogBox box)

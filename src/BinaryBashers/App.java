@@ -1,7 +1,15 @@
 package BinaryBashers;
 
+import BinaryBashers.UI.DialogBoxes.DialogBoxManager;
+import BinaryBashers.Utils.Util;
 import dev.WinterRose.SaxionEngine.*;
+import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
+import dev.WinterRose.SaxionEngine.ColorPallets.SpritePalletChanger;
+import dev.WinterRose.SaxionEngine.TextProviders.DefaultTextProvider;
+import dev.WinterRose.SaxionEngine.TextProviders.TextProvider;
 import nl.saxion.app.SaxionApp;
+
+import java.awt.*;
 
 public class App extends Application
 {
@@ -32,6 +40,8 @@ public class App extends Application
 
         createScene("levelScene", scene -> {
             Sprite backgroundSprite = new Sprite("resources/sprites/background/background01.png");
+            //backgroundSprite = SpritePalletChanger.changePallet(backgroundSprite, new ColorPallet(new Sprite("resources/colorPallets/main.png"), new Sprite("resources/colorPallets/midnightAblaze/midnight-ablaze.png")));
+
             var spriteRenderer = new SpriteRenderer(backgroundSprite);
             spriteRenderer.origin = new Vector2(0,0);
             GameObject backgroundObject = new GameObject("background");
@@ -48,8 +58,15 @@ public class App extends Application
 
             GameObject in = new GameObject("input");
             in.transform.setPosition(new Vector2(200, 200));
-            var inrend = new InputRenderer(6);
-            in.addComponent(inrend);
+//            var inrend = new TextRenderer("This is some awesome text \ndid you know that? \nNo? \nWell you should");
+//            //inrend.getTextProvider().setFont(Util.loadFont("resources/fonts/Primiera Regular- Demo.otf", 12));
+//            inrend.getTextProvider().getWords().get(2).fontType = FontType.Bold;
+//            inrend.getTextProvider().getWords().get(6).setColor(Color.red);
+//            inrend.getTextProvider().getWords().get(8).getCharacters()[2].color = Color.magenta;
+//            in.addComponent(inrend);
+            var dbm = new DialogBoxManager();
+            in.addComponent(dbm);
+            dbm.enqueue("t", "t", 5);
             scene.addObject(in);
         });
         loadScene("levelScene");
