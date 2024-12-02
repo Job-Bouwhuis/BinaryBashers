@@ -11,8 +11,8 @@ public class BoxRenderer extends ActiveRenderer
     public Color boxColor = Color.white;
     public Color backgroundColor = new Color(66, 66, 66, 66);
 
-    public float widthAnimationSpeed = 3f;
-    public float heightAnimationSpeed = 3f;
+    public float widthAnimationSpeed = 6f;
+    public float heightAnimationSpeed = 6f;
 
     public float animateOutWidthStartPercent = .6f;
     public float animateInHeightStartPercent = .6f;
@@ -120,5 +120,14 @@ public class BoxRenderer extends ActiveRenderer
     public Vector2 getCurrentWidthHeight()
     {
         return new Vector2(bounds.width, bounds.height);
+    }
+    public Rectangle.Float getCurrentBounds()
+    {
+        return bounds;
+    }
+
+    public Rectangle.Float getTargetBounds()
+    {
+        return targetBounds;
     }
 }

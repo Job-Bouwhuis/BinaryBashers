@@ -16,6 +16,7 @@ public class Painter
     public static final int windowWidth = SaxionApp.getWidth();
     public static final int windowHeight = SaxionApp.getHeight();
     public static Rectangle2D.Float windowBounds;
+    public static final Vector2 renderCenter = new Vector2(renderWidth / 2, renderHeight / 2);
 
     private BufferedImage renderCanvas;
     private Graphics2D graphics;
@@ -49,9 +50,7 @@ public class Painter
         final float padding = 1;
 
         for (var c : chars)
-        {
             width += fontMetrics.stringWidth("" + c.character) + padding;
-        }
 
         return new Vector2(width, height);
     }
@@ -376,5 +375,10 @@ public class Painter
     private void ensureStarted()
     {
         if (!isStarted) throw new IllegalStateException("Frame not yet started. Call start() first.");
+    }
+
+    public Vector2 measureText(TextProvider text)
+    {
+        return measureString(text.getText());
     }
 }

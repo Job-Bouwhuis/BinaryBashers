@@ -1,5 +1,7 @@
 package dev.WinterRose.SaxionEngine;
 
+import BinaryBashers.UI.DialogBoxes.ConfirmationDialogBox;
+import BinaryBashers.UI.DialogBoxes.DialogBoxManager;
 import nl.saxion.app.SaxionApp;
 import nl.saxion.app.interaction.GameLoop;
 import nl.saxion.app.interaction.KeyboardEvent;
@@ -16,6 +18,12 @@ import java.util.function.Consumer;
 
 public abstract class Application implements GameLoop
 {
+    private static Application instance;
+    public static Application getInstance()
+    {
+        return instance;
+    }
+
     Map<String, Consumer<Scene>> scenes = new HashMap<>();
     Scene activeScene;
     private boolean isFullscreen = true;
@@ -25,6 +33,7 @@ public abstract class Application implements GameLoop
     public Application(boolean fullscreen)
     {
         isFullscreen = fullscreen;
+        instance = this;
     }
 
 
@@ -54,6 +63,8 @@ public abstract class Application implements GameLoop
         float deltaTime = (currentTime - lastFrameTime) / 1_000_000_000.0f; // Convert nanoseconds to seconds
         lastFrameTime = currentTime;
 
+        forceQuitDialog();
+
         Time.update(deltaTime);
 
         activeScene.updateScene();
@@ -62,6 +73,30 @@ public abstract class Application implements GameLoop
         Input.update();
         var bounds = gameWindow.getBounds();
         Input.windowPosition = new Vector2(bounds.x, bounds.y);
+    }
+
+    /**
+     * This method is a hacky solution to the way the DialogBoxManager is currently implemented.
+     * In a next sprint this will be fixed
+     */
+    private void forceQuitDialog()
+    {
+        if(DialogBoxManager.getInstance() == null)
+        {
+            GameObject dialogManager = new GameObject("DialogBoxManager");
+            dialogManager.addComponent(new DialogBoxManager());
+            activeScene.addObject(dialogManager);
+        }
+        if(Input.getKey(Keys.DELETE) && Input.getKeyDown(Keys.TAB))
+        {
+            ConfirmationDialogBox box = new ConfirmationDialogBox("Warning!", "Are you sure you want to force quit the game?\n" +
+                    "Any unsaved progress will be lost!", cdb -> {
+                if(cdb.getResult())
+                    Application.getInstance().closeGame();
+            });
+            box.getTitle().setColor(Color.red);
+            DialogBoxManager.getInstance().enqueue(box);
+        }
     }
 
     public void closeGame()
@@ -108,6 +143,11 @@ public abstract class Application implements GameLoop
     {
         Input.mouseEvent(event);
         if (activeScene != null) activeScene.handleCallbacks(event);
+    }
+
+    public boolean isFullscreen()
+    {
+        return isFullscreen;
     }
 
     private void subscribeToMouseMoveEventBecauseSaxionAppDevsWereTooLazyToMakeAGoodOne()

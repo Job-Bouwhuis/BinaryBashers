@@ -10,7 +10,13 @@ public class TimedDialogBox extends DialogBox
 
     public TimedDialogBox()
     {
-        super("Confirm", "Confirm to continue!");
+        super("This is a timed dialog.", "It will go away in 5 seconds!");
+    }
+
+    @Override
+    public void init(DialogBoxManager manager)
+    {
+
     }
 
     public TimedDialogBox(String title, String text, float time)

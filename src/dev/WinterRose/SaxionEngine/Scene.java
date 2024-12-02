@@ -12,6 +12,7 @@ public class Scene
     private final ArrayList<GameObject> objectsToDestroy = new ArrayList<>();
     private Painter scenePainter;
     private ColorPallet scenePallet = null;
+    private boolean initialized;
 
     public Scene(String name)
     {
@@ -26,6 +27,7 @@ public class Scene
             GameObject obj = objects.get(i);
             obj.wakeObject();
         }
+        initialized = true;
     }
 
     public void updateScene()
@@ -63,6 +65,8 @@ public class Scene
     {
         objects.add(obj);
         obj.scene = this;
+        if(initialized)
+            obj.wakeObject();
     }
 
     public void handleCallbacks(KeyboardEvent e)
