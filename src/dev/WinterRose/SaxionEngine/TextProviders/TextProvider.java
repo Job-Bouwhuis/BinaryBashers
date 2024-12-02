@@ -39,6 +39,7 @@ public abstract class TextProvider
     public void setText(String text)
     {
         textValue = text;
+        words.clear();
         buildWordsList();
     }
 
