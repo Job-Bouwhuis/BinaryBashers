@@ -43,8 +43,7 @@ public class EnemySprite extends ActiveRenderer {
     }
 
     private void setIntoProgress(int progress) {
-        if (progress < introColors.length)
-            solidColorTint = introColors[progress];
+        solidColorTint = introColors[progress];
     }
 
     public void startEnteringAnimation() {
@@ -76,18 +75,16 @@ public class EnemySprite extends ActiveRenderer {
 
     @Override
     public void update() {
-        if (timerActive && timer >= timerDuration) {
+        if (timerActive && (timer + 1 * Time.deltaTime >= timerDuration)) {
             finishEnteringAnimation();
         }
         else if (timerActive) {
-
+            updateIntroAnimation();
         }
     }
 
     private void updateIntroAnimation() {
         timer += 1 * Time.deltaTime;
-        // Something is not correct in this calculation. The first color is on screen for less frames.
-        // I may be stupid
         int animationProgress = (int) Math.floor(timer / timeBetweenSprites);
         setIntoProgress(animationProgress);
     }
