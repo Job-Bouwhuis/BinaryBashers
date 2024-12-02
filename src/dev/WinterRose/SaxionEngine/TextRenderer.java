@@ -31,7 +31,7 @@ public class TextRenderer extends Renderer
     }
 
     public void setText(String text) {
-        this.text = new DefaultTextProvider(text);
+        this.text.setText(text);
     }
 
     public Vector2 getOrigin() {

@@ -11,6 +11,8 @@ public class Input
     private static final Set<Integer> keysPressed = new HashSet<>();
     private static final Set<Integer> keysReleased = new HashSet<>();
 
+    static Vector2 windowPosition = new Vector2();
+
     private static Vector2 mousePosition = new Vector2(0, 0);
     private static Vector2 lastMousePosition = new Vector2(0, 0);
     private static int scrollDelta = 0;
@@ -88,6 +90,11 @@ public class Input
                 keysHeld.remove(keyCode);
             keysReleased.add(keyCode);
         }
+    }
+
+    public static Vector2 getWindowPosition()
+    {
+        return windowPosition;
     }
 
     public static Vector2 getMousePosition()

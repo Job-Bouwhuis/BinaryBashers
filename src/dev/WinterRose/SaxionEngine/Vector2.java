@@ -114,4 +114,13 @@ public class Vector2
     {
         return "X: %s - Y: %s".formatted(x, y);
     }
+
+    public Vector2 divide(float divider)
+    {
+        return new Vector2(x / divider, y / divider);
+    }
+    public Vector2 divide(Vector2 divider)
+    {
+        return new Vector2(x / divider.x, y / divider.y);
+    }
 }
