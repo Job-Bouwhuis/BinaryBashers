@@ -21,6 +21,7 @@ public class EnemySprite extends ActiveRenderer {
     private float timeBetweenSprites;
 
     private boolean hidden = true;
+    private boolean useDyingAnimation;
 
     // TODO: Rework into ColorPallete type
     private final Color[] defaultIntroColors = {
@@ -29,6 +30,17 @@ public class EnemySprite extends ActiveRenderer {
             new Color(31, 44, 61),
     };
     private Color[] introColors = defaultIntroColors;
+
+    private AnimatedSpriteRenderer deathAnimationSprite = new AnimatedSpriteRenderer(new Sprite[]{
+            new Sprite("resources/sprites/enemyDeath/Explosion1.png"),
+            new Sprite("resources/sprites/enemyDeath/Explosion2.png"),
+            new Sprite("resources/sprites/enemyDeath/Explosion3.png"),
+            new Sprite("resources/sprites/enemyDeath/Explosion4.png"),
+            new Sprite("resources/sprites/enemyDeath/Explosion5.png"),
+            new Sprite("resources/sprites/enemyDeath/Explosion6.png"),
+            new Sprite("resources/sprites/enemyDeath/Explosion7.png"),
+            new Sprite("resources/sprites/enemyDeath/Explosion8.png"),
+    },0.1f, false);
 
     public void setSpriteId(int id) {
         switch (id) {
@@ -51,6 +63,7 @@ public class EnemySprite extends ActiveRenderer {
 
     public void startEnteringAnimation() {
         hidden = false;
+        useDyingAnimation = false;
         timer = 0;
         timerActive = true;
         timeBetweenSprites = timerDuration / introColors.length;
@@ -69,10 +82,18 @@ public class EnemySprite extends ActiveRenderer {
         hidden = true;
     }
 
+    public void showDeathAnimation() {
+        useDyingAnimation = true;
+        deathAnimationSprite.hideOnEnd = true;
+    }
+
     @Override
     public void render(Painter painter) {
-        if (!hidden) {
+        if (!hidden && !useDyingAnimation) {
             painter.drawSprite(activeSprite, transform, new Vector2(0.5f, 0.5f), solidColorTint);
+        }
+        if (useDyingAnimation) {
+            deathAnimationSprite.manualRender(painter, transform);
         }
     }
 
@@ -83,6 +104,14 @@ public class EnemySprite extends ActiveRenderer {
         }
         else if (timerActive) {
             updateIntroAnimation();
+        }
+        if (useDyingAnimation) {
+            deathAnimationSprite.update();
+        }
+
+        // DEBUG CODE
+        if (Input.getKeyDown(Keys.K)) {
+            showDeathAnimation();
         }
     }
 
@@ -101,6 +130,7 @@ public class EnemySprite extends ActiveRenderer {
         };
 
         enemySprite = SpritePalletChanger.changePallet(enemySprite, colorPallet);
+        deathAnimationSprite.onColorPalleteChange(colorPallet);
     };
 
 }

@@ -7,36 +7,63 @@ import java.awt.*;
 
 public class AnimatedSpriteRenderer extends ActiveRenderer
 {
+    public boolean active = true;
     public Sprite[] sprites;
     private int currentFrame;
     public Vector2 origin;
     public Color tint = Color.white;
-    public float framesPerSecond;
+    public float secondsPerFrame;
     private double animationProgressTimer;
     private final float animationDuration;
+    private boolean isLooping;
+    public boolean hideOnEnd;
+    private boolean hidden;
 
-    public AnimatedSpriteRenderer(Sprite[] sprites, float framesPerSecond)
+    public AnimatedSpriteRenderer(Sprite[] sprites, float secondsPerFrame, boolean isLooping)
     {
         this.sprites = sprites;
-        this.framesPerSecond = framesPerSecond;
+        this.secondsPerFrame = secondsPerFrame;
+        this.isLooping = isLooping;
         origin = new Vector2(0.5f, 0.5f);
-        animationDuration = (sprites.length) * framesPerSecond;
+        animationDuration = (sprites.length) * secondsPerFrame;
+    }
+
+    public AnimatedSpriteRenderer(Sprite[] sprites, float secondsPerFrame, boolean isLooping, boolean startActive)
+    {
+        this(sprites, secondsPerFrame, isLooping);
+        active = startActive;
     }
 
     @Override
     public void render(Painter painter)
     {
-        painter.drawSprite(sprites[currentFrame], transform, origin, tint);
+        if (!hidden && active) {
+            painter.drawSprite(sprites[currentFrame], transform, origin, tint);
+        }
+    }
+
+    public void manualRender(Painter painter, Transform transform)
+    {
+        if (!hidden && active) {
+            painter.drawSprite(sprites[currentFrame], transform, origin, tint);
+        }
     }
 
     @Override
     public void update() {
-        animationProgressTimer += 1 * Time.deltaTime;
-
-        if (animationProgressTimer >= animationDuration) {
+        if (!active)
+            return;
+        if (animationProgressTimer < animationDuration) {
+            hidden = false;
+            animationProgressTimer += 1 * Time.deltaTime;
+        }
+        else if (isLooping) {
             animationProgressTimer = 0;
         }
-        currentFrame = (int)Math.floor(animationProgressTimer / framesPerSecond);
+        else if (hideOnEnd) {
+            hidden = true;
+        }
+        currentFrame = Math.min((int)Math.floor(animationProgressTimer / secondsPerFrame), sprites.length - 1);
     }
 
     @Override
