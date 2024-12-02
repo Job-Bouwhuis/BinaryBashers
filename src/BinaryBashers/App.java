@@ -18,7 +18,7 @@ public class App extends Application
     {
         createScene("testScene", scene -> {
             GameObject button = new GameObject("button");
-            button.transform.setPosition(new Vector2(200, 100));
+            button.transform.setPosition(Painter.renderCenter);
             var boxManager = new DialogBoxManager();
             button.addComponent(boxManager);
 

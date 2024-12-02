@@ -11,7 +11,10 @@ public class Transform extends Component
     private Transform parent;
     private ArrayList<Transform> children = new ArrayList<>();
 
-    Transform()
+    /**
+     * Use only if you know what youre doing
+     */
+    public Transform()
     {
         position = new Vector2();
         rotation = 0;
@@ -174,5 +177,10 @@ public class Transform extends Component
     public void translateXY(Vector2 delta)
     {
         translateXY(delta.x, delta.y);
+    }
+
+    public void setScale(Vector2 value)
+    {
+        scale = value;
     }
 }

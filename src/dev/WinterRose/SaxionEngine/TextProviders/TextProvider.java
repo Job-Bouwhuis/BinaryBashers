@@ -39,7 +39,6 @@ public abstract class TextProvider
     public void setText(String text)
     {
         textValue = text;
-        words.clear();
         buildWordsList();
     }
 
@@ -66,6 +65,7 @@ public abstract class TextProvider
 
     protected void buildWordsList()
     {
+        words.clear();
         Font prevFont = null;
         if(!words.isEmpty())
         {
@@ -118,18 +118,14 @@ public abstract class TextProvider
         {
             ArrayList<DrawableCharacter> chars = new ArrayList<>();
 
-            DrawableCharacter c = new DrawableCharacter(text.takeNext());
+            DrawableCharacter c = new DrawableCharacter(text.takeNext(), owner.defaultColor);
             while(c.character != null && !c.isSpaceNewlineOrReturn())
             {
                 chars.add(c);
-                c = new DrawableCharacter(text.takeNext());
+                c = new DrawableCharacter(text.takeNext(), owner.defaultColor);
             }
 
-            if(c.character == null) // end of stream
-            {
-
-            }
-            else if(c.isSpaceNewlineOrReturn())
+            if (c.character != null && c.isSpaceNewlineOrReturn()) // end of stream
             {
                 paddingChar = c.character;
                 owner.continueReadingText(text);
