@@ -12,4 +12,30 @@ public class DrawableCharacter
         this.character = c;
         color = col;
     }
+
+    public DrawableCharacter(Character c)
+    {
+        character = c;
+        color = Color.white;
+    }
+
+    public boolean isSpace()
+    {
+        return character == ' ';
+    }
+
+    public boolean isNewline()
+    {
+        return character == '\n';
+    }
+
+    public boolean isReturn()
+    {
+        return character == '\r';
+    }
+
+    public boolean isSpaceNewlineOrReturn()
+    {
+        return isSpace() || isNewline() || isReturn();
+    }
 }

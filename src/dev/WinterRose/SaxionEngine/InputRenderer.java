@@ -16,6 +16,8 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
     public Vector2 origin = new Vector2(0.5f, 0.5f);
     public Action<InputRenderer> onEnterKeyPressed = new Action<>();
     public Character[] acceptedCharacters;
+    public boolean onlyCapitalLetters = true;
+
     /**
      * A predefined collection of characters that cant be typed in as a character
      */
@@ -71,13 +73,29 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
             onEnterKeyPressed.invoke(this);
             return;
         }
+        if(keyCode >= KeyboardEvent.VK_NUMPAD0 && keyCode <= KeyboardEvent.VK_NUMPAD9)
+        {
+            keyCode -= 48;
+        }
+        if(keyCode >= 65 && keyCode <= 65 + 26)
+        {
+            if(!onlyCapitalLetters)
+            {
+                if(!key.isShiftDown())
+                {
+                    int offset = keyCode - 65;
+                    keyCode = 97 + offset;
+                }
+            }
+        }
         if (keyCode == KeyboardEvent.VK_BACK_SPACE)
         {
             if (inputText.isEmpty()) return;
             inputText.removeLast();
             return;
         }
-        if (Arrays.stream(blacklistedCharacters).anyMatch(blacklistedChar -> blacklistedChar.charValue() == keyCode))
+        int finalKeyCode = keyCode;
+        if (Arrays.stream(blacklistedCharacters).anyMatch(blacklistedChar -> blacklistedChar.charValue() == finalKeyCode))
             return;
 
         if (acceptedCharacters == null)
@@ -86,7 +104,7 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
             return;
         }
 
-        if (!Arrays.stream(acceptedCharacters).anyMatch(c -> ((int) c.charValue()) == keyCode)) return;
+        if (!Arrays.stream(acceptedCharacters).anyMatch(c -> ((int) c.charValue()) == finalKeyCode)) return;
 
         addCharacter((char) keyCode);
     }

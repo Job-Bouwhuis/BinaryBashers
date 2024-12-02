@@ -1,7 +1,15 @@
 package BinaryBashers;
 
+import BinaryBashers.UI.DialogBoxes.DialogBoxManager;
+import BinaryBashers.Utils.Util;
 import dev.WinterRose.SaxionEngine.*;
+import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
+import dev.WinterRose.SaxionEngine.ColorPallets.SpritePalletChanger;
+import dev.WinterRose.SaxionEngine.TextProviders.DefaultTextProvider;
+import dev.WinterRose.SaxionEngine.TextProviders.TextProvider;
 import nl.saxion.app.SaxionApp;
+
+import java.awt.*;
 
 public class App extends Application
 {
@@ -32,6 +40,8 @@ public class App extends Application
 
         createScene("levelScene", scene -> {
             Sprite backgroundSprite = new Sprite("resources/sprites/background/background01.png");
+            //backgroundSprite = SpritePalletChanger.changePallet(backgroundSprite, new ColorPallet(new Sprite("resources/colorPallets/main.png"), new Sprite("resources/colorPallets/midnightAblaze/midnight-ablaze.png")));
+
             var spriteRenderer = new SpriteRenderer(backgroundSprite);
             spriteRenderer.origin = new Vector2(0,0);
             GameObject backgroundObject = new GameObject("background");
@@ -47,17 +57,6 @@ public class App extends Application
             scene.addObject(enemyObject);
 
 
-            Sprite[] timerSprites = {
-                    new Sprite("resources/sprites/ui/timer/Timer1.png"),
-                    new Sprite("resources/sprites/ui/timer/Timer2.png"),
-                    new Sprite("resources/sprites/ui/timer/Timer3.png"),
-                    new Sprite("resources/sprites/ui/timer/Timer4.png")
-            };
-            AnimatedSpriteRenderer timerSprite = new AnimatedSpriteRenderer(timerSprites, 0.5f);
-            GameObject timerObject = new GameObject("TimerObject");
-            timerObject.addComponent(timerSprite);
-            timerObject.transform.setPosition(new Vector2(500, 200));
-            scene.addObject(timerObject);
         });
         loadScene("levelScene");
     }

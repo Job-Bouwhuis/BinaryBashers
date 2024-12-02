@@ -16,7 +16,7 @@ public abstract class Application implements GameLoop
 {
     Map<String, Consumer<Scene>> scenes = new HashMap<>();
     Scene activeScene;
-    private long lastFrameTime = System.nanoTime(); // last time is also time of app creation.
+    private long lastFrameTime = System.nanoTime();
 
     /**
      * Use method createScene(String, Consumer) to add scenes. then loadScene(String) to load the first scene.
@@ -40,7 +40,7 @@ public abstract class Application implements GameLoop
     @Override
     public void loop()
     {
-        long currentTime = System.nanoTime(); // time in nanoseconds
+        long currentTime = System.nanoTime();
         float deltaTime = (currentTime - lastFrameTime) / 1_000_000_000.0f; // Convert nanoseconds to seconds
         lastFrameTime = currentTime;
 

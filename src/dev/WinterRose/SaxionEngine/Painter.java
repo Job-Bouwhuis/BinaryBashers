@@ -15,6 +15,7 @@ public class Painter
     public static final int renderHeight = 360;
     public static final int windowWidth = SaxionApp.getWidth();
     public static final int windowHeight = SaxionApp.getHeight();
+    public static Rectangle2D.Float windowBounds;
 
     private BufferedImage renderCanvas;
     private Graphics2D graphics;
@@ -22,7 +23,10 @@ public class Painter
 
     private TintedSpriteCache tintedSpriteCache = new TintedSpriteCache();
 
-    Painter() { }
+    /*internal*/ Painter()
+    {
+        windowBounds = new Rectangle2D.Float(0, 0, renderWidth, renderHeight);
+    }
 
     /**
      * This is a rather expensive call relatively speaking. Do not call repeatedly in the Update loop.
@@ -39,7 +43,8 @@ public class Painter
         FontMetrics fontMetrics = graphics.getFontMetrics(font);
 
         float width = 0;
-        float height = fontMetrics.getAscent() - fontMetrics.getDescent();;
+        float height = fontMetrics.getAscent() - fontMetrics.getDescent();
+        ;
 
         final float padding = 1;
 
@@ -62,8 +67,7 @@ public class Painter
         {
             Constructor<nl.saxion.app.canvas.drawable.Image> constructor = nl.saxion.app.canvas.drawable.Image.class.getDeclaredConstructor(BufferedImage.class, int.class, int.class, int.class, int.class);
 
-            if (!constructor.canAccess(null))
-                constructor.setAccessible(true);
+            if (!constructor.canAccess(null)) constructor.setAccessible(true);
 
             return constructor.newInstance(image, x, y, width, height);
         }
@@ -71,6 +75,14 @@ public class Painter
         {
             throw new RuntimeException("Failed to create an Image instance", e);
         }
+    }
+
+    private static DrawableCharacter[] getDrawableCharactersFromString(String text, Color color)
+    {
+        DrawableCharacter[] characters = new DrawableCharacter[text.length()];
+        for (int i = 0; i < text.length(); i++)
+            characters[i] = new DrawableCharacter(text.charAt(i), color);
+        return characters;
     }
 
     /**
@@ -95,7 +107,7 @@ public class Painter
     {
         ensureStarted();
         graphics.setColor(color);
-        graphics.fillRect((int)position.x, (int)position.y, scale.x, scale.y);
+        graphics.fillRect((int) position.x, (int) position.y, scale.x, scale.y);
     }
 
     public void drawRectangle(Rectangle2D rect, Color color)
@@ -103,7 +115,7 @@ public class Painter
         Color prevColor = graphics.getColor();
         ensureStarted();
         graphics.setColor(color);
-        graphics.drawRect((int)rect.getX(), (int)rect.getY(), (int)rect.getWidth(), (int)rect.getHeight());
+        graphics.drawRect((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
         graphics.setColor(prevColor);
     }
 
@@ -114,28 +126,21 @@ public class Painter
         // inside
         Color prevColor = graphics.getColor();
         graphics.setColor(fillColor);
-        graphics.fillRect((int)rect.getX(), (int)rect.getY(), (int)rect.getWidth(), (int)rect.getHeight());
+        graphics.fillRect((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
         graphics.setColor(prevColor);
 
         // outside
         drawRectangle(rect, borderColor);
     }
 
+    //    public void drawText(TextProvider text, Transform transform, Vector2 origin)
+    //    {
+    //        drawTextInternal(text.getCharacters(), text.getText(), transform, origin, text.getFontType());
+    //    }
+
     public void drawText(String text, Transform transform, Vector2 origin, Color color, FontType fontType)
     {
         drawTextInternal(getDrawableCharactersFromString(text, color), text, transform, origin, fontType);
-    }
-
-    public void drawText(TextProvider text, Transform transform, Vector2 origin){
-        drawTextInternal(text.getCharacters(), text.getText(), transform, origin, text.getFontType());
-    }
-
-    private static DrawableCharacter[] getDrawableCharactersFromString(String text, Color color)
-    {
-        DrawableCharacter[] characters = new DrawableCharacter[text.length()];
-        for(int i = 0; i < text.length(); i++)
-            characters[i] = new DrawableCharacter(text.charAt(i), color);
-        return characters;
     }
 
     public void drawText(DrawableCharacter[] characters, Transform transform, Vector2 origin, FontType fontType)
@@ -155,7 +160,7 @@ public class Painter
         Color prevColor = graphics.getColor();
         ensureStarted();
         graphics.setColor(color);
-        graphics.fillOval((int)position.x - radius, (int)position.y - radius, radius * 2, radius * 2);
+        graphics.fillOval((int) position.x - radius, (int) position.y - radius, radius * 2, radius * 2);
         graphics.setColor(prevColor);
     }
 
@@ -169,7 +174,8 @@ public class Painter
         Vector2 size = sprite.getSize();
         Vector2 originRelativePosition = CalculateOrigin(transform, size, origin);
 
-        Vector2 parentPosition = transform.getParent() != null ? transform.getParent().getWorldPosition() : transform.getWorldPosition();
+        Vector2 parentPosition = transform.getParent() != null ? transform.getParent()
+                .getWorldPosition() : transform.getWorldPosition();
         originRelativePosition.add(parentPosition);
 
         AffineTransform affineTransform = new AffineTransform();
@@ -182,7 +188,7 @@ public class Painter
 
         affineTransform.scale(transform.getScale().x, transform.getScale().y);
 
-        if(tint.equals(Color.white))
+        if (tint.equals(Color.white))
         {
             graphics.drawImage(sprite.getImageRaw(), affineTransform, null);
             return;
@@ -191,6 +197,83 @@ public class Painter
         graphics.drawImage(image, affineTransform, null);
     }
 
+
+    public void drawText(TextProvider text, Transform transform, Vector2 origin, Rectangle.Float bounds)
+    {
+        ensureStarted();
+        Vector2 position = transform.getPosition();
+        Vector2 scale = transform.getScale();
+        float rotationRads = transform.getRotationRadians();
+
+        Font prevFont = graphics.getFont();
+        Color prevColor = graphics.getColor();
+        AffineTransform beforeTransform = graphics.getTransform();
+
+        AffineTransform affineTransform = new AffineTransform();
+        affineTransform.translate(position.x, position.y);
+        affineTransform.rotate(rotationRads, bounds.width * origin.x, bounds.height * origin.y);
+        affineTransform.scale(scale.x, scale.y);
+        graphics.setTransform(affineTransform);
+
+        float xOffset = 0;
+        float yOffset = 0;
+
+        for (TextProvider.Word word : text.getWords())
+        {
+            Font wordFont = word.font != null ? word.font : new Font(graphics.getFont()
+                    .getFontName(), switch (word.fontType) {
+                case Normal -> Font.PLAIN;
+                case Italic -> Font.ITALIC;
+                case Bold -> Font.BOLD;
+            }, (int) (graphics.getFont()
+                    .getSize() * scale.y));
+            graphics.setFont(wordFont);
+            FontMetrics metric = graphics.getFontMetrics(wordFont);
+
+            int wordWidth = 0;
+            for (DrawableCharacter c : word.getCharacters())
+                wordWidth += metric.charWidth(c.character) + text.getCharacterXPadding();
+            wordWidth += metric.charWidth(' ') * (word.paddingChar != null ? 1 : 0);
+
+            int lineHeight = metric.getAscent() - metric.getDescent();
+
+            if (xOffset + wordWidth > bounds.width)
+            {
+                xOffset = 0;
+                yOffset += lineHeight + text.getCharacterYPadding();
+
+                if (yOffset + lineHeight > bounds.height)
+                    break;
+            }
+
+            for (DrawableCharacter c : word.getCharacters())
+            {
+                String character = String.valueOf(c.character);
+                graphics.setColor(c.color);
+                graphics.drawString(character, (int) (bounds.x + xOffset), (int) (bounds.y + yOffset + metric.getAscent()));
+                xOffset += metric.charWidth(c.character) + text.getCharacterXPadding();
+            }
+
+            if (word.paddingChar != null)
+            {
+                if (word.paddingChar == '\n')
+                {
+                    xOffset = 0;
+                    yOffset += lineHeight + text.getCharacterYPadding();
+
+                    if (yOffset + lineHeight > bounds.height)
+                        break;
+                }
+                else
+                    xOffset += metric.charWidth(word.paddingChar) + text.getCharacterXPadding();
+            }
+
+            graphics.setColor(prevColor);
+            graphics.setFont(prevFont);
+        }
+
+        graphics.setTransform(beforeTransform);
+    }
 
 
     private void drawTextInternal(DrawableCharacter[] characters, String text, Transform transform, Vector2 origin, FontType fontType)
@@ -201,7 +284,7 @@ public class Painter
 
         var prevFont = graphics.getFont();
 
-        int fontSize = (int)(graphics.getFont().getSize() * scale.y);
+        int fontSize = (int) (graphics.getFont().getSize() * scale.y);
         int fType = switch (fontType)
         {
             case Normal -> Font.PLAIN;
@@ -233,7 +316,7 @@ public class Painter
         {
             String character = String.valueOf(c.character);
             graphics.setColor(c.color);
-            graphics.drawString(character, (int)xOffset, 0);
+            graphics.drawString(character, (int) xOffset, 0);
             xOffset += metric.stringWidth(character) + padding;
         }
 
@@ -292,7 +375,6 @@ public class Painter
      */
     private void ensureStarted()
     {
-        if (!isStarted)
-            throw new IllegalStateException("Frame not yet started. Call start() first.");
+        if (!isStarted) throw new IllegalStateException("Frame not yet started. Call start() first.");
     }
 }
