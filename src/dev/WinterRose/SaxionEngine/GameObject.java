@@ -2,6 +2,7 @@ package dev.WinterRose.SaxionEngine;
 
 import dev.WinterRose.SaxionEngine.Callbacks.IKeystrokeCallback;
 import dev.WinterRose.SaxionEngine.Callbacks.IMouseCallback;
+import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 import nl.saxion.app.interaction.KeyboardEvent;
 
 import java.util.ArrayList;
@@ -198,5 +199,11 @@ public class GameObject
     {
         if(isDestroyed)
             throw new IllegalStateException("Object %s is destroyed, while trying to access it");
+    }
+
+    public void updatePallete(ColorPallet scenePallet) {
+        for (Component component : components) {
+            component.onColorPalleteChange(scenePallet);
+        }
     }
 }

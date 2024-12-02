@@ -27,6 +27,10 @@ public class ColorPallet
         for (int i = 0; i < fromColors.length; i++)
             add(fromColors[i], toColors[i]);
     }
+    public ColorPallet(Sprite to)
+    {
+        this(new Sprite("resources/colorPallets/main.png"), to);
+    }
 
     public void add(Color from, Color to)
     {
@@ -60,6 +64,10 @@ public class ColorPallet
         return null;
     }
 
+    public Color getColorFromIndex(int index) {
+        return colorMappings.get(index).to;
+    }
+
     public boolean exists(Color from)
     {
         return get(from) != null;
@@ -81,4 +89,5 @@ public class ColorPallet
             return this.from.getRGB() == from.getRGB();
         }
     }
+
 }

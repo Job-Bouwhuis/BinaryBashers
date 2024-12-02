@@ -56,9 +56,21 @@ public class App extends Application
             enemyObject.transform.setPosition(new Vector2(200, 200));
             scene.addObject(enemyObject);
 
-
+            Sprite[] timerSprites = {
+                    new Sprite("resources/sprites/ui/timer/Timer1.png"),
+                    new Sprite("resources/sprites/ui/timer/Timer2.png"),
+                    new Sprite("resources/sprites/ui/timer/Timer3.png"),
+                    new Sprite("resources/sprites/ui/timer/Timer4.png")
+            };
+            AnimatedSpriteRenderer timerSprite = new AnimatedSpriteRenderer(timerSprites, 0.5f);
+            GameObject timerObject = new GameObject("TimerObject");
+            timerObject.addComponent(timerSprite);
+            timerObject.transform.setPosition(new Vector2(500, 200));
+            scene.addObject(timerObject);
+            scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/midnightAblaze/midnight-ablaze.png")));
         });
         loadScene("levelScene");
+
     }
 
     @Override

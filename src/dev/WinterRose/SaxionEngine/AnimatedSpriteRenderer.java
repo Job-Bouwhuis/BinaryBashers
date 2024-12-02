@@ -1,5 +1,8 @@
 package dev.WinterRose.SaxionEngine;
 
+import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
+import dev.WinterRose.SaxionEngine.ColorPallets.SpritePalletChanger;
+
 import java.awt.*;
 
 public class AnimatedSpriteRenderer extends ActiveRenderer
@@ -34,6 +37,12 @@ public class AnimatedSpriteRenderer extends ActiveRenderer
             animationProgressTimer = 0;
         }
         currentFrame = (int)Math.floor(animationProgressTimer / framesPerSecond);
-        System.out.println(animationProgressTimer);
     }
+
+    @Override
+    public void onColorPalleteChange(ColorPallet colorPallet) {
+        for (int i = 0; i < sprites.length; i++) {
+            sprites[i] = SpritePalletChanger.changePallet(sprites[i], colorPallet);
+        }
+    };
 }

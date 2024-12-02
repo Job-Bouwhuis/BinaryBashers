@@ -1,6 +1,8 @@
 package BinaryBashers;
 
 import dev.WinterRose.SaxionEngine.*;
+import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
+import dev.WinterRose.SaxionEngine.ColorPallets.SpritePalletChanger;
 
 import java.awt.*;
 
@@ -21,11 +23,12 @@ public class EnemySprite extends ActiveRenderer {
     private boolean hidden = true;
 
     // TODO: Rework into ColorPallete type
-    private final Color[] introColors = {
+    private final Color[] defaultIntroColors = {
             new Color(0, 7, 13),
             new Color(11, 22, 42),
             new Color(31, 44, 61),
     };
+    private Color[] introColors = defaultIntroColors;
 
     public void setSpriteId(int id) {
         switch (id) {
@@ -88,5 +91,16 @@ public class EnemySprite extends ActiveRenderer {
         int animationProgress = (int) Math.floor(timer / timeBetweenSprites);
         setIntoProgress(animationProgress);
     }
+
+    @Override
+    public void onColorPalleteChange(ColorPallet colorPallet) {
+        introColors = new Color[] {
+                colorPallet.getColorFromIndex(0),
+                colorPallet.getColorFromIndex(1),
+                colorPallet.getColorFromIndex(2)
+        };
+
+        enemySprite = SpritePalletChanger.changePallet(enemySprite, colorPallet);
+    };
 
 }

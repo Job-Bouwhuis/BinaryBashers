@@ -1,5 +1,8 @@
 package dev.WinterRose.SaxionEngine;
 
+import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
+import dev.WinterRose.SaxionEngine.ColorPallets.SpritePalletChanger;
+
 import java.awt.*;
 
 public class SpriteRenderer extends Renderer
@@ -19,4 +22,9 @@ public class SpriteRenderer extends Renderer
     {
         painter.drawSprite(sprite, transform, origin, tint);
     }
+
+    @Override
+    public void onColorPalleteChange(ColorPallet colorPallet) {
+        sprite = SpritePalletChanger.changePallet(sprite, colorPallet);
+    };
 }

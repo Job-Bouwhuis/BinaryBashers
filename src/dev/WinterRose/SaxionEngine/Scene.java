@@ -1,5 +1,6 @@
 package dev.WinterRose.SaxionEngine;
 
+import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 import nl.saxion.app.interaction.KeyboardEvent;
 
 import java.util.ArrayList;
@@ -9,7 +10,8 @@ public class Scene
     public final String name;
     private final ArrayList<GameObject> objects = new ArrayList<>();
     private final ArrayList<GameObject> objectsToDestroy = new ArrayList<>();
-    Painter scenePainter;
+    private Painter scenePainter;
+    private ColorPallet scenePallet = null;
 
     public Scene(String name)
     {
@@ -86,6 +88,13 @@ public class Scene
         {
             gameObject.onDestroyInternal();
             objects.remove(gameObject);
+        }
+    }
+
+    public void setScenePallet(ColorPallet newPallet) {
+        scenePallet = newPallet;
+        for (GameObject object : objects) {
+            object.updatePallete(newPallet);
         }
     }
 }
