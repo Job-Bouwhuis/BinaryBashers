@@ -81,6 +81,10 @@ public class DialogBoxManager extends ActiveRenderer
     @Override
     public void render(Painter painter)
     {
+//        painter.drawRectangle(boxRenderer.getTargetBounds(), Color.magenta);
+//
+//        painter.drawRectangle(boxRenderer.getCurrentBounds(), Color.cyan);
+
         if(currentDialog == null)
             return;
 

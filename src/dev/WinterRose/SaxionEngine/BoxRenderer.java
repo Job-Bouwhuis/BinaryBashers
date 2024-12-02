@@ -51,7 +51,7 @@ public class BoxRenderer extends ActiveRenderer
     }
 
     @Override
-    public void update()
+    public void awake()
     {
         var pos = transform.getPosition();
         var scale = transform.getScale();
@@ -63,8 +63,16 @@ public class BoxRenderer extends ActiveRenderer
                 pos.x - targetWidth / 2,
                 pos.y - targetHeight / 2,
                 targetWidth,
-                targetHeight
-                            );
+                targetHeight);
+
+        bounds.x = targetBounds.x;
+        bounds.y = targetBounds.y;
+    }
+
+    @Override
+    public void update()
+    {
+        awake(); // keep updating the bounds so that they match
 
         float time = Time.deltaTime;
 

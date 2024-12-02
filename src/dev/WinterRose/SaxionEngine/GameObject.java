@@ -60,6 +60,11 @@ public class GameObject
         if (component instanceof ActiveRenderer renderer) activeRenderers.add(renderer);
 
         components.add(component);
+
+        if(scene != null && scene.initialized)
+        {
+            component.awake();
+        }
     }
 
     public <T> T getComponent(Class<T> componentType)

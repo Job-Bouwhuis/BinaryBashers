@@ -12,7 +12,7 @@ public class Scene
     private final ArrayList<GameObject> objectsToDestroy = new ArrayList<>();
     private Painter scenePainter;
     private ColorPallet scenePallet = null;
-    private boolean initialized;
+    boolean initialized;
 
     public Scene(String name)
     {
