@@ -3,11 +3,9 @@ package BinaryBashers;
 import BinaryBashers.UI.DialogBoxes.DialogBoxManager;
 import BinaryBashers.Utils.Util;
 import dev.WinterRose.SaxionEngine.*;
-import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
+import BinaryBashers.Enemies.BinaryEnemy;
 import dev.WinterRose.SaxionEngine.Entities.EnemySpawner;
 import nl.saxion.app.SaxionApp;
-
-import java.awt.*;
 
 public class App extends Application
 {
@@ -56,7 +54,9 @@ public class App extends Application
             AnimatedSpriteRenderer timerSprite = new AnimatedSpriteRenderer(timerSprites, 0.5f, true);
             GameObject timerObject = new GameObject("TimerObject");
             timerObject.addComponent(timerSprite);
-            timerObject.transform.setPosition(new Vector2(500, 200));
+            timerObject.transform.setPosition(new Vector2(500, 200
+            ));
+
             scene.addObject(timerObject);
             //scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/midnightAblaze/midnight-ablaze.png")));
         });
@@ -72,7 +72,7 @@ public class App extends Application
             scene.addObject(backgroundObject);
 
             GameObject spawner = new GameObject("spawner");
-            spawner.addComponent(new EnemySpawner());
+            spawner.addComponent(new EnemySpawner(BinaryEnemy.class));
             scene.addObject(spawner);
         });
 

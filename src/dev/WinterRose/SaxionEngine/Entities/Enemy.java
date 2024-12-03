@@ -5,7 +5,7 @@ import dev.WinterRose.SaxionEngine.Painter;
 import dev.WinterRose.SaxionEngine.Transform;
 import dev.WinterRose.SaxionEngine.Vector2;
 
-public class Enemy
+public abstract class Enemy
 {
     private int entityID;
     private EnemySprite sprite;
@@ -43,4 +43,6 @@ public class Enemy
     public void hide() {
         sprite.hide();
     }
+
+    public abstract boolean compairInput(String input);
 }
