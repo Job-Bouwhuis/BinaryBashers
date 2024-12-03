@@ -20,7 +20,7 @@ public class EnemySprite extends ActiveRenderer {
     private float timer;
     private float timeBetweenSprites;
 
-    private boolean hidden = true;
+    public boolean hidden = true;
     private boolean useDyingAnimation;
 
     // TODO: Rework into ColorPallete type
