@@ -13,6 +13,7 @@ public abstract class Enemy
     private final Vector2 textPosition;
     protected String text;
     private boolean isDead;
+    private SoundPack deathSounds;
 
     public Enemy(int spriteId, Vector2 enemyPosition)
     {
@@ -23,6 +24,8 @@ public abstract class Enemy
 
         text = "...";
         textPosition = enemyPosition.subtract(new Vector2(0, sprite.getSolid().getHeight() + 10));
+        deathSounds = new SoundPack("resources/audio/enemyDeaths");
+        deathSounds.setAllVolume(0.8f);
     }
 
     public EnemySprite getSprite()
@@ -30,10 +33,11 @@ public abstract class Enemy
         return sprite;
     }
 
-    public void death()
+    public void kill()
     {
         isDead = true;
         sprite.showDeathAnimation();
+        deathSounds.playRandom();
     }
 
     public void render(Painter painter)

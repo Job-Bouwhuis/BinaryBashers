@@ -106,6 +106,8 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         newEnemy.startAnimation();
         enemies.add(newEnemy);
         newEnemy.spawner = this;
+        if(owner.getScene().getScenePallet() != null)
+            newEnemy.getSprite().onColorPalleteChange(owner.getScene().getScenePallet());
 
         System.out.println("Enemy spawned with ID: " + randomId + ". Total enemies: " + enemies.size());
     }
@@ -135,7 +137,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
             var e = enemies.get(i);
             if (e.compairInput(input))
             {
-                e.death();
+                e.kill();
             }
         }
     }

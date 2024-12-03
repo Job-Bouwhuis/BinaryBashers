@@ -101,5 +101,10 @@ public class Scene
             object.updatePallete(newPallet);
         }
     }
+
+    public ColorPallet getScenePallet()
+    {
+        return scenePallet;
+    }
 }
 
