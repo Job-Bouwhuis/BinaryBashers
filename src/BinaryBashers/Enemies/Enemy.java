@@ -1,4 +1,4 @@
-package dev.WinterRose.SaxionEngine.Entities;
+package BinaryBashers.Enemies;
 
 import BinaryBashers.EnemySprite;
 import dev.WinterRose.SaxionEngine.Painter;

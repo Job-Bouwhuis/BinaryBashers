@@ -1,10 +1,9 @@
-package dev.WinterRose.SaxionEngine.Entities;
+package BinaryBashers.Enemies;
 
 import BinaryBashers.UI.DialogBoxes.DialogBoxManager;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 
-import java.awt.dnd.InvalidDnDOperationException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;

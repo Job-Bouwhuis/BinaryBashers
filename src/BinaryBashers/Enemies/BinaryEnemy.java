@@ -1,6 +1,5 @@
 package BinaryBashers.Enemies;
 
-import dev.WinterRose.SaxionEngine.Entities.Enemy;
 import dev.WinterRose.SaxionEngine.Vector2;
 import BinaryBashers.Utils.Util;
 
