@@ -42,10 +42,9 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         try
         {
             enemyConstructor = enemyType.getDeclaredConstructor(Integer.class, Vector2.class);
-        }
-        catch (NoSuchMethodException e)
+        } catch (NoSuchMethodException e)
         {
-            if(DialogBoxManager.getInstance() == null)
+            if (DialogBoxManager.getInstance() == null)
             {
                 GameObject dialogManager = new GameObject("DialogBoxManager");
                 var dial = new DialogBoxManager();
@@ -79,10 +78,10 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     // Spawns an enemy with a random ID
     public void spawnEnemy()
     {
-        if(enemyConstructor == null)
+        if (enemyConstructor == null)
             return;
 
-        if(enemies.size() >= 3)
+        if (enemies.size() >= 3)
         {
             System.out.println("Already 3 enemies exist, cant add more");
             return;
@@ -95,15 +94,15 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         try
         {
             newEnemy = enemyConstructor.newInstance(randomId, enemyPos);
-        }
-        catch (InstantiationException
-               | InvocationTargetException
-               | IllegalAccessException e)
+        } catch (InstantiationException
+                 | InvocationTargetException
+                 | IllegalAccessException e)
         {
             throw new RuntimeException(e);
         }
         newEnemy.startAnimation();
         enemies.add(newEnemy);
+        newEnemy.spawner = this;
 
         System.out.println("Enemy spawned with ID: " + randomId + ". Total enemies: " + enemies.size());
     }
@@ -111,32 +110,34 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     private Vector2 getNewEnemyPosition()
     {
         int size = enemies.size();
-        if(size == 1)
+        if (size == 1)
         {
             return Painter.renderCenter.subtract(new Vector2(Painter.renderCenter.x / 2, 0));
-        }
-        else if (size == 0)
+        } else if (size == 0)
         {
             return Painter.renderCenter;
-        }
-        else if(size == 2)
+        } else if (size == 2)
         {
             return Painter.renderCenter.add(new Vector2(Painter.renderCenter.x / 2, 0));
-        }
-        else
+        } else
         {
-            throw new IllegalStateException("je dikke moeder");
+            throw new IllegalStateException("Invalid Position");
         }
     }
 
-    public void checkAndKillEnemies(int input)
+    public void checkAndKillEnemies(String input)
     {
-
+        for (var e : enemies)
+        {
+            if (e.compairInput(input))
+            {
+                e.death();
+            }
+        }
     }
 
     public void killEnemy(Enemy enemy)
     {
-        enemy.death();
         enemies.remove(enemy);
         System.out.println("Enemy removed. Total enemies: " + enemies.size());
     }
@@ -167,7 +168,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     @Override
     public void onColorPalleteChange(ColorPallet colorPallet)
     {
-        for(var e : enemies)
+        for (var e : enemies)
             e.getSprite().onColorPalleteChange(colorPallet);
     }
 }

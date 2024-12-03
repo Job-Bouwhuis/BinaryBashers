@@ -9,7 +9,8 @@ public abstract class Enemy
 {
     private int entityID;
     private EnemySprite sprite;
-    private EnemySpawner spawner;
+    public EnemySpawner spawner;
+    private boolean isDead;
 
     public Enemy(int id, Vector2 enemyPosition) {
         this.entityID = id;
@@ -24,8 +25,8 @@ public abstract class Enemy
     }
 
     public void death() {
-        System.out.println("Enemy has been defeated.");
-        spawner.killEnemy(this);
+        isDead = true;
+        sprite.showDeathAnimation();
     }
 
     public void render(Painter painter) {
@@ -34,6 +35,10 @@ public abstract class Enemy
 
     public void update() {
         sprite.update();
+        if(sprite.hidden)
+        {
+            spawner.killEnemy(this);
+        }
     }
 
     public void startAnimation() {

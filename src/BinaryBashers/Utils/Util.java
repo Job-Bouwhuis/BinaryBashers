@@ -88,5 +88,6 @@ public class Util
             }
             else if(hex.charAt(i) >= 'A' && hex.charAt(i) <= 'F'){}
         }
+        return decimal;
     }
 }
