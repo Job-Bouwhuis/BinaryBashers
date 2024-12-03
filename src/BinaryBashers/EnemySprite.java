@@ -42,6 +42,11 @@ public class EnemySprite extends ActiveRenderer {
             new Sprite("resources/sprites/enemyDeath/Explosion8.png"),
     },0.1f, false);
 
+    public boolean isDeathHidden()
+    {
+        return useDyingAnimation && deathAnimationSprite.isHidden();
+    }
+
     public void setSpriteId(int id) {
         switch (id) {
             case 0:
@@ -108,11 +113,6 @@ public class EnemySprite extends ActiveRenderer {
         if (useDyingAnimation) {
             deathAnimationSprite.update();
         }
-
-        // DEBUG CODE
-        if (Input.getKeyDown(Keys.K)) {
-            showDeathAnimation();
-        }
     }
 
     private void updateIntroAnimation() {
@@ -132,5 +132,10 @@ public class EnemySprite extends ActiveRenderer {
         enemySprite = SpritePalletChanger.changePallet(enemySprite, colorPallet);
         deathAnimationSprite.onColorPalleteChange(colorPallet);
     };
+
+    public Sprite getSolid()
+    {
+        return solidEnemySprite;
+    }
 
 }

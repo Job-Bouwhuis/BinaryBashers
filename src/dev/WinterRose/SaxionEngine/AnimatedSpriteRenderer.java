@@ -71,5 +71,10 @@ public class AnimatedSpriteRenderer extends ActiveRenderer
         for (int i = 0; i < sprites.length; i++) {
             sprites[i] = SpritePalletChanger.changePallet(sprites[i], colorPallet);
         }
-    };
+    }
+
+    public boolean isHidden()
+    {
+        return hidden;
+    }
 }

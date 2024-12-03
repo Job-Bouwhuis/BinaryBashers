@@ -61,6 +61,7 @@ public abstract class TextProvider
     public void setFontType(FontType fontType)
     {
         this.fontType = fontType;
+        buildWordsList();
     }
 
     protected void buildWordsList()
@@ -98,6 +99,14 @@ public abstract class TextProvider
     {
         for(Word wrd : words)
             wrd.font = font;
+    }
+
+    public void setTextColorAndFontType(String text, Color color, FontType fontType)
+    {
+        setText(text);
+        setColor(color);
+        setFontType(fontType);
+        buildWordsList();
     }
 
     /**

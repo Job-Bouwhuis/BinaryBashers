@@ -7,13 +7,15 @@ import java.util.Random;
 
 public class BinaryEnemy extends Enemy
 {
-    private int binaryNum = 0;
-
+    private Integer binaryNum = 0;
+    private Integer decimalNum = 0;
     public BinaryEnemy(Integer id, Vector2 enemyPos)
     {
         super(id, enemyPos);
-        binaryNum = new Random().nextInt(16);
-    } //randomize binary num
+        decimalNum = new Random().nextInt(16);
+        text = Integer.toString(decimalNum);
+        binaryNum = Util.decimalToBinary(decimalNum);
+    }
 
     @Override
     public boolean compairInput(String input)
@@ -21,7 +23,8 @@ public class BinaryEnemy extends Enemy
         if(input.equals(""))
             return false;
 
-        int in = Util.binaryToDecimal(Integer.parseInt(input));
+        int in = Integer.parseInt(input);
+
         int comparison = Integer.compare(binaryNum, in);
         return comparison == 0;
     }

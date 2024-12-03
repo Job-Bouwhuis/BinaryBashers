@@ -4,6 +4,7 @@ import BinaryBashers.UI.DialogBoxes.DialogBoxManager;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 
+import java.awt.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         this.enemyType = enemyType;
         this.enemies = new ArrayList<>();
         this.random = new Random();
-        spawnTimer = Math.max(spawnInterval - 5, 0);
+        spawnTimer = 5;
     }
 
     @Override
@@ -63,15 +64,18 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     @Override
     public void update()
     {
-        spawnTimer += Time.deltaTime;
-        if (spawnTimer >= spawnInterval)
+        spawnTimer -= Time.deltaTime;
+        if (spawnTimer <= 0)
         {
             spawnEnemy();
-            spawnTimer = 0;
+            spawnTimer = spawnInterval;
         }
 
-        for (var e : enemies)
+        for (int i = 0; i < enemies.size(); i++)
+        {
+            var e = enemies.get(i);
             e.update();
+        }
     }
 
     // Spawns an enemy with a random ID
@@ -126,8 +130,9 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
 
     public void checkAndKillEnemies(String input)
     {
-        for (var e : enemies)
+        for (int i = 0; i < enemies.size(); i++)
         {
+            var e = enemies.get(i);
             if (e.compairInput(input))
             {
                 e.death();
@@ -139,6 +144,8 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     {
         enemies.remove(enemy);
         System.out.println("Enemy removed. Total enemies: " + enemies.size());
+        if(enemies.isEmpty() && spawnTimer > 5)
+            spawnTimer = 5; // no enemies, set timer to 5 seconds until a new one spawns to keep gameflow going
     }
 
     public boolean hasEnemies()
@@ -160,14 +167,22 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     @Override
     public void render(Painter painter)
     {
-        for (var e : enemies)
+        painter.drawScaledText("Time until next enemy: " + Math.round(spawnTimer) + "s", new Vector2(2), new Vector2(0.9f), new Vector2(), Color.white, FontType.Bold);
+
+        for (int i = 0; i < enemies.size(); i++)
+        {
+            var e = enemies.get(i);
             e.render(painter);
+        }
     }
 
     @Override
     public void onColorPalleteChange(ColorPallet colorPallet)
     {
-        for (var e : enemies)
+        for (int i = 0; i < enemies.size(); i++)
+        {
+            var e = enemies.get(i);
             e.getSprite().onColorPalleteChange(colorPallet);
+        }
     }
 }

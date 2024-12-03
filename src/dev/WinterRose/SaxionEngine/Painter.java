@@ -1,5 +1,6 @@
 package dev.WinterRose.SaxionEngine;
 
+import dev.WinterRose.SaxionEngine.TextProviders.DefaultTextProvider;
 import dev.WinterRose.SaxionEngine.TextProviders.TextProvider;
 import nl.saxion.app.SaxionApp;
 
@@ -15,7 +16,7 @@ public class Painter
     public static final int renderHeight = 360;
     public static final int windowWidth = SaxionApp.getWidth();
     public static final int windowHeight = SaxionApp.getHeight();
-    public static Rectangle2D.Float windowBounds;
+    public static final Rectangle2D.Float renderBounds = new Rectangle2D.Float(0, 0, renderWidth, renderHeight);
     public static final Vector2 renderCenter = new Vector2(renderWidth / 2, renderHeight / 2);
 
     private BufferedImage renderCanvas;
@@ -24,10 +25,7 @@ public class Painter
 
     private TintedSpriteCache tintedSpriteCache = new TintedSpriteCache();
 
-    /*internal*/ Painter()
-    {
-        windowBounds = new Rectangle2D.Float(0, 0, renderWidth, renderHeight);
-    }
+    /*internal*/ Painter() {}
 
     /**
      * This is a rather expensive call relatively speaking. Do not call repeatedly in the Update loop.
@@ -274,6 +272,32 @@ public class Painter
         graphics.setTransform(beforeTransform);
     }
 
+    public void drawText(String text, Vector2 position, Vector2 origin)
+    {
+        drawText(text, position, origin, Color.white);
+    }
+
+    public void drawText(String text, Vector2 position, Vector2 origin, Color color)
+    {
+        drawText(text, position, origin, color, FontType.Normal);
+    }
+
+    public void drawText(String text, Vector2 position, Vector2 origin, Color color, FontType fontType)
+    {
+        drawScaledText(text, position, new Vector2(1), origin, color, fontType);
+    }
+
+    public void drawScaledText(String text, Vector2 position, Vector2 scale, Vector2 origin, Color color, FontType fontType)
+    {
+        Transform t = new Transform();
+        t.setPosition(position);
+        t.setScale(scale);
+
+        TextProvider textprov = new DefaultTextProvider();
+        textprov.setTextColorAndFontType(text, color, fontType);
+
+        drawText(textprov, t, origin, renderBounds);
+    }
 
     private void drawTextInternal(DrawableCharacter[] characters, String text, Transform transform, Vector2 origin, FontType fontType)
     {

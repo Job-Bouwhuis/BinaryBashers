@@ -84,6 +84,6 @@ public class Button extends ActiveRenderer
         textTransform.setPosition(new Vector2(textX, textY - 4));
 
         painter.drawSprite(sprite, transform, origin, drawingColor);
-        painter.drawText(text, textTransform, new Vector2(), Painter.windowBounds);
+        painter.drawText(text, textTransform, new Vector2(), Painter.renderBounds);
     }
 }
