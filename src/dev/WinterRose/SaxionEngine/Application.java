@@ -85,6 +85,7 @@ public abstract class Application implements GameLoop
         {
             GameObject dialogManager = new GameObject("DialogBoxManager");
             dialogManager.addComponent(new DialogBoxManager());
+            dialogManager.transform.setPosition(Painter.renderCenter);
             activeScene.addObject(dialogManager);
         }
         if(Input.getKey(Keys.DELETE) && Input.getKeyDown(Keys.TAB))
@@ -284,7 +285,6 @@ public abstract class Application implements GameLoop
                 height = SaxionApp.getHeight();
             }
 
-
             frame.setLayout(null);
             frame.addKeyListener((KeyListener) keyListener.get(null));
             frame.setFocusable(true);
@@ -297,7 +297,6 @@ public abstract class Application implements GameLoop
             if (!isFullscreen)
                 frame.setLocation((screenWidth / 2) - (frame.getWidth() / 2), (screenHeight / 2) - (frame.getHeight() / 2));
 
-
             Field canvasField = app.getDeclaredField("canvas");
             canvasField.setAccessible(true);
             Panel canvas = (Panel) canvasField.get(null);
@@ -305,7 +304,6 @@ public abstract class Application implements GameLoop
 
             frameField.set(null, frame);
 
-            Thread.sleep(100);
             frame.setVisible(true);
 
             gameWindow = frame;
