@@ -31,7 +31,7 @@ public class TextRenderer extends Renderer
     }
 
     public void setText(String text) {
-        this.text = new DefaultTextProvider(text);
+        this.text.setText(text);
     }
 
     public Vector2 getOrigin() {
@@ -62,6 +62,11 @@ public class TextRenderer extends Renderer
     @Override
     public void render(Painter painter)
     {
-        painter.drawText(text, transform, origin);
+        painter.drawText(text, transform, origin, Painter.windowBounds);
+    }
+
+    public TextProvider getTextProvider()
+    {
+        return text;
     }
 }

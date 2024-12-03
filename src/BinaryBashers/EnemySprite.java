@@ -1,6 +1,8 @@
 package BinaryBashers;
 
 import dev.WinterRose.SaxionEngine.*;
+import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
+import dev.WinterRose.SaxionEngine.ColorPallets.SpritePalletChanger;
 
 import java.awt.*;
 
@@ -19,13 +21,26 @@ public class EnemySprite extends ActiveRenderer {
     private float timeBetweenSprites;
 
     private boolean hidden = true;
+    private boolean useDyingAnimation;
 
     // TODO: Rework into ColorPallete type
-    private final Color[] introColors = {
+    private final Color[] defaultIntroColors = {
             new Color(0, 7, 13),
             new Color(11, 22, 42),
             new Color(31, 44, 61),
     };
+    private Color[] introColors = defaultIntroColors;
+
+    private AnimatedSpriteRenderer deathAnimationSprite = new AnimatedSpriteRenderer(new Sprite[]{
+            new Sprite("resources/sprites/enemyDeath/Explosion1.png"),
+            new Sprite("resources/sprites/enemyDeath/Explosion2.png"),
+            new Sprite("resources/sprites/enemyDeath/Explosion3.png"),
+            new Sprite("resources/sprites/enemyDeath/Explosion4.png"),
+            new Sprite("resources/sprites/enemyDeath/Explosion5.png"),
+            new Sprite("resources/sprites/enemyDeath/Explosion6.png"),
+            new Sprite("resources/sprites/enemyDeath/Explosion7.png"),
+            new Sprite("resources/sprites/enemyDeath/Explosion8.png"),
+    },0.1f, false);
 
     public void setSpriteId(int id) {
         switch (id) {
@@ -43,12 +58,12 @@ public class EnemySprite extends ActiveRenderer {
     }
 
     private void setIntoProgress(int progress) {
-        if (progress < introColors.length)
-            solidColorTint = introColors[progress];
+        solidColorTint = introColors[progress];
     }
 
     public void startEnteringAnimation() {
         hidden = false;
+        useDyingAnimation = false;
         timer = 0;
         timerActive = true;
         timeBetweenSprites = timerDuration / introColors.length;
@@ -67,29 +82,55 @@ public class EnemySprite extends ActiveRenderer {
         hidden = true;
     }
 
+    public void showDeathAnimation() {
+        useDyingAnimation = true;
+        deathAnimationSprite.hideOnEnd = true;
+    }
+
     @Override
     public void render(Painter painter) {
-        if (!hidden) {
+        if (!hidden && !useDyingAnimation) {
             painter.drawSprite(activeSprite, transform, new Vector2(0.5f, 0.5f), solidColorTint);
+        }
+        if (useDyingAnimation) {
+            deathAnimationSprite.manualRender(painter, transform);
         }
     }
 
     @Override
     public void update() {
-        if (timerActive && timer >= timerDuration) {
+        if (timerActive && (timer + 1 * Time.deltaTime >= timerDuration)) {
             finishEnteringAnimation();
         }
         else if (timerActive) {
+            updateIntroAnimation();
+        }
+        if (useDyingAnimation) {
+            deathAnimationSprite.update();
+        }
 
+        // DEBUG CODE
+        if (Input.getKeyDown(Keys.K)) {
+            showDeathAnimation();
         }
     }
 
     private void updateIntroAnimation() {
         timer += 1 * Time.deltaTime;
-        // Something is not correct in this calculation. The first color is on screen for less frames.
-        // I may be stupid
         int animationProgress = (int) Math.floor(timer / timeBetweenSprites);
         setIntoProgress(animationProgress);
     }
+
+    @Override
+    public void onColorPalleteChange(ColorPallet colorPallet) {
+        introColors = new Color[] {
+                colorPallet.getColorFromIndex(0),
+                colorPallet.getColorFromIndex(1),
+                colorPallet.getColorFromIndex(2)
+        };
+
+        enemySprite = SpritePalletChanger.changePallet(enemySprite, colorPallet);
+        deathAnimationSprite.onColorPalleteChange(colorPallet);
+    };
 
 }

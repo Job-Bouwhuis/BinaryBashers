@@ -25,7 +25,7 @@ public class MouseEvent
     public MouseEvent(Vector2 location)
     {
         final Vector2 JFrameOffsetCompensation = new Vector2(8, 30);
-        location.subtract(JFrameOffsetCompensation); // workaround for slightly off location values from the JFrame side
+        location = location.subtract(JFrameOffsetCompensation); // workaround for slightly off location values from the JFrame side
         int windowWidth = Painter.windowWidth;
         int windowHeight = Painter.windowHeight;
         int renderWidth = Painter.renderWidth;
@@ -33,7 +33,10 @@ public class MouseEvent
 
         this.location = new Vector2(
                 (location.x * renderWidth) / windowWidth,
-                (location.y * renderHeight) / windowHeight);
+                (location.y * renderHeight) / windowHeight).subtract(Input.getWindowPosition().divide(2));
+
+        if(Application.getInstance().isFullscreen())
+            this.location = this.location.add(new Vector2(2, 7.5f)); // account for the window decoration not being there now.
     }
 }
 

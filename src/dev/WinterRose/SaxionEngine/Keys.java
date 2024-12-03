@@ -52,6 +52,11 @@ public enum Keys
 
     private final char character;
 
+    Keys()
+    {
+        this.character = '\0'; // Default for non-character keys
+    }
+
     Keys(char character)
     {
         this.character = character;

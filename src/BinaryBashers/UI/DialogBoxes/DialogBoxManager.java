@@ -1,7 +1,12 @@
 package BinaryBashers.UI.DialogBoxes;
 
+import dev.WinterRose.SaxionEngine.TextProviders.AnimatedTextProvider;
+import dev.WinterRose.SaxionEngine.TextProviders.DefaultTextProvider;
 import dev.WinterRose.SaxionEngine.TextProviders.TextProvider;
 import dev.WinterRose.SaxionEngine.*;
+
+import java.awt.*;
+import java.util.function.Consumer;
 
 public class DialogBoxManager extends ActiveRenderer
 {
@@ -11,9 +16,11 @@ public class DialogBoxManager extends ActiveRenderer
         return instance;
     }
 
+    private Sound dialogEnterSound;
+    private Sound dialogExitSound;
+
     private BoxRenderer boxRenderer;
 
-    private TextProvider currentText;
     private DialogBox currentDialog;
 
     private Queue<DialogBox> dialogQueue = new Queue<>();
@@ -22,23 +29,22 @@ public class DialogBoxManager extends ActiveRenderer
     public void awake()
     {
         if(instance != null)
-        {
             owner.destroy(); // a dialog box manager already exists, destroy this one so there is no conflict
-        }
 
         if(!owner.hasComponent(BoxRenderer.class))
             owner.addComponent(new BoxRenderer(new Vector2(Painter.renderWidth / 2, Painter.renderHeight / 2)));
         boxRenderer = owner.getComponent(BoxRenderer.class);
+
+        dialogEnterSound = new Sound("resources/audio/8bit-DialogEnter.wav");
+        dialogEnterSound.setVolume(.6f);
+        dialogExitSound = new Sound("resources/audio/8bit-DialogExit.wav");
+        dialogExitSound.setVolume(.6f);
+        instance = this;
     }
 
     @Override
     public void update()
     {
-        if(Input.getKeyDown(Keys.SPACE))
-        {
-            enqueue("Cool Shit", "some testing dialog box to make sure things are working like they should", 5);
-        }
-
         if(currentDialog != null)
         {
             if(currentDialog.isFinished())
@@ -47,23 +53,29 @@ public class DialogBoxManager extends ActiveRenderer
                 if(dialogQueue.pop() instanceof DialogBox box)
                     currentDialog = box;
             }
-            else
+            else if(boxRenderer.getAnimationProgress() > .96f)
                 currentDialog.update();
         }
 
         if(currentDialog == null)
         {
             if(dialogQueue.pop() instanceof DialogBox box)
+            {
                 currentDialog = box;
+                box.init(this);
+            }
             if(boxRenderer.isAnimatingIn())
+            {
                 boxRenderer.animateOut();
+                dialogExitSound.play();
+            }
             return;
         }
         if(!boxRenderer.isAnimatingIn())
+        {
             boxRenderer.animateIn();
-
-        Vector2 boxWidthHeight = boxRenderer.getCurrentWidthHeight(); // (near) 0 when invisible
-        float animationProgress = boxRenderer.getAnimationProgress(); // 0 near 0 when fully animated out and invisible, near 1 when fully animated in and visible
+            dialogEnterSound.play();
+        }
     }
 
     @Override
@@ -72,10 +84,36 @@ public class DialogBoxManager extends ActiveRenderer
         if(currentDialog == null)
             return;
 
-        final Vector2 origin = new Vector2(0, .5f); // make it so the text placement is in the middle left of the text element.
-        // some logic that smoothly and letter by letter types out the text and title
-        TextProvider text = currentDialog.text;
-        painter.drawText(text, transform, origin);
+        final Vector2 origin = new Vector2(0, 0);
+
+        var bounds = boxRenderer.getCurrentBounds();
+        Vector2 boxTopLeft = new Vector2(
+                transform.getPosition().x - bounds.width / 2,
+                transform.getPosition().y - bounds.height / 2);
+
+        if(boxRenderer.isAnimatingIn() && boxRenderer.getAnimationProgress() > .96f)
+        {
+            currentDialog.render(painter);
+
+            // title
+            {
+                Transform t = new Transform();
+                t.setPosition(new Vector2(bounds.x, bounds.y).subtract(new Vector2(boxTopLeft.x, boxTopLeft.y).subtract(new Vector2(3, 0))));
+                if(currentDialog.title.getColor() == Color.white)
+                    currentDialog.title.setColor(Color.cyan);
+                painter.drawText(currentDialog.title, t, origin, bounds);
+            }
+
+            if(currentDialog.title instanceof AnimatedTextProvider atp && atp.getAnimationPercent() < .7f)
+                return;
+
+            // text
+            {
+                Transform t = new Transform();
+                t.setPosition(new Vector2(bounds.x, bounds.y).subtract(new Vector2(boxTopLeft.x, boxTopLeft.y).subtract(new Vector2(3, 22))));
+                painter.drawText(currentDialog.text, t, origin, bounds);
+            }
+        }
     }
 
     public void enqueue(DialogBox box)
@@ -88,5 +126,19 @@ public class DialogBoxManager extends ActiveRenderer
         enqueue(new TimedDialogBox(title, text, time));
     }
 
+    public void enqueue(String title, String text, Consumer<ConfirmationDialogBox> onButtonClicked)
+    {
+        enqueue(new ConfirmationDialogBox(title, text, onButtonClicked));
+    }
 
+    @Override
+    public void onDestroyed()
+    {
+        instance = null;
+    }
+
+    public DialogBox getCurrentDialog()
+    {
+        return currentDialog;
+    }
 }
