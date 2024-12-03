@@ -1,5 +1,8 @@
 package dev.WinterRose.SaxionEngine;
 
+import BinaryBashers.UI.DialogBoxes.ConfirmationDialogBox;
+import BinaryBashers.UI.DialogBoxes.DialogBoxManager;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -17,14 +20,15 @@ public class Sprite
     public Sprite(String path)
     {
         this.texturePath = path;
-        BufferedImage image = null;
+        BufferedImage image;
+        File imgFile = new File(path);
         try
         {
-            image = ImageIO.read(new File(path));
+            image = ImageIO.read(imgFile);
         }
         catch (IOException e)
         {
-            throw new RuntimeException(e);
+           throw new RuntimeException(e);
         }
 
         initializeSprite(image);
@@ -34,11 +38,6 @@ public class Sprite
     {
         createdImage = image;
         initializeSprite(image);
-    }
-
-    public Sprite(Sprite original)
-    {
-
     }
 
     private void initializeSprite(BufferedImage image)

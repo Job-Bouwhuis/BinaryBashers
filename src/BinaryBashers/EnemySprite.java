@@ -13,7 +13,7 @@ public class EnemySprite extends ActiveRenderer {
     private Sprite activeSprite;
     private Color solidColorTint;
 
-    private final String BASE_SPRITE_DIR = "resources\\sprites\\enemies\\";
+    private final String BASE_SPRITE_DIR = "resources/sprites/enemies/";
 
     private final float timerDuration = 4;
     public boolean timerActive;
@@ -50,13 +50,13 @@ public class EnemySprite extends ActiveRenderer {
     public void setSpriteId(int id) {
         switch (id) {
             case 0:
-                enemySprite = new Sprite(BASE_SPRITE_DIR + "Mathematical Mage.png");
+                enemySprite = new Sprite(BASE_SPRITE_DIR + "MathematicalMage.png");
                 break;
             case 1:
-                enemySprite = new Sprite(BASE_SPRITE_DIR + "Decimal Demon.png");
+                enemySprite = new Sprite(BASE_SPRITE_DIR + "DecimalDemon.png");
                 break;
             case 2:
-                enemySprite = new Sprite(BASE_SPRITE_DIR + "Statistical Slime.png");
+                enemySprite = new Sprite(BASE_SPRITE_DIR + "StatisticalSlime.png");
                 break;
         }
         solidEnemySprite = enemySprite.getSolid();

@@ -81,16 +81,16 @@ public abstract class Application implements GameLoop
      */
     private void forceQuitDialog()
     {
+        if(DialogBoxManager.getInstance() == null)
+        {
+            GameObject dialogManager = new GameObject("DialogBoxManager");
+            dialogManager.transform.setPosition(Painter.renderCenter);
+            dialogManager.addComponent(new DialogBoxManager());
+            activeScene.addObject(dialogManager);
+        }
+
         if(Input.getKey(Keys.DELETE) && Input.getKeyDown(Keys.TAB))
         {
-            if(DialogBoxManager.getInstance() == null)
-            {
-                GameObject dialogManager = new GameObject("DialogBoxManager");
-                dialogManager.transform.setPosition(Painter.renderCenter);
-                dialogManager.addComponent(new DialogBoxManager());
-                activeScene.addObject(dialogManager);
-            }
-
             ConfirmationDialogBox box = new ConfirmationDialogBox("Warning!", "Are you sure you want to force quit the game?\n" +
                     "Any unsaved progress will be lost!", cdb -> {
                 if(cdb.getResult())
