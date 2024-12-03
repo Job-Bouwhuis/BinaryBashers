@@ -1,16 +1,20 @@
 package dev.WinterRose.SaxionEngine.Entities;
 
+import BinaryBashers.UI.DialogBoxes.DialogBoxManager;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 
 import java.awt.dnd.InvalidDnDOperationException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class EnemySpawner extends ActiveRenderer
+public class EnemySpawner<T extends Enemy> extends ActiveRenderer
 {
-    /*internal*/ int bok = 0;
+    private Class<T> enemyType;
+    private Constructor<T> enemyConstructor;
 
     private static EnemySpawner instance;
 
@@ -19,16 +23,43 @@ public class EnemySpawner extends ActiveRenderer
         return instance;
     }
 
-    private List<Enemy> enemies;
+    private List<T> enemies;
     private float spawnInterval = 30f;
     private float spawnTimer;
     private Random random;
 
-    public EnemySpawner()
+    public EnemySpawner(Class<T> enemyType)
     {
+        this.enemyType = enemyType;
         this.enemies = new ArrayList<>();
         this.random = new Random();
         spawnTimer = Math.max(spawnInterval - 5, 0);
+    }
+
+    @Override
+    public void awake()
+    {
+        try
+        {
+            enemyConstructor = enemyType.getDeclaredConstructor(Integer.class, Vector2.class);
+        }
+        catch (NoSuchMethodException e)
+        {
+            if(DialogBoxManager.getInstance() == null)
+            {
+                GameObject dialogManager = new GameObject("DialogBoxManager");
+                var dial = new DialogBoxManager();
+                dialogManager.addComponent(dial);
+                dialogManager.transform.setPosition(Painter.renderCenter);
+                owner.getScene().addObject(dialogManager);
+                dial.awake();
+            }
+
+            System.out.println("Valid Enemy constructor not found!");
+            DialogBoxManager.getInstance()
+                    .enqueue("WARNING", "Enemy constructor not valid!\n" + enemyType.getName(),
+                            40);
+        }
     }
 
     @Override
@@ -48,6 +79,9 @@ public class EnemySpawner extends ActiveRenderer
     // Spawns an enemy with a random ID
     public void spawnEnemy()
     {
+        if(enemyConstructor == null)
+            return;
+
         if(enemies.size() >= 3)
         {
             System.out.println("Already 3 enemies exist, cant add more");
@@ -57,7 +91,17 @@ public class EnemySpawner extends ActiveRenderer
         int randomId = random.nextInt(3);
         Vector2 enemyPos = getNewEnemyPosition();
 
-        Enemy newEnemy = new Enemy(randomId, enemyPos);
+        T newEnemy = null;
+        try
+        {
+            newEnemy = enemyConstructor.newInstance(randomId, enemyPos);
+        }
+        catch (InstantiationException
+               | InvocationTargetException
+               | IllegalAccessException e)
+        {
+            throw new RuntimeException(e);
+        }
         newEnemy.startAnimation();
         enemies.add(newEnemy);
 
@@ -85,6 +129,11 @@ public class EnemySpawner extends ActiveRenderer
         }
     }
 
+    public void checkAndKillEnemies(int input)
+    {
+
+    }
+
     public void killEnemy(Enemy enemy)
     {
         enemy.death();
@@ -97,7 +146,7 @@ public class EnemySpawner extends ActiveRenderer
         return !enemies.isEmpty();
     }
 
-    public List<Enemy> getEnemies()
+    public List<T> getEnemies()
     {
         return enemies;
     }

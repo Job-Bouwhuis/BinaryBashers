@@ -126,6 +126,7 @@ public abstract class Application implements GameLoop
         activeScene.wakeScene();
     }
 
+
     @Override
     public void keyboardEvent(KeyboardEvent e)
     {
