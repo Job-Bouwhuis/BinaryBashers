@@ -67,11 +67,11 @@ public class EnemySpawner extends ActiveRenderer
     private Vector2 getNewEnemyPosition()
     {
         int size = enemies.size();
-        if(size == 0)
+        if(size == 1)
         {
             return Painter.renderCenter.subtract(new Vector2(Painter.renderCenter.x / 2, 0));
         }
-        else if (size == 1)
+        else if (size == 0)
         {
             return Painter.renderCenter;
         }
