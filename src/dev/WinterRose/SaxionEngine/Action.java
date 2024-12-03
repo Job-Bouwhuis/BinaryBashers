@@ -1,5 +1,7 @@
 package dev.WinterRose.SaxionEngine;
 
+import dev.WinterRose.SaxionEngine.Entities.EnemySpawner;
+
 import java.util.ArrayList;
 import java.util.function.Consumer;
 

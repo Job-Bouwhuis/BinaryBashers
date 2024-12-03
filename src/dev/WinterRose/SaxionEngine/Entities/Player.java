@@ -1,6 +1,6 @@
 package dev.WinterRose.SaxionEngine.Entities;
 
-public class Player extends Entity {
+public class Player {
     
     private int health = 3;
     
@@ -22,7 +22,7 @@ public class Player extends Entity {
         }
     }
 
-    @Override public void death() {
+    public void death() {
         System.out.println("Player has died. Game Over.");
     }
 }

@@ -4,6 +4,7 @@ import BinaryBashers.UI.DialogBoxes.DialogBoxManager;
 import BinaryBashers.Utils.Util;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
+import dev.WinterRose.SaxionEngine.Entities.EnemySpawner;
 import nl.saxion.app.SaxionApp;
 
 import java.awt.*;
@@ -31,7 +32,6 @@ public class App extends Application
 
         createScene("levelScene", scene -> {
             Sprite backgroundSprite = new Sprite("resources/sprites/background/background01.png");
-            //backgroundSprite = SpritePalletChanger.changePallet(backgroundSprite, new ColorPallet(new Sprite("resources/colorPallets/main.png"), new Sprite("resources/colorPallets/midnightAblaze/midnight-ablaze.png")));
 
             var spriteRenderer = new SpriteRenderer(backgroundSprite);
             spriteRenderer.origin = new Vector2(0, 0);
@@ -42,7 +42,6 @@ public class App extends Application
             EnemySprite enemySprite = new EnemySprite();
             enemySprite.setSpriteId(SaxionApp.getRandomValueBetween(0, 2));
             enemySprite.startEnteringAnimation();
-//            enemySprite.showDeathAnimation();
             GameObject enemyObject = new GameObject("TestEnemySprite");
             enemyObject.addComponent(enemySprite);
             enemyObject.transform.setPosition(new Vector2(200, 200));
@@ -59,10 +58,25 @@ public class App extends Application
             timerObject.addComponent(timerSprite);
             timerObject.transform.setPosition(new Vector2(500, 200));
             scene.addObject(timerObject);
-//            scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/midnightAblaze/midnight-ablaze.png")));
+            //scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/midnightAblaze/midnight-ablaze.png")));
         });
 
-        loadScene("levelScene");
+
+        createScene("spawnerTest", scene -> {
+            Sprite backgroundSprite = new Sprite("resources/sprites/background/background01.png");
+
+            var spriteRenderer = new SpriteRenderer(backgroundSprite);
+            spriteRenderer.origin = new Vector2(0, 0);
+            GameObject backgroundObject = new GameObject("background");
+            backgroundObject.addComponent(spriteRenderer);
+            scene.addObject(backgroundObject);
+
+            GameObject spawner = new GameObject("spawner");
+            spawner.addComponent(new EnemySpawner());
+            scene.addObject(spawner);
+        });
+
+        loadScene("spawnerTest");
     }
 
     @Override

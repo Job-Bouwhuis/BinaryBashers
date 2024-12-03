@@ -5,8 +5,6 @@ public class Vector2
     public float x;
     public float y;
 
-    public Action<Vector2> onPositionChanged = new Action<>();
-
     public Vector2()
     {
         this(0);
@@ -57,15 +55,6 @@ public class Vector2
     }
 
     /**
-     * Creates a new vector with the normalized value of this one.
-     * @return A new vector2 with normalized values of the original
-     */
-    public Vector2 normalized()
-    {
-        return new Vector2(this).normalize();
-    }
-
-    /**
      * Normalizes this vector. But only if x and y are not 0.
      * @return returns this same instance
      */
@@ -75,7 +64,6 @@ public class Vector2
         float length = length();
         x = x / length;
         y = y / length;
-        onPositionChanged.invoke(this);
         return this;
     }
 
