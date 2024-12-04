@@ -13,6 +13,7 @@ import java.util.Random;
 
 public class EnemySpawner<T extends Enemy> extends ActiveRenderer
 {
+    public Action<Integer> onEnemyCountChanged = new Action<>();
     private Class<T> enemyType;
     private Constructor<T> enemyConstructor;
     private ScoreManager scoreManager = ScoreManager.getInstance();
@@ -43,12 +44,9 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     @Override
     public void awake()
     {
-        if (owner.hasComponent(Timer.class))
-        {
-            timer = owner.getComponent(Timer.class);
-        }
+        timer = owner.getComponent(Timer.class);
         timer.onTimeAction.add(t -> timeElapsed(t));
-
+        timer.setSprites(new Sprite[0]);
         try
         {
             enemyConstructor = enemyType.getDeclaredConstructor(Integer.class, Vector2.class, Integer.class);
@@ -129,13 +127,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
 
         System.out.println("Enemy spawned with ID: " + randomId + ". Total enemies: " + enemies.size());
 
-        timer.setSpeedMultiplier(switch (enemies.size())
-        {
-            case 1 -> 1.2f;
-            case 2 -> 1.4f;
-            case 3 -> 1.6f;
-            default -> 1;
-        });
+        onEnemyCountChanged.invoke(enemies.size());
     }
 
     private Vector2 getNewEnemyPosition()
@@ -172,8 +164,9 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     public void killEnemy(Enemy enemy)
     {
         enemies.remove(enemy);
+        onEnemyCountChanged.invoke(enemies.size());
         System.out.println("Enemy removed. Total enemies: " + enemies.size());
-        if (enemies.isEmpty() && timer.getCurrentTime() > 5)
+        if (enemies.isEmpty() && timer.getTimeLeft() > 5)
         {
             timer.skipTo(timer.getMaxTime() - 5); // no enemies, set timer to 5 seconds until a new one spawns to keep gameflow going
             timer.setSpeedMultiplier(1f);
