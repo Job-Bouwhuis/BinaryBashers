@@ -51,7 +51,10 @@ public class DialogBoxManager extends ActiveRenderer
             {
                 currentDialog = null;
                 if(dialogQueue.pop() instanceof DialogBox box)
+                {
                     currentDialog = box;
+                    box.init(this);
+                }
             }
             else if(boxRenderer.getAnimationProgress() > .96f)
                 currentDialog.update();
@@ -81,10 +84,6 @@ public class DialogBoxManager extends ActiveRenderer
     @Override
     public void render(Painter painter)
     {
-//        painter.drawRectangle(boxRenderer.getTargetBounds(), Color.magenta);
-//
-//        painter.drawRectangle(boxRenderer.getCurrentBounds(), Color.cyan);
-
         if(currentDialog == null)
             return;
 
