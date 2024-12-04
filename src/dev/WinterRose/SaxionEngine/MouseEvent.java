@@ -32,8 +32,6 @@ public class MouseEvent
         this.location = new Vector2(
                 (location.x * renderWidth) / windowWidth,
                 (location.y * renderHeight) / windowHeight).subtract(Input.getWindowPosition().divide(2));
-
-        System.out.println(Input.windowPosition.toString());
     }
 }
 

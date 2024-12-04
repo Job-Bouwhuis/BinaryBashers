@@ -16,9 +16,9 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     private Class<T> enemyType;
     private Constructor<T> enemyConstructor;
 
-    private static EnemySpawner instance;
+    private static EnemySpawner<?> instance;
 
-    public static EnemySpawner getInstance()
+    public static EnemySpawner<?> getInstance()
     {
         return instance;
     }
@@ -27,7 +27,10 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     private float spawnInterval = 30f;
     private float spawnTimer;
     private Random random;
-    private Timer timer;
+    private Timer enemySpawnTimer;
+
+    public Action<Integer> onEnemyCountChanged = new Action<>();
+
 
     public EnemySpawner(Class<T> enemyType)
     {
@@ -40,8 +43,9 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     @Override
     public void awake()
     {
-        timer = new Timer(spawnTimer, true, true, 1);
-        timer.onTimeAction.add(t -> timeElapsed(t));
+        enemySpawnTimer = owner.getComponent(Timer.class);
+        enemySpawnTimer.onTimeAction.add(t -> enemySpawnTimeElapsed(t));
+        enemySpawnTimer.setSprites(new Sprite[0]);
         try
         {
             enemyConstructor = enemyType.getDeclaredConstructor(Integer.class, Vector2.class);
@@ -68,8 +72,6 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     @Override
     public void update()
     {
-        timer.update();
-        System.out.println(timer.getSpeedMultiplier());
         for (int i = 0; i < enemies.size(); i++)
         {
             var e = enemies.get(i);
@@ -77,14 +79,28 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         }
     }
 
-    private void timeElapsed(Timer timer)
+    private void enemySpawnTimeElapsed(Timer timer)
     {
-        spawnEnemy();
         if (enemies.size() > 0)
         {
-            timer.setMaxTime(spawnInterval);
-        }
+            try
+            {
+                var player = owner.getComponent(Player.class);
+                damagePlayer(player);
+            }
+            catch (NullPointerException e){
+                System.out.println("Player not found!");
+            }
 
+        }
+        timer.setMaxTime(spawnInterval);
+        spawnEnemy();
+    }
+
+    private void damagePlayer(Player player)
+    {
+        if (hasEnemies())
+            player.takeDamage(1);
     }
 
     // Spawns an enemy with a random ID
@@ -120,21 +136,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
 
         System.out.println("Enemy spawned with ID: " + randomId + ". Total enemies: " + enemies.size());
 
-        switch (enemies.size())
-        {
-            case 1:
-                timer.setSpeedMultiplier(1.2f);
-                break;
-            case 2:
-                timer.setSpeedMultiplier(1.4f);
-                break;
-            case 3:
-                timer.setSpeedMultiplier(1.6f);
-                break;
-            default:
-                timer.setSpeedMultiplier(1f);
-                break;
-        }
+        onEnemyCountChanged.invoke(enemies.size());
     }
 
     private Vector2 getNewEnemyPosition()
@@ -170,11 +172,12 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     public void killEnemy(Enemy enemy)
     {
         enemies.remove(enemy);
+        onEnemyCountChanged.invoke(enemies.size());
         System.out.println("Enemy removed. Total enemies: " + enemies.size());
-        if (enemies.isEmpty() && timer.getCurrentTime() > 5)
+        if (enemies.isEmpty() && enemySpawnTimer.getTimeLeft() > 5)
         {
-            timer.skipTo(timer.getMaxTime() - 5); // no enemies, set timer to 5 seconds until a new one spawns to keep gameflow going
-            timer.setSpeedMultiplier(1f);
+            enemySpawnTimer.skipTo(enemySpawnTimer.getMaxTime() - 5); // no enemies, set timer to 5 seconds until a new one spawns to keep gameflow going
+            enemySpawnTimer.setSpeedMultiplier(1f);
         }
     }
 

@@ -1,5 +1,6 @@
 package BinaryBashers;
 
+import BinaryBashers.Enemies.Player;
 import BinaryBashers.UI.DialogBoxes.DialogBoxManager;
 import dev.WinterRose.SaxionEngine.*;
 import BinaryBashers.Enemies.BinaryEnemy;
@@ -73,31 +74,29 @@ public class App extends Application
             GameObject backgroundObject = new GameObject("background");
             backgroundObject.addComponent(spriteRenderer);
             scene.addObject(backgroundObject);
-            EnemySpawner enemySpawner = new EnemySpawner(BinaryEnemy.class);
+            EnemySpawner<?> enemySpawner = new EnemySpawner<>(BinaryEnemy.class);
             GameObject spawner = new GameObject("spawner");
+            Sprite timerSprite = new Sprite("resources/sprites/ui/timer/Timer1.png");
+            Timer enemySpawnTimer = new Timer(5, true, true, 1);
+            Timer playerDamageTimer = new Timer(10, true, true, 1);
+            Player player = new Player(3, enemySpawner);
+            GameObject playerObj = new GameObject("player");
+            playerObj.addComponent(player);
+            playerObj.addComponent(playerDamageTimer);
+
+
+            player.transform.setPosition(new Vector2(Painter.renderWidth - timerSprite.getwidth(), Painter.renderHeight - timerSprite.getHeight()));
             spawner.addComponent(enemySpawner);
-
+            spawner.addComponent(enemySpawnTimer);
             scene.addObject(spawner);
-
-            Sprite[] timerSprites = {
-                    new Sprite("resources/sprites/ui/timer/Timer1.png"),
-                    new Sprite("resources/sprites/ui/timer/Timer2.png"),
-                    new Sprite("resources/sprites/ui/timer/Timer3.png"),
-                    new Sprite("resources/sprites/ui/timer/Timer4.png")
-            };
-            AnimatedSpriteRenderer timerSprite = new AnimatedSpriteRenderer(timerSprites, 0.5f, true);
-            GameObject timerObject = new GameObject("TimerObject");
-            timerObject.addComponent(timerSprite);
-            timerObject.transform.setPosition(new Vector2(Painter.renderWidth - timerSprites[0].getwidth(), Painter.renderHeight - timerSprites[0].getHeight()));
-            scene.addObject(timerObject);
-
+            scene.addObject(playerObj);
             GameObject inputField = new GameObject("inputRenderer");
             InputRenderer inputRenderer = new InputRenderer(4);
             inputRenderer.onEnterKeyPressed.add(inputRenderer1 -> {
                 enemySpawner.checkAndKillEnemies(inputRenderer1.getInputAsString());
                 inputRenderer1.inputText.clear();
             });
-            inputRenderer.acceptedCharacters = new Character[] {'0', '1'};
+            inputRenderer.acceptedCharacters = new Character[]{'0', '1'};
             inputField.addComponent(inputRenderer);
             inputField.transform.setPosition(new Vector2(Painter.renderCenter).add(new Vector2(0, (float) Painter.renderHeight / 2)));
             scene.addObject(inputField);
