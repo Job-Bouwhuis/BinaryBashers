@@ -1,6 +1,10 @@
 package dev.WinterRose.SaxionEngine;
 
+import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
+import dev.WinterRose.SaxionEngine.ColorPallets.SpritePalletChanger;
+
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class Timer extends ActiveRenderer
@@ -11,6 +15,12 @@ public class Timer extends ActiveRenderer
     public Action<Timer> onTimeAction = new Action<>();
     private boolean isRunning;
     private boolean autoLoop;
+    Sprite[] timerSprites = {
+            new Sprite("resources/sprites/ui/timer/Timer1.png"),
+            new Sprite("resources/sprites/ui/timer/Timer2.png"),
+            new Sprite("resources/sprites/ui/timer/Timer3.png"),
+            new Sprite("resources/sprites/ui/timer/Timer4.png")
+    };
 
     @Override
     public void update()
@@ -92,9 +102,26 @@ public class Timer extends ActiveRenderer
         currentTime = Math.clamp(currentTime, 0f, maxTime);
     }
 
+    private Sprite selectTimerSprite()
+    {
+        float percent = currentTime / maxTime;
+        return timerSprites[(int)(percent*timerSprites.length)];
+    }
+
     @Override
     public void render(Painter painter)
     {
+        Sprite current = selectTimerSprite();
+        painter.drawSprite(current, transform, new Vector2(.5f, .5f), Color.white);
+    }
 
+    @Override
+    public void onColorPalleteChange(ColorPallet colorPallet)
+    {
+        super.onColorPalleteChange(colorPallet);
+        for (int i = 0; i < timerSprites.length; i++)
+        {
+            timerSprites[i] = SpritePalletChanger.changePallet(timerSprites[i], colorPallet);
+        }
     }
 }
