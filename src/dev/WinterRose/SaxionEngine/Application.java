@@ -30,12 +30,19 @@ public abstract class Application implements GameLoop
     private long lastFrameTime = System.nanoTime();
     private JFrame gameWindow;
 
+    private Point initialWindowSize;
+
     public Application(boolean fullscreen)
     {
         isFullscreen = fullscreen;
         instance = this;
     }
 
+    public void run(int width, int height)
+    {
+        initialWindowSize = new Point(width, height);
+        SaxionApp.startGameLoop(this, width, height, 1);
+    }
 
     /**
      * Use method createScene(String, Consumer) to add scenes. then loadScene(String) to load the first scene.
@@ -47,7 +54,7 @@ public abstract class Application implements GameLoop
     @Override
     public void init()
     {
-        subscribeToMouseMoveEventBecauseSaxionAppDevsWereTooLazyToMakeAGoodOne();
+        updateSaxionAppReferences(initialWindowSize);
         createScenes();
     }
 
@@ -70,13 +77,22 @@ public abstract class Application implements GameLoop
         activeScene.updateScene();
         activeScene.drawScene();
 
+        if(Input.getKey(Keys.F11))
+        {
+            isFullscreen = !isFullscreen;
+            Input.clear();
+            updateSaxionAppReferences(initialWindowSize);
+            activeScene.createNewPainter();
+        }
+
         Input.update();
         var bounds = gameWindow.getBounds();
         Input.windowPosition = new Vector2(bounds.x, bounds.y);
+        Input.windowSize = new Point(bounds.width, bounds.height);
     }
 
     /**
-     * This method is a hacky solution to the way the DialogBoxManager is currently implemented.
+     * This method is a hacky solution to the way the DialogBoxMan011ager is currently implemented.
      * In a next sprint this will be fixed
      */
     private void forceQuitDialog()
@@ -130,6 +146,7 @@ public abstract class Application implements GameLoop
     @Override
     public void keyboardEvent(KeyboardEvent e)
     {
+        System.out.println(e.getKeyCode());
         Input.keyboardEvent(e);
         activeScene.handleCallbacks(e);
     }
@@ -152,9 +169,9 @@ public abstract class Application implements GameLoop
         return isFullscreen;
     }
 
-    private void subscribeToMouseMoveEventBecauseSaxionAppDevsWereTooLazyToMakeAGoodOne()
+    private void updateSaxionAppReferences(Point windowSize)
     {
-        Panel canvas = createCustomFrame();
+        Panel canvas = createCustomFrame(windowSize);
 
         for (var mouseListener : canvas.getMouseListeners())
             canvas.removeMouseListener(mouseListener);
@@ -251,7 +268,7 @@ public abstract class Application implements GameLoop
 
     }
 
-    private Panel createCustomFrame()
+    private Panel createCustomFrame(Point windowSize)
     {
         try
         {
@@ -282,8 +299,8 @@ public abstract class Application implements GameLoop
             else
             {
                 frame.setUndecorated(false);
-                width = SaxionApp.getWidth();
-                height = SaxionApp.getHeight();
+                width = windowSize.x;
+                height = windowSize.y;
             }
 
 
@@ -298,7 +315,6 @@ public abstract class Application implements GameLoop
 
             if (!isFullscreen)
                 frame.setLocation((screenWidth / 2) - (frame.getWidth() / 2), (screenHeight / 2) - (frame.getHeight() / 2));
-
 
             Field canvasField = app.getDeclaredField("canvas");
             canvasField.setAccessible(true);

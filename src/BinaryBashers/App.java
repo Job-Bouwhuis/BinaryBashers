@@ -16,8 +16,7 @@ public class App extends Application
 
     public static void main(String[] args)
     {
-        SaxionApp.startGameLoop(new App(false), 1280, 720, 1);
-//        SaxionApp.startGameLoop(new App(true), 1920, 1080, 1);
+        new App(false).run(1280, 720);
     }
 
     @Override
@@ -92,19 +91,17 @@ public class App extends Application
             timerObject.transform.setPosition(new Vector2(Painter.renderWidth - timerSprites[0].getwidth(), Painter.renderHeight - timerSprites[0].getHeight()));
             scene.addObject(timerObject);
 
-
             GameObject inputField = new GameObject("inputRenderer");
             InputRenderer inputRenderer = new InputRenderer(4);
             inputRenderer.onEnterKeyPressed.add(inputRenderer1 -> {
                 enemySpawner.checkAndKillEnemies(inputRenderer1.getInputAsString());
                 inputRenderer1.inputText.clear();
             });
-            inputRenderer.acceptedCharacters = new Character[]{'0', '1'};
+            inputRenderer.acceptedCharacters = new Character[] {'0', '1'};
             inputField.addComponent(inputRenderer);
             inputField.transform.setPosition(new Vector2(Painter.renderCenter).add(new Vector2(0, (float) Painter.renderHeight / 2)));
             scene.addObject(inputField);
             scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/midnightAblaze/midnight-ablaze.png")));
-
         });
 
         loadScene("spawnerTest");
