@@ -1,6 +1,7 @@
 package dev.WinterRose.SaxionEngine.TextProviders;
 
 import dev.WinterRose.SaxionEngine.Sound;
+import dev.WinterRose.SaxionEngine.SoundPack;
 
 import java.util.ArrayList;
 
@@ -12,7 +13,7 @@ public class AnimatedTextProvider extends TextProvider
     private int currentCharacterIndex = 0;
 
     private boolean playSound = true;
-    private Sound sound;
+    private SoundPack sounds;
     private int soundEveryXCharacters = 2;
 
     /**
@@ -25,8 +26,8 @@ public class AnimatedTextProvider extends TextProvider
         this.text = text;
         calls = nextCharacterCalls = framesPerCharacter;
         forceSetText("");
-        sound = new Sound("resources/audio/8bit-KeyPress.wav");
-        sound.setVolume(.6f);
+        sounds = new SoundPack("resources/audio/letterTyping");
+        sounds.setAllVolume(.8f);
     }
 
     @Override
@@ -47,9 +48,8 @@ public class AnimatedTextProvider extends TextProvider
         if (currentCharacterIndex == text.length()) return; // no more characters to add.
 
         if (currentCharacterIndex % soundEveryXCharacters == 0)
-        {
-            sound.play();
-        }
+            sounds.playRandom();
+
         String textOnScreen = getText();
         forceSetText(textOnScreen + text.charAt(currentCharacterIndex));
 
