@@ -8,11 +8,23 @@ import java.util.Random;
 public class BinaryEnemy extends Enemy
 {
     private Integer binaryNum = 0;
-    private Integer decimalNum = 0;
-    public BinaryEnemy(Integer id, Vector2 enemyPos)
+
+    public BinaryEnemy(Integer id, Vector2 enemyPos, Integer difficulty)
     {
         super(id, enemyPos);
-        decimalNum = new Random().nextInt(16);
+        switch (difficulty) {
+            case 0:
+                decimalNum = new Random().nextInt(16);
+                break;
+            case 1:
+                decimalNum = new Random().nextInt(32);
+                break;
+            case 2:
+                decimalNum = new Random().nextInt(64);
+            case 3:
+                decimalNum = new Random().nextInt(32, 128);
+        }
+//        decimalNum = new Random().nextInt(16);
         text = Integer.toString(decimalNum);
         binaryNum = Util.decimalToBinary(decimalNum);
     }
@@ -28,5 +40,8 @@ public class BinaryEnemy extends Enemy
         int comparison = Integer.compare(binaryNum, in);
         return comparison == 0;
     }
-
+    @Override
+    public int getInputLength() {
+        return Util.calculateBitSize(decimalNum);
+    }
 }
