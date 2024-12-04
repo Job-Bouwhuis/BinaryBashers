@@ -14,8 +14,6 @@ public class Painter
 {
     public static final int renderWidth = 640;
     public static final int renderHeight = 360;
-    public static final int windowWidth = SaxionApp.getWidth();
-    public static final int windowHeight = SaxionApp.getHeight();
     public static final Rectangle2D.Float renderBounds = new Rectangle2D.Float(0, 0, renderWidth, renderHeight);
     public static final Vector2 renderCenter = new Vector2(renderWidth / 2, renderHeight / 2);
 

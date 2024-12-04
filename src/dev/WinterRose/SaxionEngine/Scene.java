@@ -106,5 +106,10 @@ public class Scene
     {
         return scenePallet;
     }
+
+    public void createNewPainter()
+    {
+        scenePainter = new Painter();
+    }
 }
 

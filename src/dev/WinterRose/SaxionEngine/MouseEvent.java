@@ -26,8 +26,8 @@ public class MouseEvent
     {
         final Vector2 JFrameOffsetCompensation = new Vector2(8, 30);
         location = location.subtract(JFrameOffsetCompensation); // workaround for slightly off location values from the JFrame side
-        int windowWidth = Painter.windowWidth;
-        int windowHeight = Painter.windowHeight;
+        int windowWidth = Input.getWindowSize().x;
+        int windowHeight = Input.getWindowSize().y;
         int renderWidth = Painter.renderWidth;
         int renderHeight = Painter.renderHeight;
 
