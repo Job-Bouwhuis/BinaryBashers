@@ -48,6 +48,18 @@ public enum Keys
     ESCAPE((char) 27),
     TAB('\t'),
     BACKSPACE((char) 8),
+    F1((char)112),
+    F2((char)113),
+    F3((char)114),
+    F4((char)115),
+    F5((char)116),
+    F6((char)117),
+    F7((char)118),
+    F8((char)119),
+    F9((char)120),
+    F10((char)121),
+    F11((char)122),
+    F12((char)123),
     DELETE((char) 127);
 
     private final char character;

@@ -2,6 +2,7 @@ package dev.WinterRose.SaxionEngine;
 
 import nl.saxion.app.interaction.KeyboardEvent;
 
+import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,6 +12,7 @@ public class Input
     private static final Set<Integer> keysPressed = new HashSet<>();
     private static final Set<Integer> keysReleased = new HashSet<>();
 
+    static Point windowSize = new Point();
     static Vector2 windowPosition = new Vector2();
 
     private static Vector2 mousePosition = new Vector2(0, 0);
@@ -80,14 +82,12 @@ public class Input
 
         if (event.isKeyPressed())
         {
-            if (!keysHeld.contains(keyCode))
-                keysPressed.add(keyCode);
+            if (!keysHeld.contains(keyCode)) keysPressed.add(keyCode);
             keysHeld.add(keyCode);
         }
         else
         {
-            if (keysHeld.contains(keyCode))
-                keysHeld.remove(keyCode);
+            if (keysHeld.contains(keyCode)) keysHeld.remove(keyCode);
             keysReleased.add(keyCode);
         }
     }
@@ -95,6 +95,11 @@ public class Input
     public static Vector2 getWindowPosition()
     {
         return windowPosition;
+    }
+
+    public static Point getWindowSize()
+    {
+        return windowSize;
     }
 
     public static Vector2 getMousePosition()
@@ -213,5 +218,15 @@ public class Input
             case Right -> mouseRightRelease;
             case None -> false;
         };
+    }
+
+    static void clear()
+    {
+        mouseLeftClick = mouseLeftHold = mouseLeftRelease = false;
+        mouseRightHold = mouseRightClick = mouseRightRelease = false;
+
+        keysHeld.clear();
+        keysPressed.clear();
+        keysReleased.clear();
     }
 }

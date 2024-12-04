@@ -3,11 +3,11 @@ package dev.WinterRose.SaxionEngine;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-public class Timer extends Behavior
+public class Timer extends ActiveRenderer
 {
     private float currentTime;
     private float maxTime;
-    private float speedMultiplier;
+    private float speedMultiplier = 1;
     public Action<Timer> onTimeAction = new Action<>();
     private boolean isRunning;
     private boolean autoLoop;
@@ -43,7 +43,7 @@ public class Timer extends Behavior
 
     public void setSpeedMultiplier(float amount)
     {
-        speedMultiplier += amount;
+        speedMultiplier = amount;
     }
 
     public float getSpeedMultiplier()
@@ -51,7 +51,7 @@ public class Timer extends Behavior
         return speedMultiplier;
     }
 
-    public void SetMaxTime(float time)
+    public void setMaxTime(float time)
     {
         maxTime = time;
     }
@@ -85,5 +85,16 @@ public class Timer extends Behavior
     {
         currentTime = 0;
         start();
+    }
+
+    public void skipTo(float time){
+        currentTime = time;
+        currentTime = Math.clamp(currentTime, 0f, maxTime);
+    }
+
+    @Override
+    public void render(Painter painter)
+    {
+
     }
 }

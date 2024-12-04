@@ -55,13 +55,16 @@ public abstract class TextProvider
 
     public FontType getFontType()
     {
-        return fontType;
+        if(words.isEmpty())
+            return FontType.Normal;
+
+        return words.get(0).fontType;
     }
 
     public void setFontType(FontType fontType)
     {
-        this.fontType = fontType;
-        buildWordsList();
+        for(Word wrd : words)
+            wrd.fontType = fontType;
     }
 
     protected void buildWordsList()
@@ -103,9 +106,10 @@ public abstract class TextProvider
 
     public void setTextColorAndFontType(String text, Color color, FontType fontType)
     {
-        setText(text);
-        setColor(color);
-        setFontType(fontType);
+        textValue = text;
+        defaultColor = color;
+        for(Word wrd : words)
+            wrd.fontType = fontType;
         buildWordsList();
     }
 
