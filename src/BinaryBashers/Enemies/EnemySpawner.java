@@ -40,8 +40,12 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     @Override
     public void awake()
     {
-        timer = new Timer(spawnTimer, true, true, 1);
+        if (owner.hasComponent(Timer.class))
+        {
+            timer = owner.getComponent(Timer.class);
+        }
         timer.onTimeAction.add(t -> timeElapsed(t));
+
         try
         {
             enemyConstructor = enemyType.getDeclaredConstructor(Integer.class, Vector2.class);
@@ -68,7 +72,6 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     @Override
     public void update()
     {
-        timer.update();
         System.out.println(timer.getSpeedMultiplier());
         for (int i = 0; i < enemies.size(); i++)
         {
@@ -120,21 +123,13 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
 
         System.out.println("Enemy spawned with ID: " + randomId + ". Total enemies: " + enemies.size());
 
-        switch (enemies.size())
+        timer.setSpeedMultiplier(switch (enemies.size())
         {
-            case 1:
-                timer.setSpeedMultiplier(1.2f);
-                break;
-            case 2:
-                timer.setSpeedMultiplier(1.4f);
-                break;
-            case 3:
-                timer.setSpeedMultiplier(1.6f);
-                break;
-            default:
-                timer.setSpeedMultiplier(1f);
-                break;
-        }
+            case 1 -> 1.2f;
+            case 2 -> 1.4f;
+            case 3 -> 1.6f;
+            default -> 1;
+        });
     }
 
     private Vector2 getNewEnemyPosition()
