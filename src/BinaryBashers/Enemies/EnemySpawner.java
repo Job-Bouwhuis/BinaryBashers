@@ -15,6 +15,8 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
 {
     private Class<T> enemyType;
     private Constructor<T> enemyConstructor;
+    private ScoreManager scoreManager = ScoreManager.getInstance();
+    public InputRenderer inputRenderer;
 
     private static EnemySpawner instance;
 
@@ -28,6 +30,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     private float spawnTimer;
     private Random random;
     private Timer timer;
+    private DifficultyGenerator difficultyGenerator = new DifficultyGenerator();
 
     public EnemySpawner(Class<T> enemyType)
     {
@@ -48,7 +51,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
 
         try
         {
-            enemyConstructor = enemyType.getDeclaredConstructor(Integer.class, Vector2.class);
+            enemyConstructor = enemyType.getDeclaredConstructor(Integer.class, Vector2.class, Integer.class);
         } catch (NoSuchMethodException e)
         {
             if (DialogBoxManager.getInstance() == null)
@@ -72,7 +75,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     @Override
     public void update()
     {
-        System.out.println(timer.getSpeedMultiplier());
+//        System.out.println(timer.getSpeedMultiplier());
         for (int i = 0; i < enemies.size(); i++)
         {
             var e = enemies.get(i);
@@ -108,7 +111,10 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         T newEnemy = null;
         try
         {
-            newEnemy = enemyConstructor.newInstance(randomId, enemyPos);
+            newEnemy = enemyConstructor.newInstance(randomId, enemyPos, difficultyGenerator.getDifficultyNumber(scoreManager.getCurrentScore()));
+            if (newEnemy.getInputLength() > inputRenderer.characterMax) {
+                inputRenderer.characterMax = newEnemy.getInputLength();
+            }
         } catch (InstantiationException
                  | InvocationTargetException
                  | IllegalAccessException e)
@@ -158,6 +164,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
             if (e.compairInput(input))
             {
                 e.kill();
+                scoreManager.addPoints(1);
             }
         }
     }

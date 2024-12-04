@@ -14,6 +14,7 @@ public abstract class Enemy
     protected String text;
     private boolean isDead;
     private SoundPack deathSounds;
+    public Integer decimalNum = 0;
 
     public Enemy(int spriteId, Vector2 enemyPosition)
     {
@@ -70,4 +71,6 @@ public abstract class Enemy
     {
         sprite.onColorPalleteChange(newPallet);
     }
+
+    public abstract int getInputLength();
 }

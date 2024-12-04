@@ -33,7 +33,7 @@ public class MouseEvent
                 (location.x * renderWidth) / windowWidth,
                 (location.y * renderHeight) / windowHeight).subtract(Input.getWindowPosition().divide(2));
 
-        System.out.println(Input.windowPosition.toString());
+//        System.out.println(Input.windowPosition.toString());
     }
 }
 
