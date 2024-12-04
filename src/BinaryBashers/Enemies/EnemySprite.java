@@ -1,4 +1,4 @@
-package BinaryBashers;
+package BinaryBashers.Enemies;
 
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;

@@ -1,4 +1,4 @@
-package BinaryBashers;
+package BinaryBashers.Testing;
 
 import dev.WinterRose.SaxionEngine.*;
 

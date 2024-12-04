@@ -1,6 +1,6 @@
 package BinaryBashers;
 
-import BinaryBashers.Enemies.Player;
+import BinaryBashers.Enemies.EnemySprite;
 import BinaryBashers.UI.DialogBoxes.DialogBoxManager;
 import dev.WinterRose.SaxionEngine.*;
 import BinaryBashers.Enemies.BinaryEnemy;
