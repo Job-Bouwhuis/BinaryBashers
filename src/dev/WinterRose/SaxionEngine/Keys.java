@@ -60,6 +60,7 @@ public enum Keys
     F10((char)121),
     F11((char)122),
     F12((char)123),
+    ALT((char)18),
     DELETE((char) 127);
 
     private final char character;

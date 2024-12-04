@@ -93,6 +93,9 @@ public class ConfirmationDialogBox extends DialogBox
     @Override
     public void update()
     {
+        if(finished)
+            return;
+        
         confirmButton.update();
         cancelButton.update();
     }
@@ -100,6 +103,9 @@ public class ConfirmationDialogBox extends DialogBox
     @Override
     public void render(Painter painter)
     {
+        if(finished)
+            return;
+
         confirmButton.render(painter);
         cancelButton.render(painter);
     }
