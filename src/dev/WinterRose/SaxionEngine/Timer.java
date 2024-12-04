@@ -21,6 +21,7 @@ public class Timer extends ActiveRenderer
             new Sprite("resources/sprites/ui/timer/Timer3.png"),
             new Sprite("resources/sprites/ui/timer/Timer4.png")
     };
+    private boolean paused;
 
     @Override
     public void update()
@@ -111,6 +112,8 @@ public class Timer extends ActiveRenderer
     @Override
     public void render(Painter painter)
     {
+        if(timerSprites.length == 0)
+            return;
         Sprite current = selectTimerSprite();
         painter.drawSprite(current, transform, new Vector2(.5f, .5f), Color.white);
     }
@@ -123,5 +126,20 @@ public class Timer extends ActiveRenderer
         {
             timerSprites[i] = SpritePalletChanger.changePallet(timerSprites[i], colorPallet);
         }
+    }
+
+    public boolean isRunning()
+    {
+        return isRunning;
+    }
+
+    public void stop()
+    {
+        isRunning = false;
+    }
+
+    public void setSprites(Sprite[] sprites)
+    {
+        timerSprites = sprites;
     }
 }

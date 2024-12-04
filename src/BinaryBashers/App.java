@@ -1,5 +1,6 @@
 package BinaryBashers;
 
+import BinaryBashers.Enemies.Player;
 import BinaryBashers.UI.DialogBoxes.DialogBoxManager;
 import dev.WinterRose.SaxionEngine.*;
 import BinaryBashers.Enemies.BinaryEnemy;
@@ -73,17 +74,22 @@ public class App extends Application
             GameObject backgroundObject = new GameObject("background");
             backgroundObject.addComponent(spriteRenderer);
             scene.addObject(backgroundObject);
-            EnemySpawner enemySpawner = new EnemySpawner(BinaryEnemy.class);
+            EnemySpawner<?> enemySpawner = new EnemySpawner<>(BinaryEnemy.class);
             GameObject spawner = new GameObject("spawner");
             Sprite timerSprite = new Sprite("resources/sprites/ui/timer/Timer1.png");
-            Timer timer = new Timer(5, true, true, 1);
+            Timer enemySpawnTimer = new Timer(5, true, true, 1);
+            Timer playerDamageTimer = new Timer(5, true, true, 1);
+            Player player = new Player(3, enemySpawner);
+            GameObject playerObj = new GameObject("player");
+            playerObj.addComponent(player);
+            playerObj.addComponent(playerDamageTimer);
 
-            spawner.transform.setPosition(new Vector2(Painter.renderWidth - timerSprite.getwidth(), Painter.renderHeight - timerSprite.getHeight()));
+
+            player.transform.setPosition(new Vector2(Painter.renderWidth - timerSprite.getwidth(), Painter.renderHeight - timerSprite.getHeight()));
             spawner.addComponent(enemySpawner);
-            spawner.addComponent(timer);
-
+            spawner.addComponent(enemySpawnTimer);
             scene.addObject(spawner);
-
+            scene.addObject(playerObj);
             GameObject inputField = new GameObject("inputRenderer");
             InputRenderer inputRenderer = new InputRenderer(4);
             inputRenderer.onEnterKeyPressed.add(inputRenderer1 -> {
