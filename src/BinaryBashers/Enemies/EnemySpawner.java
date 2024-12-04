@@ -27,6 +27,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     private float spawnInterval = 30f;
     private float spawnTimer;
     private Random random;
+    private Timer timer;
 
     public EnemySpawner(Class<T> enemyType)
     {
@@ -39,6 +40,8 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     @Override
     public void awake()
     {
+        timer = new Timer(spawnTimer, true, true, 1);
+        timer.onTimeAction.add(t -> timeElapsed(t));
         try
         {
             enemyConstructor = enemyType.getDeclaredConstructor(Integer.class, Vector2.class);
@@ -61,21 +64,27 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         }
     }
 
+    //4 sec is 1 frame per seconde. aantal sec delen door frame voor animatie
     @Override
     public void update()
     {
-        spawnTimer -= Time.deltaTime;
-        if (spawnTimer <= 0)
-        {
-            spawnEnemy();
-            spawnTimer = spawnInterval;
-        }
-
+        timer.update();
+        System.out.println(timer.getSpeedMultiplier());
         for (int i = 0; i < enemies.size(); i++)
         {
             var e = enemies.get(i);
             e.update();
         }
+    }
+
+    private void timeElapsed(Timer timer)
+    {
+        spawnEnemy();
+        if (enemies.size() > 0)
+        {
+            timer.setMaxTime(spawnInterval);
+        }
+
     }
 
     // Spawns an enemy with a random ID
@@ -106,10 +115,26 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         newEnemy.startAnimation();
         enemies.add(newEnemy);
         newEnemy.spawner = this;
-        if(owner.getScene().getScenePallet() != null)
+        if (owner.getScene().getScenePallet() != null)
             newEnemy.getSprite().onColorPalleteChange(owner.getScene().getScenePallet());
 
         System.out.println("Enemy spawned with ID: " + randomId + ". Total enemies: " + enemies.size());
+
+        switch (enemies.size())
+        {
+            case 1:
+                timer.setSpeedMultiplier(1.2f);
+                break;
+            case 2:
+                timer.setSpeedMultiplier(1.4f);
+                break;
+            case 3:
+                timer.setSpeedMultiplier(1.6f);
+                break;
+            default:
+                timer.setSpeedMultiplier(1f);
+                break;
+        }
     }
 
     private Vector2 getNewEnemyPosition()
@@ -146,8 +171,11 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     {
         enemies.remove(enemy);
         System.out.println("Enemy removed. Total enemies: " + enemies.size());
-        if(enemies.isEmpty() && spawnTimer > 5)
-            spawnTimer = 5; // no enemies, set timer to 5 seconds until a new one spawns to keep gameflow going
+        if (enemies.isEmpty() && timer.getCurrentTime() > 5)
+        {
+            timer.skipTo(timer.getMaxTime() - 5); // no enemies, set timer to 5 seconds until a new one spawns to keep gameflow going
+            timer.setSpeedMultiplier(1f);
+        }
     }
 
     public boolean hasEnemies()
