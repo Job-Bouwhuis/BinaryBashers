@@ -8,9 +8,7 @@ import nl.saxion.app.interaction.KeyboardEvent;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +17,7 @@ import java.util.function.Consumer;
 public abstract class Application implements GameLoop
 {
     private static Application instance;
+
     public static Application getInstance()
     {
         return instance;
@@ -77,7 +76,7 @@ public abstract class Application implements GameLoop
         activeScene.updateScene();
         activeScene.drawScene();
 
-        if(Input.getKey(Keys.F11))
+        if (Input.getKey(Keys.F11))
         {
             isFullscreen = !isFullscreen;
             Input.clear();
@@ -97,7 +96,7 @@ public abstract class Application implements GameLoop
      */
     private void forceQuitDialog()
     {
-        if(DialogBoxManager.getInstance() == null)
+        if (DialogBoxManager.getInstance() == null)
         {
             GameObject dialogManager = new GameObject("DialogBoxManager");
             dialogManager.transform.setPosition(Painter.renderCenter);
@@ -105,12 +104,10 @@ public abstract class Application implements GameLoop
             activeScene.addObject(dialogManager);
         }
 
-        if(Input.getKey(Keys.DELETE) && Input.getKeyDown(Keys.TAB))
+        if (Input.getKey(Keys.ALT) && Input.getKeyDown(Keys.F4))
         {
-            ConfirmationDialogBox box = new ConfirmationDialogBox("Warning!", "Are you sure you want to force quit the game?\n" +
-                    "Any unsaved progress will be lost!", cdb -> {
-                if(cdb.getResult())
-                    Application.getInstance().closeGame();
+            ConfirmationDialogBox box = new ConfirmationDialogBox("Warning!", "Are you sure you want to force quit the game?\n" + "Any unsaved progress will be lost!", cdb -> {
+                if (cdb.getResult()) Application.getInstance().closeGame();
             });
             box.getTitle().setColor(Color.red);
             DialogBoxManager.getInstance().enqueue(box);
@@ -119,7 +116,7 @@ public abstract class Application implements GameLoop
 
     public void closeGame()
     {
-         System.exit(0);
+        System.exit(0);
     }
 
     public void loadScene(String sceneName)
@@ -146,7 +143,6 @@ public abstract class Application implements GameLoop
     @Override
     public void keyboardEvent(KeyboardEvent e)
     {
-        System.out.println(e.getKeyCode());
         Input.keyboardEvent(e);
         activeScene.handleCallbacks(e);
     }
@@ -308,7 +304,7 @@ public abstract class Application implements GameLoop
             frame.addKeyListener((KeyListener) keyListener.get(null));
             frame.setFocusable(true);
             frame.setFocusTraversalKeysEnabled(false);
-            frame.setDefaultCloseOperation(3);
+            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             frame.getContentPane().setPreferredSize(new Dimension(width, height));
             frame.pack();
             frame.setResizable(false);
@@ -327,6 +323,19 @@ public abstract class Application implements GameLoop
             frame.setVisible(true);
 
             gameWindow = frame;
+
+            frame.addWindowListener(new WindowAdapter()
+            {
+                @Override
+                public void windowClosing(WindowEvent e)
+                {
+                    ConfirmationDialogBox box = new ConfirmationDialogBox("Warning!", "Are you sure you want to force quit the game?\n" + "Any unsaved progress will be lost!", cdb -> {
+                        if (cdb.getResult()) Application.getInstance().closeGame();
+                    });
+                    box.getTitle().setColor(Color.red);
+                    DialogBoxManager.getInstance().enqueue(box);
+                }
+            });
 
             return canvas;
         }
