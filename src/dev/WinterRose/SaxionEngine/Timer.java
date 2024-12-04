@@ -87,6 +87,11 @@ public class Timer extends ActiveRenderer
         return currentTime;
     }
 
+    public float getTimeLeft()
+    {
+        return maxTime - currentTime;
+    }
+
     public void start()
     {
         isRunning = true;
@@ -112,7 +117,7 @@ public class Timer extends ActiveRenderer
     @Override
     public void render(Painter painter)
     {
-        if(timerSprites.length == 0)
+        if(timerSprites.length == 0 || !isRunning)
             return;
         Sprite current = selectTimerSprite();
         painter.drawSprite(current, transform, new Vector2(.5f, .5f), Color.white);

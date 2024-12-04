@@ -93,8 +93,8 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
             }
 
         }
-        spawnEnemy();
         timer.setMaxTime(spawnInterval);
+        spawnEnemy();
     }
 
     private void damagePlayer(Player player)
@@ -174,7 +174,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         enemies.remove(enemy);
         onEnemyCountChanged.invoke(enemies.size());
         System.out.println("Enemy removed. Total enemies: " + enemies.size());
-        if (enemies.isEmpty() && enemySpawnTimer.getCurrentTime() > 5)
+        if (enemies.isEmpty() && enemySpawnTimer.getTimeLeft() > 5)
         {
             enemySpawnTimer.skipTo(enemySpawnTimer.getMaxTime() - 5); // no enemies, set timer to 5 seconds until a new one spawns to keep gameflow going
             enemySpawnTimer.setSpeedMultiplier(1f);
