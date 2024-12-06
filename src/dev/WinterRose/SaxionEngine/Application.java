@@ -304,7 +304,7 @@ public abstract class Application implements GameLoop
             frame.addKeyListener((KeyListener) keyListener.get(null));
             frame.setFocusable(true);
             frame.setFocusTraversalKeysEnabled(false);
-            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.getContentPane().setPreferredSize(new Dimension(width, height));
             frame.pack();
             frame.setResizable(false);

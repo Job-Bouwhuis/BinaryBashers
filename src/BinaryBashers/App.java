@@ -1,12 +1,16 @@
 package BinaryBashers;
 
+import BinaryBashers.Demoing.DemoSwitcher;
 import BinaryBashers.Enemies.EnemySprite;
+import BinaryBashers.Testing.MoveTest;
 import BinaryBashers.UI.DialogBoxes.DialogBoxManager;
 import dev.WinterRose.SaxionEngine.*;
 import BinaryBashers.Enemies.BinaryEnemy;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 import BinaryBashers.Enemies.EnemySpawner;
 import nl.saxion.app.SaxionApp;
+
+import java.awt.*;
 
 public class App extends Application
 {
@@ -84,7 +88,6 @@ public class App extends Application
             playerObj.addComponent(player);
             playerObj.addComponent(playerDamageTimer);
 
-
             player.transform.setPosition(new Vector2(Painter.renderWidth - timerSprite.getwidth(), Painter.renderHeight - timerSprite.getHeight()));
             spawner.addComponent(enemySpawner);
             spawner.addComponent(enemySpawnTimer);
@@ -101,7 +104,31 @@ public class App extends Application
             inputField.addComponent(inputRenderer);
             inputField.transform.setPosition(new Vector2(Painter.renderCenter).add(new Vector2(0, (float) Painter.renderHeight / 2)));
             scene.addObject(inputField);
+
+            GameObject demoObj = new GameObject("DemoObj");
+            demoObj.addComponent(new DemoSwitcher());
+            scene.addObject(demoObj);
+
             scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/midnightAblaze/midnight-ablaze.png")));
+        });
+
+        createScene("childParentDemo", scene -> {
+            GameObject parent = new GameObject("Parent");
+            parent.addComponent(new SpriteRenderer(Sprite.square(18, 18, Color.cyan)));
+            parent.addComponent(new MoveTest());
+            scene.addObject(parent);
+
+            GameObject child = new GameObject("child");
+            child.addComponent(new SpriteRenderer(Sprite.square(10, 10, Color.red)));
+            child.transform.translateY(-15);
+            child.transform.setParent(parent.transform);
+            scene.addObject(child);
+
+            GameObject demoObj = new GameObject("DemoObj");
+            demoObj.addComponent(new DemoSwitcher());
+            scene.addObject(demoObj);
+
+            parent.transform.setPosition(Painter.renderCenter);
         });
 
         loadScene("spawnerTest");

@@ -52,7 +52,7 @@ public class Player extends Renderer
         damageTimer.onTimeAction.add(t -> takeDamage(1));
         damageTimer.stop();
 
-        Sprite heartImage = HealthImage.heartImage;
+        Sprite heartImage = new Sprite("resources/sprites/ui/Heart.png");;
         final float heartScale = .8f;
         Vector2 effectiveScale = new Vector2(heartImage.getwidth() * heartScale, heartImage.getHeight() * heartScale);
         heart1 = new HealthImage(
@@ -66,6 +66,13 @@ public class Player extends Renderer
         heart3 = new HealthImage(
                 new Vector2(heart2.getPosition().x + effectiveScale.x + 3, heart2.getPosition().y),
                 new Vector2(heartScale));
+
+        if(heart1 != null)
+            heart1.heartImage = SpritePalletChanger.changePallet(heart1.heartImage, owner.getScene().getScenePallet());
+        if(heart2 != null)
+            heart2.heartImage = SpritePalletChanger.changePallet(heart2.heartImage, owner.getScene().getScenePallet());
+        if(heart3 != null)
+            heart3.heartImage = SpritePalletChanger.changePallet(heart3.heartImage, owner.getScene().getScenePallet());
     }
 
     public int getHealth()
@@ -128,6 +135,11 @@ public class Player extends Renderer
     @Override
     public void onColorPalleteChange(ColorPallet colorPallet)
     {
-        HealthImage.heartImage = SpritePalletChanger.changePallet(HealthImage.heartImage, colorPallet);
+        if(heart1 != null)
+            heart1.heartImage = SpritePalletChanger.changePallet(heart1.heartImage, colorPallet);
+        if(heart2 != null)
+            heart2.heartImage = SpritePalletChanger.changePallet(heart2.heartImage, colorPallet);
+        if(heart3 != null)
+            heart3.heartImage = SpritePalletChanger.changePallet(heart3.heartImage, colorPallet);
     }
 }

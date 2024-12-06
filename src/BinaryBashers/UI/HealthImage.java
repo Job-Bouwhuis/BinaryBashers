@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class HealthImage
 {
-    public static Sprite heartImage = new Sprite("resources/sprites/ui/Heart.png");
+    public Sprite heartImage;
     private final Vector2 position;
     private final Transform transform;
     private final Vector2 origin = new Vector2(.5f, .5f);
@@ -31,6 +31,7 @@ public class HealthImage
         transform = new Transform();
         transform.setPosition(position);
         transform.setScale(scale);
+        heartImage = new Sprite("resources/sprites/ui/Heart.png");
     }
 
     public void paint(Painter painter)
