@@ -32,11 +32,45 @@ public class ColorPallet
         this(new Sprite("resources/colorPallets/main.png"), to);
     }
 
+    public ColorPallet(ArrayList<Color> fromColors, ArrayList<Color> toColors)
+    {
+        if(fromColors.size() != toColors.size())
+            throw new RuntimeException("Color arrays not same size");
+
+        for (int i = 0; i < fromColors.size(); i++)
+        {
+            Color from = fromColors.get(i);
+            Color to = toColors.get(i);
+
+            colorMappings.add(new ColorMap(from, to));
+        }
+    }
+
     public void add(Color from, Color to)
     {
         if (get(from) != null)
             throw new IllegalStateException("Color (%s) already added to the map. can not add 2 of the same colors to map to different colors");
         colorMappings.add(new ColorMap(from, to));
+    }
+
+    public ArrayList<Color> getFromColors()
+    {
+        ArrayList<Color> result = new ArrayList<>();
+        for (var c : colorMappings)
+        {
+            result.add(c.from);
+        }
+        return result;
+    }
+
+    public ArrayList<Color> getToColors()
+    {
+        ArrayList<Color> result = new ArrayList<>();
+        for (var c : colorMappings)
+        {
+            result.add(c.to);
+        }
+        return result;
     }
 
     /**

@@ -192,7 +192,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     @Override
     public void render(Painter painter)
     {
-        painter.drawScaledText("Time until next enemy: " + Math.round(spawnTimer) + "s", new Vector2(2), new Vector2(0.9f), new Vector2(), Color.white, FontType.Bold);
+        //painter.drawScaledText("Time until next enemy: " + Math.round(spawnTimer) + "s", new Vector2(2), new Vector2(0.9f), new Vector2(), Color.white, FontType.Bold);
 
         for (int i = 0; i < enemies.size(); i++)
         {

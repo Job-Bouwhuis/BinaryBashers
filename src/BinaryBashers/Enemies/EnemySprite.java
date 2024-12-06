@@ -129,7 +129,10 @@ public class EnemySprite extends ActiveRenderer {
                 colorPallet.getColorFromIndex(2)
         };
 
-        enemySprite = SpritePalletChanger.changePallet(enemySprite, colorPallet);
+        if(timerActive)
+            enemySprite = SpritePalletChanger.changePallet(enemySprite, colorPallet);
+        else
+            activeSprite = SpritePalletChanger.changePallet(activeSprite, colorPallet);
         deathAnimationSprite.onColorPalleteChange(colorPallet);
     };
 

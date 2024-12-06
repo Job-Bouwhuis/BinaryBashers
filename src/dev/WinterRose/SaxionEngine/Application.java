@@ -344,6 +344,11 @@ public abstract class Application implements GameLoop
             throw new RuntimeException(e);
         }
     }
+
+    public Scene getActiveScene()
+    {
+        return activeScene;
+    }
 }
 
 
