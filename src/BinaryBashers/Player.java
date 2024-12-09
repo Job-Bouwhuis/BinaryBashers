@@ -112,6 +112,7 @@ public class Player extends Renderer
 
     public void death()
     {
+        damageTimer.stop();
         DialogBoxManager.getInstance().enqueue(new ConfirmationDialogBox("DEDE", "You died. Score: TO BE DETERMINED", confirmationDialogBox -> {
             Application.getInstance().closeGame();
         }));
