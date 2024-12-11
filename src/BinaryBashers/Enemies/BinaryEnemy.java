@@ -41,7 +41,17 @@ public class BinaryEnemy extends Enemy
     }
     @Override
     public int getInputLength() {
-        return Util.calculateBitSize(decimalNum);
+
+        int count = 0;
+        int temp = Util.binaryToDecimal(binaryNum);
+        while(temp != 0)
+        {
+// removing the last digit of the number n
+            temp = temp / 10;
+// increasing count by 1
+            count = count + 1;
+        }
+        return count;
     }
 }
 
