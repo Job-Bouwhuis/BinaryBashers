@@ -10,14 +10,12 @@ public class Scene
     public final String name;
     private final ArrayList<GameObject> objects = new ArrayList<>();
     private final ArrayList<GameObject> objectsToDestroy = new ArrayList<>();
-    private Painter scenePainter;
     private ColorPallet scenePallet = null;
     boolean initialized;
 
     public Scene(String name)
     {
         this.name = name;
-        scenePainter = new Painter();
     }
 
     public void wakeScene()
@@ -48,17 +46,15 @@ public class Scene
         objectsToDestroy.clear();
     }
 
-    public void drawScene()
+    public void drawScene(Painter appPainter)
     {
-        scenePainter.begin();
         for (int i = 0, objectsSize = objects.size(); i < objectsSize; i++)
         {
             var obj = objects.get(i);
-            if (obj.isActive) obj.drawObject(scenePainter);
+            if (obj.isActive) obj.drawObject(appPainter);
         }
 
         nl.saxion.app.SaxionApp.clear();
-        scenePainter.end();
     }
 
     public void addObject(GameObject obj)
@@ -105,11 +101,6 @@ public class Scene
     public ColorPallet getScenePallet()
     {
         return scenePallet;
-    }
-
-    public void createNewPainter()
-    {
-        scenePainter = new Painter();
     }
 }
 

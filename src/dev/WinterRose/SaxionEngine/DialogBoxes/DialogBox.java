@@ -1,8 +1,7 @@
-package BinaryBashers.UI.DialogBoxes;
+package dev.WinterRose.SaxionEngine.DialogBoxes;
 
 import dev.WinterRose.SaxionEngine.Painter;
 import dev.WinterRose.SaxionEngine.TextProviders.AnimatedTextProvider;
-import dev.WinterRose.SaxionEngine.TextProviders.DefaultTextProvider;
 import dev.WinterRose.SaxionEngine.TextProviders.TextProvider;
 
 public abstract class DialogBox
@@ -10,18 +9,22 @@ public abstract class DialogBox
     protected TextProvider title;
     protected TextProvider text;
 
+    protected final boolean haltGame;
+
     protected boolean finished = false;
 
-    protected DialogBox(String title, String text)
+    protected DialogBox(String title, String text, boolean haltGame)
     {
         this.title = new AnimatedTextProvider(title, 1);
         this.text = new AnimatedTextProvider(text, 1);
+        this.haltGame = haltGame;
     }
 
-    protected DialogBox(TextProvider title, TextProvider text)
+    protected DialogBox(TextProvider title, TextProvider text, boolean haltGame)
     {
         this.title = title;
         this.text = text;
+        this.haltGame = haltGame;
     }
 
     public TextProvider getTitle()
@@ -34,7 +37,10 @@ public abstract class DialogBox
         return text;
     }
 
-    protected DialogBox() { }
+    protected DialogBox()
+    {
+        haltGame = false;
+    }
 
     public abstract void init(DialogBoxManager manager);
     public abstract void update();

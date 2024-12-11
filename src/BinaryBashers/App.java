@@ -1,7 +1,7 @@
 package BinaryBashers;
 
 import BinaryBashers.Enemies.EnemySprite;
-import BinaryBashers.UI.DialogBoxes.DialogBoxManager;
+import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
 import dev.WinterRose.SaxionEngine.*;
 import BinaryBashers.Enemies.BinaryEnemy;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
@@ -26,8 +26,6 @@ public class App extends Application
         createScene("testScene", scene -> {
             GameObject button = new GameObject("button");
             button.transform.setPosition(Painter.renderCenter);
-            var boxManager = new DialogBoxManager();
-            button.addComponent(boxManager);
 
             scene.addObject(button);
         });
@@ -83,7 +81,6 @@ public class App extends Application
             GameObject playerObj = new GameObject("player");
             playerObj.addComponent(player);
             playerObj.addComponent(playerDamageTimer);
-
 
             player.transform.setPosition(new Vector2(Painter.renderWidth - timerSprite.getwidth(), Painter.renderHeight - timerSprite.getHeight()));
             spawner.addComponent(enemySpawner);

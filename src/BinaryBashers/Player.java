@@ -1,8 +1,8 @@
 package BinaryBashers;
 
 import BinaryBashers.Enemies.EnemySpawner;
-import BinaryBashers.UI.DialogBoxes.ConfirmationDialogBox;
-import BinaryBashers.UI.DialogBoxes.DialogBoxManager;
+import dev.WinterRose.SaxionEngine.DialogBoxes.ConfirmationDialogBox;
+import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
 import BinaryBashers.UI.HealthImage;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
