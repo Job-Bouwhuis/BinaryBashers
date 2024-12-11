@@ -1,4 +1,4 @@
-package BinaryBashers.UI.DialogBoxes;
+package dev.WinterRose.SaxionEngine.DialogBoxes;
 
 import dev.WinterRose.SaxionEngine.Button;
 import dev.WinterRose.SaxionEngine.*;
@@ -46,7 +46,7 @@ public class ConfirmationDialogBox extends DialogBox
         Transform confirmTransform = new Transform();
         Transform cancelTransform = new Transform();
 
-        Rectangle.Float bounds = manager.owner.getComponent(BoxRenderer.class).getTargetBounds();
+        Rectangle.Float bounds = manager.getBoxTargetBounds();
 
         float margin = 3f;
         int buttonWidth = 60;

@@ -74,7 +74,7 @@ public class BoxRenderer extends ActiveRenderer
     {
         awake(); // keep updating the bounds so that they match
 
-        float time = Time.deltaTime;
+        float time = Time.getDeltaTime();
 
         animationProgress = (bounds.width / targetBounds.width + bounds.height / targetBounds.height) / 2;
 

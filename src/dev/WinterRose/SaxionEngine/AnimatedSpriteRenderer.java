@@ -55,7 +55,7 @@ public class AnimatedSpriteRenderer extends ActiveRenderer
             return;
         if (animationProgressTimer < animationDuration) {
             hidden = false;
-            animationProgressTimer += 1 * Time.deltaTime;
+            animationProgressTimer += 1 * Time.getDeltaTime();
         }
         else if (isLooping) {
             animationProgressTimer = 0;

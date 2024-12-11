@@ -1,8 +1,8 @@
 package BinaryBashers.Enemies;
 
-import BinaryBashers.UI.DialogBoxes.DialogBoxManager;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
+import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
 
 import java.awt.*;
 import java.lang.reflect.Constructor;
@@ -50,22 +50,12 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         try
         {
             enemyConstructor = enemyType.getDeclaredConstructor(Integer.class, Vector2.class, Integer.class);
-        } catch (NoSuchMethodException e)
+        }
+        catch (NoSuchMethodException e)
         {
-            if (DialogBoxManager.getInstance() == null)
-            {
-                GameObject dialogManager = new GameObject("DialogBoxManager");
-                var dial = new DialogBoxManager();
-                dialogManager.addComponent(dial);
-                dialogManager.transform.setPosition(Painter.renderCenter);
-                owner.getScene().addObject(dialogManager);
-                dial.awake();
-            }
-
             System.out.println("Valid Enemy constructor not found!");
             DialogBoxManager.getInstance()
-                    .enqueue("WARNING", "Enemy constructor not valid!\n" + enemyType.getName(),
-                            40);
+                    .enqueue("WARNING", "Enemy constructor not valid!\n" + enemyType.getName(), 40);
         }
     }
 
@@ -73,7 +63,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     @Override
     public void update()
     {
-//        System.out.println(timer.getSpeedMultiplier());
+        //        System.out.println(timer.getSpeedMultiplier());
         for (int i = 0; i < enemies.size(); i++)
         {
             var e = enemies.get(i);
@@ -94,8 +84,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     // Spawns an enemy with a random ID
     public void spawnEnemy()
     {
-        if (enemyConstructor == null)
-            return;
+        if (enemyConstructor == null) return;
 
         if (enemies.size() >= 3)
         {
@@ -110,12 +99,12 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         try
         {
             newEnemy = enemyConstructor.newInstance(randomId, enemyPos, difficultyGenerator.getDifficultyNumber(scoreManager.getCurrentScore()));
-            if (newEnemy.getInputLength() > inputRenderer.characterMax) {
+            if (newEnemy.getInputLength() > inputRenderer.characterMax)
+            {
                 inputRenderer.characterMax = newEnemy.getInputLength();
             }
-        } catch (InstantiationException
-                 | InvocationTargetException
-                 | IllegalAccessException e)
+        }
+        catch (InstantiationException | InvocationTargetException | IllegalAccessException e)
         {
             throw new RuntimeException(e);
         }
@@ -136,13 +125,16 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         if (size == 1)
         {
             return Painter.renderCenter.subtract(new Vector2(Painter.renderCenter.x / 2, 0));
-        } else if (size == 0)
+        }
+        else if (size == 0)
         {
             return Painter.renderCenter;
-        } else if (size == 2)
+        }
+        else if (size == 2)
         {
             return Painter.renderCenter.add(new Vector2(Painter.renderCenter.x / 2, 0));
-        } else
+        }
+        else
         {
             throw new IllegalStateException("Invalid Position");
         }

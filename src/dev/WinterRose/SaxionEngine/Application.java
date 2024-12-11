@@ -1,7 +1,7 @@
 package dev.WinterRose.SaxionEngine;
 
-import BinaryBashers.UI.DialogBoxes.ConfirmationDialogBox;
-import BinaryBashers.UI.DialogBoxes.DialogBoxManager;
+import dev.WinterRose.SaxionEngine.DialogBoxes.ConfirmationDialogBox;
+import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
 import nl.saxion.app.SaxionApp;
 import nl.saxion.app.interaction.GameLoop;
 import nl.saxion.app.interaction.KeyboardEvent;
@@ -28,13 +28,14 @@ public abstract class Application implements GameLoop
     private boolean isFullscreen = true;
     private long lastFrameTime = System.nanoTime();
     private JFrame gameWindow;
-
+    private Painter appPainter;
     private Point initialWindowSize;
 
     public Application(boolean fullscreen)
     {
         isFullscreen = fullscreen;
         instance = this;
+        appPainter = new Painter();
     }
 
     public void run(int width, int height)
@@ -72,16 +73,28 @@ public abstract class Application implements GameLoop
         forceQuitDialog();
 
         Time.update(deltaTime);
+        var dialogManager = DialogBoxManager.getInstance();
 
-        activeScene.updateScene();
-        activeScene.drawScene();
+        boolean hasActiveDialogBox = dialogManager.update();
+
+        if(!hasActiveDialogBox)
+        {
+            activeScene.updateScene();
+        }
+
+        appPainter.begin();
+
+        activeScene.drawScene(appPainter);
+        dialogManager.render(appPainter);
+
+        appPainter.end();
 
         if (Input.getKey(Keys.F11))
         {
             isFullscreen = !isFullscreen;
             Input.clear();
             updateSaxionAppReferences(initialWindowSize);
-            activeScene.createNewPainter();
+            appPainter = new Painter();
         }
 
         Input.update();
@@ -96,14 +109,6 @@ public abstract class Application implements GameLoop
      */
     private void forceQuitDialog()
     {
-        if (DialogBoxManager.getInstance() == null)
-        {
-            GameObject dialogManager = new GameObject("DialogBoxManager");
-            dialogManager.transform.setPosition(Painter.renderCenter);
-            dialogManager.addComponent(new DialogBoxManager());
-            activeScene.addObject(dialogManager);
-        }
-
         if (Input.getKey(Keys.ALT) && Input.getKeyDown(Keys.F4))
         {
             ConfirmationDialogBox box = new ConfirmationDialogBox("Warning!", "Are you sure you want to force quit the game?\n" + "Any unsaved progress will be lost!", cdb -> {

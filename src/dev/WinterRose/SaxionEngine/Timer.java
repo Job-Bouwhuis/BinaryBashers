@@ -28,7 +28,7 @@ public class Timer extends ActiveRenderer
     {
         if (isRunning)
         {
-            currentTime += Time.deltaTime * speedMultiplier;
+            currentTime += Time.getDeltaTime() * speedMultiplier;
             if (currentTime >= maxTime)
             {
                 onTimeAction.invoke(this);

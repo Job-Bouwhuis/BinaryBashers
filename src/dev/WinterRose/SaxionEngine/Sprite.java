@@ -1,8 +1,5 @@
 package dev.WinterRose.SaxionEngine;
 
-import BinaryBashers.UI.DialogBoxes.ConfirmationDialogBox;
-import BinaryBashers.UI.DialogBoxes.DialogBoxManager;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;

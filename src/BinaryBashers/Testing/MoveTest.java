@@ -15,7 +15,7 @@ public class MoveTest extends Behavior
         if (Input.getKey(Keys.D)) moveVec.x = 1;
         if (Input.getKey(Keys.S)) moveVec.y = 1;
 
-        moveVec.normalize().multiply(Time.deltaTime).multiply(speed);
+        moveVec.normalize().multiply(Time.getDeltaTime()).multiply(speed);
         transform.translateXY(moveVec);
 
         if (Input.getKey(Keys.E))
@@ -24,8 +24,8 @@ public class MoveTest extends Behavior
             transform.addRotation(-1);
 
         if (Input.getKey(Keys.T))
-            transform.getScale().add(new Vector2(1, 1).multiply(Time.deltaTime));
+            transform.getScale().add(new Vector2(1, 1).multiply(Time.getDeltaTime()));
         if (Input.getKey(Keys.G))
-            transform.getScale().subtract(new Vector2(1, 1).multiply(Time.deltaTime));
+            transform.getScale().subtract(new Vector2(1, 1).multiply(Time.getDeltaTime()));
     }
 }
