@@ -37,7 +37,7 @@ public class DecimalToBinary
             scene.addObject(spawner);
             scene.addObject(playerObj);
             GameObject inputField = new GameObject("inputRenderer");
-            InputRenderer inputRenderer = new InputRenderer(4);
+            InputRenderer inputRenderer = new InputRenderer(0);
             enemySpawner.inputRenderer = inputRenderer;
             inputRenderer.onEnterKeyPressed.add(inputRenderer1 -> {
                 enemySpawner.checkAndKillEnemies(inputRenderer1.getInputAsString());
