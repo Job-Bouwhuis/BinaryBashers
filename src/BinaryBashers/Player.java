@@ -77,6 +77,7 @@ public class Player extends Renderer
     {
         if (spawner.hasEnemies())
         {
+            spawner.startRandomEnemyDamageAnimation();
             health -= damage;
             System.out.println("Player takes " + damage + " damage. Remaining health: " + health);
             if (health <= 0)
