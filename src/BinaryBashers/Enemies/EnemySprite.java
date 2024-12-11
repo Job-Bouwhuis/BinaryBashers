@@ -104,7 +104,7 @@ public class EnemySprite extends ActiveRenderer {
 
     @Override
     public void update() {
-        if (timerActive && (timer + 1 * Time.deltaTime >= timerDuration)) {
+        if (timerActive && (timer + 1 * Time.getDeltaTime() >= timerDuration)) {
             finishEnteringAnimation();
         }
         else if (timerActive) {
@@ -116,7 +116,7 @@ public class EnemySprite extends ActiveRenderer {
     }
 
     private void updateIntroAnimation() {
-        timer += 1 * Time.deltaTime;
+        timer += 1 * Time.getDeltaTime();
         int animationProgress = (int) Math.floor(timer / timeBetweenSprites);
         setIntoProgress(animationProgress);
     }

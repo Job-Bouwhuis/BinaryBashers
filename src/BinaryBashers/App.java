@@ -24,6 +24,7 @@ public class App extends Application
     @Override
     public void createScenes()
     {
+        Time.setTimeScale(0.5f);
         createScene("testScene", scene -> {
             GameObject button = new GameObject("button");
             button.transform.setPosition(Painter.renderCenter);

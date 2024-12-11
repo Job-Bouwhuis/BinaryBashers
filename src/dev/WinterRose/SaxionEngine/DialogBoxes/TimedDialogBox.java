@@ -34,7 +34,7 @@ public class TimedDialogBox extends DialogBox
     @Override
     public void update()
     {
-        time += Time.deltaTime;
+        time += Time.getDeltaTime();
         if(time >= timeout)
             finish();
     }
