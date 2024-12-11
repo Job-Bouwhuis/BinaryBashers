@@ -73,21 +73,31 @@ public class Util
         return Integer.toHexString(decimal).toUpperCase();
     }
 
-    public static int hexToDecimal(String hex)
+    public static Integer hexToDecimal(String hex)
     {
-//1A3
         int decimal = 0;
         int length = hex.length();
         int base = 1;
 
-        for (int i = length; i >= 0 ; i--)
+        for (int i = length - 1 ; i >= 0 ; i--)
         {
             if(hex.charAt(i) >= '0' && hex.charAt(i) <= '9'){
                 decimal += (hex.charAt(i) - 48) * base;
                 base = base * 16;
             }
-            else if(hex.charAt(i) >= 'A' && hex.charAt(i) <= 'F'){}
+            else if(hex.charAt(i) >= 'A' && hex.charAt(i) <= 'F'){
+                decimal += (hex.charAt(i) - 55) * base;
+                base = base * 16;
+            }
         }
         return decimal;
     }
+
+    public static String decimalToOctal(int decimal){
+        return Integer.toOctalString(decimal);
+    }
+
+    public static Integer octalToDecimal(int octal){
+        return Integer.parseInt(String.valueOf(octal), 8);
+}
 }

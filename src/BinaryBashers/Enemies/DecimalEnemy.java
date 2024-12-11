@@ -5,14 +5,13 @@ import BinaryBashers.Utils.Util;
 
 import java.util.Random;
 
-public class BinaryEnemy extends Enemy
+public class DecimalEnemy extends Enemy
 {
-    private Integer binaryNum = 0;
-
-    public BinaryEnemy(Integer id, Vector2 enemyPos, Integer difficulty)
+    public DecimalEnemy(Integer id, Vector2 enemyPos, Integer difficulty)
     {
         super(id, enemyPos);
-        switch (difficulty) {
+        switch (difficulty)
+        {
             case 0:
                 decimalNum = new Random().nextInt(16);
                 break;
@@ -25,23 +24,24 @@ public class BinaryEnemy extends Enemy
                 decimalNum = new Random().nextInt(32, 128);
         }
 //        decimalNum = new Random().nextInt(16);
-        binaryNum = Util.decimalToBinary(decimalNum);
-        text = Integer.toString(binaryNum);
+        text = Integer.toString(decimalNum);
     }
 
     @Override
     public boolean compairInput(String input)
     {
-        if(input.equals(""))
+        if (input.equals(""))
             return false;
 
         int in = Integer.parseInt(input);
+        return Util.binaryToDecimal(in) == decimalNum;
 
-        return Util.binaryToDecimal(binaryNum) == in;
     }
+
     @Override
-    public int getInputLength() {
+    public int getInputLength()
+    {
         return Util.calculateBitSize(decimalNum);
     }
-}
 
+}
