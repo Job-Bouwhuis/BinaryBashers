@@ -53,8 +53,6 @@ public class Scene
             var obj = objects.get(i);
             if (obj.isActive) obj.drawObject(appPainter);
         }
-
-        nl.saxion.app.SaxionApp.clear();
     }
 
     public void addObject(GameObject obj)

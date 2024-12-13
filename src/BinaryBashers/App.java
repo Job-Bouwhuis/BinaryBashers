@@ -1,11 +1,8 @@
 package BinaryBashers;
 
 import BinaryBashers.Enemies.EnemySprite;
-import BinaryBashers.Utils.Util;
 import dev.WinterRose.SaxionEngine.*;
-import BinaryBashers.Enemies.BinaryEnemy;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
-import BinaryBashers.Enemies.EnemySpawner;
 import dev.WinterRose.SaxionEngine.Levels.BinaryToDecimal;
 import nl.saxion.app.SaxionApp;
 
@@ -24,7 +21,6 @@ public class App extends Application
     @Override
     public void createScenes()
     {
-        Time.setTimeScale(0.5f);
         createScene("testScene", scene -> {
             GameObject button = new GameObject("button");
             button.transform.setPosition(Painter.renderCenter);
