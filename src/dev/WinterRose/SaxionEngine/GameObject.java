@@ -3,8 +3,8 @@ package dev.WinterRose.SaxionEngine;
 import dev.WinterRose.SaxionEngine.Callbacks.IKeystrokeCallback;
 import dev.WinterRose.SaxionEngine.Callbacks.IMouseCallback;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
-import nl.saxion.app.interaction.KeyboardEvent;
 
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class GameObject
@@ -126,7 +126,7 @@ public class GameObject
         return scene;
     }
 
-    void handleKeystrokeCallbacks(KeyboardEvent eventArgs)
+    void handleKeystrokeCallbacks(KeyEvent eventArgs)
     {
         for (int i = 0; i < keystrokeCallbacks.size(); i++)
         {

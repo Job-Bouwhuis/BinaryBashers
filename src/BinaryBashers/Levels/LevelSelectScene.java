@@ -1,9 +1,7 @@
 package BinaryBashers.Levels;
 
 import BinaryBashers.BackToMainMenuComponent;
-import BinaryBashers.Testing.ShowMousePosOnScreen;
 import dev.WinterRose.SaxionEngine.*;
-import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
 import dev.WinterRose.SaxionEngine.TextProviders.DefaultTextProvider;
 
@@ -37,7 +35,7 @@ public class LevelSelectScene
             l1button.text = new DefaultTextProvider("");
             level1.addComponent(l1button);
             l1button.onClick.add(button -> {
-                Application.getInstance().loadScene("DecimalLevel");
+                app.loadScene("DecimalLevel");
             });
 
             var level2 = scene.createObject("level2Button");

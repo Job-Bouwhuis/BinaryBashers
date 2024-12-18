@@ -2,9 +2,9 @@ package dev.WinterRose.SaxionEngine;
 
 import dev.WinterRose.SaxionEngine.TextProviders.DefaultTextProvider;
 import dev.WinterRose.SaxionEngine.TextProviders.TextProvider;
-import nl.saxion.app.SaxionApp;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
@@ -26,7 +26,12 @@ public class Painter
 
     private TintedSpriteCache tintedSpriteCache = new TintedSpriteCache();
 
-    /*internal*/ Painter() {}
+    private JFrame window;
+
+    /*internal*/ Painter(JFrame window)
+    {
+        this.window = window;
+    }
 
     /**
      * This is a rather expensive call relatively speaking. Do not call repeatedly in the Update loop.
@@ -54,26 +59,26 @@ public class Painter
         return new Vector2(width, height);
     }
 
-    /**
-     * Workaround to still be able to make an instance of the SaxionApp Image class, since this is a SaxionApp.Drawiable kind. which
-     * SaxionApp needs to draw things to its magical window.
-     * Due to our rescaling feature where the game is rendered at a lower resolution, and then upscaled we need this specific constructor to get this working
-     */
-    private static nl.saxion.app.canvas.drawable.Image createSaxionImage(BufferedImage image, int x, int y, int width, int height)
-    {
-        try
-        {
-            Constructor<nl.saxion.app.canvas.drawable.Image> constructor = nl.saxion.app.canvas.drawable.Image.class.getDeclaredConstructor(BufferedImage.class, int.class, int.class, int.class, int.class);
-
-            if (!constructor.canAccess(null)) constructor.setAccessible(true);
-
-            return constructor.newInstance(image, x, y, width, height);
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException("Failed to create an Image instance", e);
-        }
-    }
+//    /**
+//     * Workaround to still be able to make an instance of the SaxionApp Image class, since this is a SaxionApp.Drawiable kind. which
+//     * SaxionApp needs to draw things to its magical window.
+//     * Due to our rescaling feature where the game is rendered at a lower resolution, and then upscaled we need this specific constructor to get this working
+//     */
+//    private static nl.saxion.app.canvas.drawable.Image createSaxionImage(BufferedImage image, int x, int y, int width, int height)
+//    {
+//        try
+//        {
+//            Constructor<nl.saxion.app.canvas.drawable.Image> constructor = nl.saxion.app.canvas.drawable.Image.class.getDeclaredConstructor(BufferedImage.class, int.class, int.class, int.class, int.class);
+//
+//            if (!constructor.canAccess(null)) constructor.setAccessible(true);
+//
+//            return constructor.newInstance(image, x, y, width, height);
+//        }
+//        catch (Exception e)
+//        {
+//            throw new RuntimeException("Failed to create an Image instance", e);
+//        }
+//    }
 
     private static DrawableCharacter[] getDrawableCharactersFromString(String text, Color color)
     {
@@ -135,11 +140,6 @@ public class Painter
         // outside
         drawRectangle(rect, borderColor);
     }
-
-    //    public void drawText(TextProvider text, Transform transform, Vector2 origin)
-    //    {
-    //        drawTextInternal(text.getCharacters(), text.getText(), transform, origin, text.getFontType());
-    //    }
 
     public void drawText(String text, Transform transform, Vector2 origin, Color color, FontType fontType)
     {
@@ -371,8 +371,8 @@ public class Painter
     {
         ensureStarted();
 
-        int windowWidth = SaxionApp.getWidth();
-        int windowHeight = SaxionApp.getHeight();
+        int windowWidth = window.getSize().width;
+        int windowHeight = window.getSize().height;
 
         int targetWidth = windowWidth;
         int targetHeight = (int) (windowWidth / 16.0 * 9);
@@ -390,13 +390,18 @@ public class Painter
         scaledGraphics.drawImage(renderCanvas, 0, 0, targetWidth, targetHeight, null);
         scaledGraphics.dispose();
 
-        var saxionImage = createSaxionImage(scaledCanvas, 0, 0, targetWidth, targetHeight);
-        nl.saxion.app.SaxionApp.clear();
-        SaxionApp.add(saxionImage);
+        ImagePanel imagePanel = new ImagePanel(scaledCanvas);
 
-        if (Input.getKey(Keys.F12))
+        SwingUtilities.invokeLater(() -> {
+            window.getContentPane().removeAll(); // Clear existing content
+            window.setLayout(new BorderLayout()); // Ensure layout supports resizing
+            window.getContentPane().add(imagePanel, BorderLayout.CENTER);
+            window.revalidate(); // Refresh layout
+            window.repaint(); // Trigger repaint
+        });
+
+        if (Input.getKeyDown(Keys.F12))
         {
-            // Generate the file name with timestamp
             String timestamp = java.time.LocalDateTime.now()
                     .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss_SSS"));
             File outputFile = new File("output_" + timestamp + ".png");
@@ -429,4 +434,6 @@ public class Painter
     {
         return measureString(text.getText());
     }
+
+
 }

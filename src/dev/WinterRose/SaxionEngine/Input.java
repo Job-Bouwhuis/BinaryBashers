@@ -1,8 +1,7 @@
 package dev.WinterRose.SaxionEngine;
 
-import nl.saxion.app.interaction.KeyboardEvent;
-
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -76,11 +75,11 @@ public class Input
         }
     }
 
-    static void keyboardEvent(KeyboardEvent event)
+    static void keyboardEvent(KeyEvent event, boolean pressed)
     {
         int keyCode = event.getKeyCode();
 
-        if (event.isKeyPressed())
+        if (pressed)
         {
             if (!keysHeld.contains(keyCode)) keysPressed.add(keyCode);
             keysHeld.add(keyCode);

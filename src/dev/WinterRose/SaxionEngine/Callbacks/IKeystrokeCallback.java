@@ -1,8 +1,8 @@
 package dev.WinterRose.SaxionEngine.Callbacks;
 
-import nl.saxion.app.interaction.KeyboardEvent;
+import java.awt.event.KeyEvent;
 
 public interface IKeystrokeCallback extends ICallback
 {
-    void keyPress(KeyboardEvent key);
+    void keyPress(KeyEvent key);
 }

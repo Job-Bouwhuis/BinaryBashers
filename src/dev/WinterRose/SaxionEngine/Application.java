@@ -2,23 +2,21 @@ package dev.WinterRose.SaxionEngine;
 
 import dev.WinterRose.SaxionEngine.DialogBoxes.ConfirmationDialogBox;
 import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
-import nl.saxion.app.SaxionApp;
-import nl.saxion.app.interaction.GameLoop;
-import nl.saxion.app.interaction.KeyboardEvent;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class Application implements GameLoop
+public abstract class Application
 {
     private static Application instance;
+    private boolean gameRunning;
+    public Action<Application> onAppClosing = new Action();
 
-    public static Application getInstance()
+    public static Application current()
     {
         return instance;
     }
@@ -27,9 +25,11 @@ public abstract class Application implements GameLoop
     Scene activeScene;
     private boolean isFullscreen = true;
     private long lastFrameTime = System.nanoTime();
-    private JFrame gameWindow;
+    private JFrame applicationWindow;
+    private Panel contentPanel;
     private Painter appPainter;
     private Point initialWindowSize;
+    private Integer fps = 0;
 
     private Sprite screenCover;
     public Application(boolean fullscreen)
@@ -39,40 +39,89 @@ public abstract class Application implements GameLoop
         screenCover = Sprite.square(Painter.renderWidth, Painter.renderHeight, Color.black);
     }
 
-    public void run(int width, int height)
+    public void run(int width, int height, int targetFramerate)
     {
+        gameRunning = true;
         initialWindowSize = new Point(width, height);
-        SaxionApp.startGameLoop(this, width, height, 1);
+
+        prepareApplicationWindow(initialWindowSize);
+        appPainter = new Painter(applicationWindow);
+        createScenes();
+        createPrefabs();
+
+        long frameDuration = 1_000_000_000L / targetFramerate;
+        long previousTime = System.nanoTime();
+        long accumulatedTime = 0;
+
+        int frames = 0;
+        long secondTimer = System.nanoTime();
+
+        while (gameRunning)
+        {
+            long currentTime = System.nanoTime();
+            long elapsedTime = currentTime - previousTime;
+            previousTime = currentTime;
+
+            accumulatedTime += elapsedTime;
+
+            if (accumulatedTime >= frameDuration)
+            {
+                loop();
+                frames++;
+                accumulatedTime -= frameDuration;
+            }
+
+            if (System.nanoTime() - secondTimer >= 1_000_000_000L) {
+                fps = frames;
+                frames = 0;
+                secondTimer += 1_000_000_000L;
+            }
+
+            try
+            {
+                long sleepTime = (frameDuration - (System.nanoTime() - previousTime)) / 1_000_000;
+                if (sleepTime > 0)
+                    Thread.sleep(sleepTime);
+            }
+            catch (InterruptedException e)
+            {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        applicationWindow.setVisible(false);
+
+        onAppClosing.invoke(this);
+
+        applicationWindow.dispose();
     }
 
-    /**
-     * Use method createScene(String, Consumer) to add scenes. then loadScene(String) to load the first scene.
-     */
-    public abstract void createScenes();
-
-    public abstract void createPrefabs();
-
-    @Override
-    public void init()
+    public Integer getFPS()
     {
-        updateSaxionAppReferences(initialWindowSize);
-        appPainter = new Painter();
-        createScenes();
+        return fps;
     }
 
     public void createScene(String name, Consumer<Scene> sceneConfigurer)
     {
         scenes.put(name, sceneConfigurer);
     }
+    /**
+     * Use method createScene(String, Consumer) to add scenes. then loadScene(String) to load the first scene.
+     */
+    public abstract void createScenes();
 
-    @Override
-    public void loop()
+    /**
+     * Used to create prefabs of game objects that can be spawned in. eg item drops, enemies, tiles, etc.
+     */
+    public abstract void createPrefabs();
+
+    private void loop()
     {
+        forceQuitDialog();
+
         long currentTime = System.nanoTime();
         float deltaTime = (currentTime - lastFrameTime) / 1_000_000_000.0f; // Convert nanoseconds to seconds
         lastFrameTime = currentTime;
-
-        forceQuitDialog();
 
         Time.update(deltaTime);
         var dialogManager = DialogBoxManager.getInstance();
@@ -89,18 +138,27 @@ public abstract class Application implements GameLoop
         activeScene.drawScene(appPainter);
         dialogManager.render(appPainter);
 
+        // DEBUG STUFF
+        appPainter.drawText(Input.getMousePosition().toString(), new Vector2(), new Vector2(), Color.white);
+        appPainter.drawText(fps.toString(), new Vector2(), new Vector2(), Color.white);
+
+        if (Input.getMouseUp(MouseButton.Left))
+            appPainter.drawText("true", new Vector2(0, 25), new Vector2(), Color.white);
+        else
+            appPainter.drawText("false", new Vector2(0, 25), new Vector2(), Color.white);
+        // END DEBUG
         appPainter.end();
 
         if (Input.getKey(Keys.F11))
         {
             isFullscreen = !isFullscreen;
             Input.clear();
-            updateSaxionAppReferences(initialWindowSize);
-            appPainter = new Painter();
+            prepareApplicationWindow(initialWindowSize);
+            appPainter = new Painter(applicationWindow);
         }
 
         Input.update();
-        var bounds = gameWindow.getBounds();
+        var bounds = applicationWindow.getBounds();
         Input.windowPosition = new Vector2(bounds.x, bounds.y);
         Input.windowSize = new Point(bounds.width, bounds.height);
     }
@@ -114,7 +172,7 @@ public abstract class Application implements GameLoop
         if (Input.getKey(Keys.ALT) && Input.getKeyDown(Keys.F4))
         {
             ConfirmationDialogBox box = new ConfirmationDialogBox("Warning!", "Are you sure you want to force quit the game?\n" + "Any unsaved progress will be lost!", cdb -> {
-                if (cdb.getResult()) Application.getInstance().closeGame();
+                if (cdb.getResult()) Application.current().closeGame();
             });
             box.getTitle().setColor(Color.red);
             DialogBoxManager.getInstance().enqueue(box);
@@ -123,32 +181,33 @@ public abstract class Application implements GameLoop
 
     public void closeGame()
     {
-        System.exit(0);
+        gameRunning = false;
     }
 
     public void loadScene(String sceneName)
     {
-//        Transform screenCoverPosition = new Transform();
-//        screenCoverPosition.setPosition(new Vector2(0, -Painter.renderHeight));
-//        while(true)
-//        {
-//            appPainter.begin();
-//            if(activeScene != null)
-//                activeScene.drawScene(appPainter);
-//            appPainter.drawSprite(screenCover, screenCoverPosition, new Vector2(), Color.white);
-//            screenCoverPosition.translateY(5);
-//            appPainter.end();
-//
-//            if(screenCoverPosition.getPosition().y > 0)
-//            {
-//                screenCoverPosition.setPosition(new Vector2());
-//                break;
-//            }
-//        }
+        Transform screenCoverPosition = new Transform();
+        screenCoverPosition.setPosition(new Vector2(0, -Painter.renderHeight));
+        while(true)
+        {
+            appPainter.begin();
+            if(activeScene != null)
+                activeScene.drawScene(appPainter);
+            screenCoverPosition.translateY(200 * Time.getUnscaledDeltaTime());
+            appPainter.end();
 
-//        appPainter.begin();
-//        appPainter.drawSprite(screenCover, screenCoverPosition, new Vector2(), Color.white);
-//        appPainter.end();
+            long currentTime = System.nanoTime();
+            float deltaTime = (currentTime - lastFrameTime) / 1_000_000_000.0f; // Convert nanoseconds to seconds
+            lastFrameTime = currentTime;
+
+            Time.update(deltaTime);
+
+            if(screenCoverPosition.getPosition().y > 0)
+            {
+                screenCoverPosition.setPosition(new Vector2());
+                break;
+            }
+        }
 
         Consumer<Scene> sceneConfigurer = scenes.get(sceneName);
         if (sceneConfigurer == null) throw new RuntimeException("No scene with name: " + sceneName);
@@ -168,40 +227,27 @@ public abstract class Application implements GameLoop
         activeScene = scene;
         activeScene.wakeScene();
 
-//        appPainter.begin();
-//
-//        while(true)
-//        {
-//            if(!appPainter.hasStarted())
-//                appPainter.begin();
-//            if(activeScene != null)
-//                activeScene.drawScene(appPainter);
-//            appPainter.drawSprite(screenCover, screenCoverPosition, new Vector2(), Color.white);
-//            screenCoverPosition.translateY(5);
-//            appPainter.end();
-//
-//            if(screenCoverPosition.getPosition().y > Painter.renderHeight)
-//            {
-//                screenCoverPosition.setPosition(new Vector2(0, Painter.renderHeight));
-//                break;
-//            }
-//        }
-//
-//        System.out.println("test");
-    }
+        while(true)
+        {
+            appPainter.begin();
+            if(activeScene != null)
+                activeScene.drawScene(appPainter);
+            screenCoverPosition.translateY(200 * Time.getUnscaledDeltaTime());
+            appPainter.drawSprite(screenCover, screenCoverPosition, new Vector2(), Color.white);
+            appPainter.end();
 
-    @Override
-    public void keyboardEvent(KeyboardEvent e)
-    {
-        Input.keyboardEvent(e);
-        activeScene.handleCallbacks(e);
-    }
+            long currentTime = System.nanoTime();
+            float deltaTime = (currentTime - lastFrameTime) / 1_000_000_000.0f; // Convert nanoseconds to seconds
+            lastFrameTime = currentTime;
 
-    @Override
-    public void mouseEvent(nl.saxion.app.interaction.MouseEvent e)
-    {
-        // really SaxionApp devs... you can do better with the MouseEvent you guys have...
-        // i just made my own cause yours is so incredibly limiting :/
+            Time.update(deltaTime);
+
+            if(screenCoverPosition.getPosition().y > Painter.renderHeight)
+            {
+                screenCoverPosition.setPosition(new Vector2(0, Painter.renderHeight));
+                break;
+            }
+        }
     }
 
     private void mouseEvent(MouseEvent event)
@@ -215,22 +261,24 @@ public abstract class Application implements GameLoop
         return isFullscreen;
     }
 
-    private void updateSaxionAppReferences(Point windowSize)
+    private void prepareApplicationWindow(Point windowSize)
     {
-        Panel canvas = createCustomFrame(windowSize);
+        JFrame canvas = createCustomFrame(windowSize);
 
+        // Reset any previous listeners to avoid duplication
         for (var mouseListener : canvas.getMouseListeners())
             canvas.removeMouseListener(mouseListener);
         for (var mouseMotion : canvas.getMouseMotionListeners())
             canvas.removeMouseMotionListener(mouseMotion);
 
+        // Set a proper layout manager
+        canvas.setLayout(new BorderLayout());
+
+        // Add mouse listener
         canvas.addMouseListener(new MouseListener()
         {
             @Override
-            public void mouseClicked(java.awt.event.MouseEvent e)
-            {
-
-            }
+            public void mouseClicked(java.awt.event.MouseEvent e) {}
 
             @Override
             public void mousePressed(java.awt.event.MouseEvent e)
@@ -260,7 +308,7 @@ public abstract class Application implements GameLoop
                     default -> MouseButton.None;
                 };
                 var event = new MouseEvent(button, new Vector2(e.getXOnScreen(), e.getYOnScreen()), e.getClickCount() == 2);
-                event.released = false;
+                event.released = true;
                 mouseEvent(event);
             }
 
@@ -279,9 +327,9 @@ public abstract class Application implements GameLoop
                 event.mouseExitedGameWindow = true;
                 mouseEvent(event);
             }
-
         });
 
+        // Add mouse motion listener
         canvas.addMouseMotionListener(new MouseMotionListener()
         {
             @Override
@@ -311,70 +359,65 @@ public abstract class Application implements GameLoop
                 mouseEvent(event);
             }
         });
-
     }
 
-    private Panel createCustomFrame(Point windowSize)
+
+    private JFrame createCustomFrame(Point windowSize)
     {
         try
         {
-            Class<SaxionApp> app = SaxionApp.class;
-
-            Field frameField = app.getDeclaredField("frame");
-            frameField.setAccessible(true);
-            ((JFrame) frameField.get(null)).setVisible(false);
-
-            JFrame frame = new JFrame();
-            Field keyListener = app.getDeclaredField("keyListener");
-            keyListener.setAccessible(true);
+            applicationWindow = new JFrame();
 
             GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
             Rectangle screenBounds = gd.getDefaultConfiguration().getBounds();
             int screenWidth = screenBounds.width;
             int screenHeight = screenBounds.height;
 
-            int width = 0;
-            int height = 0;
+            int width;
+            int height;
             if (isFullscreen)
             {
-                frame.setUndecorated(true);
-                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                applicationWindow.setUndecorated(true);
+                applicationWindow.setExtendedState(JFrame.MAXIMIZED_BOTH);
                 width = screenWidth;
                 height = screenHeight;
             }
             else
             {
-                frame.setUndecorated(false);
+                applicationWindow.setUndecorated(false);
                 width = windowSize.x;
                 height = windowSize.y;
             }
 
+            applicationWindow.setLayout(null);
+            applicationWindow.addKeyListener(new KeyListener() {
+                public void keyTyped(KeyEvent e) {
+                    if(activeScene != null)
+                        activeScene.handleCallbacks(e);
+                }
 
-            frame.setLayout(null);
-            frame.addKeyListener((KeyListener) keyListener.get(null));
-            frame.setFocusable(true);
-            frame.setFocusTraversalKeysEnabled(false);
-            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-            frame.getContentPane().setPreferredSize(new Dimension(width, height));
-            frame.pack();
-            frame.setResizable(false);
+                public void keyPressed(KeyEvent e) {
+                    Input.keyboardEvent(e, true);
+                }
+
+                public void keyReleased(KeyEvent e) {
+                    Input.keyboardEvent(e, false);
+                }
+            });
+
+            applicationWindow.setFocusable(true);
+            applicationWindow.setFocusTraversalKeysEnabled(false);
+            applicationWindow.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            applicationWindow.getContentPane().setPreferredSize(new Dimension(width, height));
+            applicationWindow.pack();
+            applicationWindow.setResizable(false);
 
             if (!isFullscreen)
-                frame.setLocation((screenWidth / 2) - (frame.getWidth() / 2), (screenHeight / 2) - (frame.getHeight() / 2));
+                applicationWindow.setLocation((screenWidth / 2) - (applicationWindow.getWidth() / 2), (screenHeight / 2) - (applicationWindow.getHeight() / 2));
 
-            Field canvasField = app.getDeclaredField("canvas");
-            canvasField.setAccessible(true);
-            Panel canvas = (Panel) canvasField.get(null);
-            frame.setContentPane(canvas);
+            applicationWindow.setVisible(true);
 
-            frameField.set(null, frame);
-
-            Thread.sleep(100);
-            frame.setVisible(true);
-
-            gameWindow = frame;
-
-            frame.addWindowListener(new WindowAdapter()
+            applicationWindow.addWindowListener(new WindowAdapter()
             {
                 @Override
                 public void windowClosing(WindowEvent e)
@@ -389,14 +432,14 @@ public abstract class Application implements GameLoop
                     }
 
                     ConfirmationDialogBox box = new ConfirmationDialogBox("Warning!", "Are you sure you want to force quit the game?\n" + "Any unsaved progress will be lost!", cdb -> {
-                        if (cdb.getResult()) Application.getInstance().closeGame();
+                        if (cdb.getResult()) Application.current().closeGame();
                     });
                     box.getTitle().setColor(Color.red);
                     DialogBoxManager.getInstance().enqueue(box);
                 }
             });
 
-            return canvas;
+            return applicationWindow;
         }
         catch (Exception e)
         {
@@ -407,6 +450,11 @@ public abstract class Application implements GameLoop
     public Scene getActiveScene()
     {
         return activeScene;
+    }
+
+    public JFrame getWindow()
+    {
+        return applicationWindow;
     }
 }
 
