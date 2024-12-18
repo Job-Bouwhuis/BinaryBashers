@@ -32,13 +32,15 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     private Random random;
     private Timer timer;
     private DifficultyGenerator difficultyGenerator = new DifficultyGenerator();
+    private Boolean fromDecimal;
 
-    public EnemySpawner(Class<T> enemyType)
+    public EnemySpawner(Class<T> enemyType, Boolean fromDecimal)
     {
         this.enemyType = enemyType;
         this.enemies = new ArrayList<>();
         this.random = new Random();
         spawnTimer = 5;
+        this.fromDecimal = fromDecimal;
     }
 
     @Override
@@ -49,7 +51,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         timer.setSprites(new Sprite[0]);
         try
         {
-            enemyConstructor = enemyType.getDeclaredConstructor(Integer.class, Vector2.class, Integer.class);
+            enemyConstructor = enemyType.getDeclaredConstructor(Integer.class, Vector2.class, Integer.class, Boolean.class);
         }
         catch (NoSuchMethodException e)
         {
@@ -98,7 +100,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         T newEnemy = null;
         try
         {
-            newEnemy = enemyConstructor.newInstance(randomId, enemyPos, difficultyGenerator.getDifficultyNumber(scoreManager.getCurrentScore()));
+            newEnemy = enemyConstructor.newInstance(randomId, enemyPos, difficultyGenerator.getDifficultyNumber(scoreManager.getCurrentScore()), fromDecimal);
             if (newEnemy.getInputLength() > inputRenderer.characterMax)
             {
                 inputRenderer.characterMax = newEnemy.getInputLength();
