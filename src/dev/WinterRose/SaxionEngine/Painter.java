@@ -80,6 +80,11 @@ public class Painter
         return characters;
     }
 
+    public boolean hasStarted()
+    {
+        return isStarted;
+    }
+
     /**
      * Begins a new frame. and make Painter ready to draw this new frame
      */
@@ -383,6 +388,7 @@ public class Painter
         scaledGraphics.dispose();
 
         var saxionImage = createSaxionImage(scaledCanvas, 0, 0, targetWidth, targetHeight);
+        nl.saxion.app.SaxionApp.clear();
         SaxionApp.add(saxionImage);
 
         graphics.dispose();

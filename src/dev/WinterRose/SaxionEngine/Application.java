@@ -31,11 +31,16 @@ public abstract class Application implements GameLoop
     private Painter appPainter;
     private Point initialWindowSize;
 
+    private Sprite screenCover;
+    private Transform screenCoverPosition;
+
     public Application(boolean fullscreen)
     {
         isFullscreen = fullscreen;
         instance = this;
         appPainter = new Painter();
+        screenCover = Sprite.square(Painter.renderWidth, Painter.renderHeight, Color.black);
+        screenCoverPosition = new Transform();
     }
 
     public void run(int width, int height)
@@ -126,6 +131,23 @@ public abstract class Application implements GameLoop
 
     public void loadScene(String sceneName)
     {
+        screenCoverPosition.setPosition(new Vector2(0, -Painter.renderHeight));
+        while(true)
+        {
+            appPainter.begin();
+            if(activeScene != null)
+                activeScene.drawScene(appPainter);
+            appPainter.drawSprite(screenCover, screenCoverPosition, new Vector2(), Color.white);
+            screenCoverPosition.translateY(2);
+            appPainter.end();
+
+            if(screenCoverPosition.getPosition().y > 0)
+            {
+                screenCoverPosition.setPosition(new Vector2());
+                break;
+            }
+        }
+
         Consumer<Scene> sceneConfigurer = scenes.get(sceneName);
         if (sceneConfigurer == null) throw new RuntimeException("No scene with name: " + sceneName);
 
@@ -143,6 +165,26 @@ public abstract class Application implements GameLoop
 
         activeScene = scene;
         activeScene.wakeScene();
+
+        appPainter.begin();
+        activeScene.drawScene(appPainter);
+
+        while(true)
+        {
+            if(!appPainter.hasStarted())
+                appPainter.begin();
+            if(activeScene != null)
+                activeScene.drawScene(appPainter);
+            appPainter.drawSprite(screenCover, screenCoverPosition, new Vector2(), Color.white);
+            screenCoverPosition.translateY(5);
+            appPainter.end();
+
+            if(screenCoverPosition.getPosition().y > Painter.renderHeight)
+            {
+                screenCoverPosition.setPosition(new Vector2(0, Painter.renderHeight));
+                break;
+            }
+        }
     }
 
     @Override

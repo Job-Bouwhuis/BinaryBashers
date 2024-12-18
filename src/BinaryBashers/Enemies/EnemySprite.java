@@ -15,10 +15,19 @@ public class EnemySprite extends ActiveRenderer {
 
     private final String BASE_SPRITE_DIR = "resources/sprites/enemies/";
 
-    private final float timerDuration = 4;
-    public boolean timerActive;
-    private float timer;
+    private final float introTimerDuration = 4;
+    public boolean isIntroTimerActive;
+    private float introTimer;
     private float timeBetweenSprites;
+
+    private boolean isAttackAnimationActive;
+    private float attackAnimationTimer;
+    private final float attackAnimationDuration = 0.15f;
+    // Amount of pixels the attack animation moves in the Y axis
+    private final float attackAnimationYOffset = 40;
+    private Vector2 attackAnimationStartPosition;
+    private Vector2 attackAnimationDestination;
+
 
     public boolean hidden = true;
     private boolean useDyingAnimation;
@@ -69,16 +78,16 @@ public class EnemySprite extends ActiveRenderer {
     public void startEnteringAnimation() {
         hidden = false;
         useDyingAnimation = false;
-        timer = 0;
-        timerActive = true;
-        timeBetweenSprites = timerDuration / introColors.length;
+        introTimer = 0;
+        isIntroTimerActive = true;
+        timeBetweenSprites = introTimerDuration / introColors.length;
         setIntoProgress(0);
         activeSprite = solidEnemySprite;
 
     }
 
     private void finishEnteringAnimation() {
-        timerActive = false;
+        isIntroTimerActive = false;
         solidColorTint = Color.white;
         activeSprite = enemySprite;
     }
@@ -104,20 +113,23 @@ public class EnemySprite extends ActiveRenderer {
 
     @Override
     public void update() {
-        if (timerActive && (timer + 1 * Time.getDeltaTime() >= timerDuration)) {
+        if (isIntroTimerActive && (introTimer + 1 * Time.getDeltaTime() >= introTimerDuration)) {
             finishEnteringAnimation();
         }
-        else if (timerActive) {
+        else if (isIntroTimerActive) {
             updateIntroAnimation();
         }
         if (useDyingAnimation) {
             deathAnimationSprite.update();
         }
+        if (isAttackAnimationActive) {
+            updateAttackAnimation();
+        }
     }
 
     private void updateIntroAnimation() {
-        timer += 1 * Time.getDeltaTime();
-        int animationProgress = (int) Math.floor(timer / timeBetweenSprites);
+        introTimer += 1 * Time.getDeltaTime();
+        int animationProgress = (int) Math.floor(introTimer / timeBetweenSprites);
         setIntoProgress(animationProgress);
     }
 
@@ -133,9 +145,30 @@ public class EnemySprite extends ActiveRenderer {
         deathAnimationSprite.onColorPalleteChange(colorPallet);
     };
 
-    public Sprite getSolid()
-    {
+    public Sprite getSolid() {
         return solidEnemySprite;
     }
 
+    public void startAttackAnimation() {
+        System.out.println("test1");
+        attackAnimationStartPosition = transform.getPosition();
+        attackAnimationDestination = attackAnimationStartPosition.add(new Vector2(0,attackAnimationYOffset));
+        isAttackAnimationActive = true;
+        attackAnimationTimer = 0;
+    }
+
+    private void updateAttackAnimation() {
+        attackAnimationTimer += Time.getDeltaTime();
+        float animationProgress = attackAnimationTimer / (attackAnimationDuration / 2);
+        if (animationProgress < 1) {
+            transform.setPosition(attackAnimationStartPosition.lerp(attackAnimationDestination, animationProgress));
+        }
+        else {
+            transform.setPosition(attackAnimationDestination.lerp(attackAnimationStartPosition, animationProgress - 1));
+
+        }
+        if (attackAnimationTimer >= attackAnimationDuration) {
+            isAttackAnimationActive = false;
+        }
+    }
 }
