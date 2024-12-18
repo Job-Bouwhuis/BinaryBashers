@@ -391,6 +391,15 @@ public abstract class Application implements GameLoop
                 @Override
                 public void windowClosing(WindowEvent e)
                 {
+                    if(activeScene != null)
+                    {
+                        if(activeScene.name.equals("LevelSelect"))
+                        {
+                            closeGame();
+                            return;
+                        }
+                    }
+
                     ConfirmationDialogBox box = new ConfirmationDialogBox("Warning!", "Are you sure you want to force quit the game?\n" + "Any unsaved progress will be lost!", cdb -> {
                         if (cdb.getResult()) Application.getInstance().closeGame();
                     });

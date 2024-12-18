@@ -1,5 +1,6 @@
 package BinaryBashers.Levels;
 
+import BinaryBashers.BackToMainMenuComponent;
 import BinaryBashers.Enemies.DecimalEnemy;
 import BinaryBashers.Enemies.EnemySpawner;
 import BinaryBashers.Player;
@@ -45,6 +46,7 @@ public class DecimalToBinaryScene
             inputField.addComponent(inputRenderer);
             inputField.transform.setPosition(new Vector2(Painter.renderCenter).add(new Vector2(0, (float) Painter.renderHeight / 2)));
             scene.addObject(inputField);
+            scene.createObject("backtolevelselect").addComponent(new BackToMainMenuComponent());
             scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/midnight-ablaze.png")));
         });
     }
