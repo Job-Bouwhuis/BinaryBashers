@@ -11,7 +11,7 @@ public class HexEnemy extends Enemy
 
     public HexEnemy(Integer id, Vector2 enemyPos, Integer difficulty, Boolean fromDecimal)
     {
-        super(id, enemyPos,fromDecimal);
+        super(id, enemyPos, fromDecimal);
         switch (difficulty)
         {
             case 0:
@@ -26,10 +26,10 @@ public class HexEnemy extends Enemy
                 decimalNum = new Random().nextInt(32, 128);
         }
         hexValue = Util.decimalToHex(decimalNum);
-        if(fromDecimal){
+        if (fromDecimal)
+        {
             text = Integer.toString(decimalNum);
-        }
-        else
+        } else
         {
             text = hexValue;
         }
@@ -38,18 +38,18 @@ public class HexEnemy extends Enemy
     @Override
     public boolean compairInput(String input)
     {
-        if(input.equals(""))
+        if (input.equals(""))
             return false;
 
-        if(showDecimal)
+        if (showDecimal)
         {
             //if the hexvalue in decimal is the players decimal input
-            int in = Integer.parseInt(input);
-            return Util.hexToDecimal(hexValue) == in;
-        }
-        else{
-            //if the players hex input is the decimal input
             int in = Util.hexToDecimal(input);
+            return Util.decimalToHex(in).equals(hexValue);
+        } else
+        {
+            //if the players hex input is the decimal input
+            int in = Integer.parseInt(input);
             return in == decimalNum;
         }
     }
@@ -57,13 +57,20 @@ public class HexEnemy extends Enemy
     @Override
     public int getInputLength()
     {
-        int count = 0;
-        int temp = decimalNum;
-        while(temp != 0){
-            temp = temp / 10;
-            count++;
-        }
+        if (showDecimal)
+        {
+            return hexValue.length(); // als hex ingevuld moet worden 'B' = 1 input lengt
+        } else
+        {
+            int count = 0;
+            int temp = decimalNum;
+            while (temp != 0)
+            {
+                temp = temp / 10;
+                count++;
+            }
 
-        return 0;
+            return count;
+        }
     }
 }
