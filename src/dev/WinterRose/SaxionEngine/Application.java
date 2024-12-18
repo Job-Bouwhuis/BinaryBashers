@@ -30,17 +30,14 @@ public abstract class Application implements GameLoop
     private JFrame gameWindow;
     private Painter appPainter;
     private Point initialWindowSize;
+    private String nextSceneToLoad;
 
     private Sprite screenCover;
-    private Transform screenCoverPosition;
-
     public Application(boolean fullscreen)
     {
         isFullscreen = fullscreen;
         instance = this;
-        appPainter = new Painter();
         screenCover = Sprite.square(Painter.renderWidth, Painter.renderHeight, Color.black);
-        screenCoverPosition = new Transform();
     }
 
     public void run(int width, int height)
@@ -56,10 +53,16 @@ public abstract class Application implements GameLoop
 
     public abstract void createPrefabs();
 
+    public void enqueueScene(String name)
+    {
+        nextSceneToLoad = name;
+    }
+
     @Override
     public void init()
     {
         updateSaxionAppReferences(initialWindowSize);
+        appPainter = new Painter();
         createScenes();
     }
 
@@ -106,6 +109,12 @@ public abstract class Application implements GameLoop
         var bounds = gameWindow.getBounds();
         Input.windowPosition = new Vector2(bounds.x, bounds.y);
         Input.windowSize = new Point(bounds.width, bounds.height);
+
+        if(nextSceneToLoad != null)
+        {
+            loadScene(nextSceneToLoad);
+            nextSceneToLoad = null;
+        }
     }
 
     /**
@@ -131,6 +140,7 @@ public abstract class Application implements GameLoop
 
     public void loadScene(String sceneName)
     {
+        Transform screenCoverPosition = new Transform();
         screenCoverPosition.setPosition(new Vector2(0, -Painter.renderHeight));
         while(true)
         {
@@ -138,7 +148,7 @@ public abstract class Application implements GameLoop
             if(activeScene != null)
                 activeScene.drawScene(appPainter);
             appPainter.drawSprite(screenCover, screenCoverPosition, new Vector2(), Color.white);
-            screenCoverPosition.translateY(2);
+            screenCoverPosition.translateY(5);
             appPainter.end();
 
             if(screenCoverPosition.getPosition().y > 0)
@@ -147,6 +157,10 @@ public abstract class Application implements GameLoop
                 break;
             }
         }
+
+        appPainter.begin();
+        appPainter.drawSprite(screenCover, screenCoverPosition, new Vector2(), Color.white);
+        appPainter.end();
 
         Consumer<Scene> sceneConfigurer = scenes.get(sceneName);
         if (sceneConfigurer == null) throw new RuntimeException("No scene with name: " + sceneName);
@@ -167,7 +181,6 @@ public abstract class Application implements GameLoop
         activeScene.wakeScene();
 
         appPainter.begin();
-        activeScene.drawScene(appPainter);
 
         while(true)
         {
@@ -185,6 +198,8 @@ public abstract class Application implements GameLoop
                 break;
             }
         }
+
+        System.out.println("test");
     }
 
     @Override

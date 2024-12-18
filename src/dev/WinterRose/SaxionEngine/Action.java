@@ -35,4 +35,9 @@ public class Action<T>
             return;
         consumers.remove(consumer);
     }
+
+    public void clear()
+    {
+        consumers.clear();
+    }
 }

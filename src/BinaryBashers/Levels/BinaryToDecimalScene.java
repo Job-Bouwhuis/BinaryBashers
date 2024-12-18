@@ -19,7 +19,6 @@ public class BinaryToDecimalScene
             backgroundObject.addComponent(spriteRenderer);
             scene.addObject(backgroundObject);
 
-
             EnemySpawner<?> enemySpawner = new EnemySpawner<>(BinaryEnemy.class, false);
             GameObject spawner = new GameObject("spawner");
             Sprite timerSprite = new Sprite("resources/sprites/ui/timer/Timer1.png");
@@ -47,8 +46,6 @@ public class BinaryToDecimalScene
             inputField.transform.setPosition(new Vector2(Painter.renderCenter).add(new Vector2(0, (float) Painter.renderHeight / 2)));
             scene.addObject(inputField);
             scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/urple.png")));
-
-//            scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/midnightAblaze/midnight-ablaze.png")));
         });
     }
 }

@@ -19,7 +19,6 @@ public class HexToDecimalScene
             backgroundObject.addComponent(spriteRenderer);
             scene.addObject(backgroundObject);
 
-
             EnemySpawner<?> enemySpawner = new EnemySpawner<>(HexEnemy.class,true);
             GameObject spawner = new GameObject("spawner");
             Sprite timerSprite = new Sprite("resources/sprites/ui/timer/Timer1.png");
