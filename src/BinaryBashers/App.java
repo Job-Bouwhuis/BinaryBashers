@@ -3,7 +3,7 @@ package BinaryBashers;
 import BinaryBashers.Enemies.EnemySprite;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
-import dev.WinterRose.SaxionEngine.Levels.BinaryToDecimal;
+import BinaryBashers.Levels.BinaryToDecimal;
 import nl.saxion.app.SaxionApp;
 
 public class App extends Application
