@@ -22,15 +22,27 @@ public class ConfirmationDialogBox extends DialogBox
     private Button confirmButton;
     private Button cancelButton;
 
+    private boolean showCancelButton = true;
+
     private boolean accepted;
 
     private Consumer<ConfirmationDialogBox> callback;
+
+
+    private final int buttonWidth = 60;
+    private final int buttonHeight = 25;
 
     public ConfirmationDialogBox(String title, String text, Consumer<ConfirmationDialogBox> onButtonClicked)
     {
         super.title = new AnimatedTextProvider(title, 1);
         super.text = new AnimatedTextProvider(text, 1);
         callback = onButtonClicked;
+
+        confirmButton = new Button(Sprite.square(buttonWidth, buttonHeight, Color.white));
+        cancelButton = new Button(Sprite.square(buttonWidth, buttonHeight, Color.white));
+
+        confirmButton.text.setText("Confirm");
+        cancelButton.text.setText("Cancel");
     }
 
     public ConfirmationDialogBox(TextProvider title, TextProvider text, Consumer<ConfirmationDialogBox> onButtonClicked)
@@ -38,6 +50,12 @@ public class ConfirmationDialogBox extends DialogBox
         super.title = title;
         super.text = text;
         callback = onButtonClicked;
+
+        confirmButton = new Button(Sprite.square(buttonWidth, buttonHeight, Color.white));
+        cancelButton = new Button(Sprite.square(buttonWidth, buttonHeight, Color.white));
+
+        confirmButton.text.setText("Confirm");
+        cancelButton.text.setText("Cancel");
     }
 
     @Override
@@ -49,8 +67,7 @@ public class ConfirmationDialogBox extends DialogBox
         Rectangle.Float bounds = manager.getBoxTargetBounds();
 
         float margin = 3f;
-        int buttonWidth = 60;
-        int buttonHeight = 25;
+
         float spaceBetweenButtons = 3f;
 
         float confirmX = bounds.x + bounds.width - buttonWidth - margin;
@@ -60,9 +77,6 @@ public class ConfirmationDialogBox extends DialogBox
         float cancelX = confirmX - buttonWidth - spaceBetweenButtons;
         float cancelY = confirmY;
         cancelTransform.setPosition(new Vector2(cancelX, cancelY));
-
-        confirmButton = new Button(Sprite.square(buttonWidth, buttonHeight, Color.white));
-        cancelButton = new Button(Sprite.square(buttonWidth, buttonHeight, Color.white));
 
         confirmButton.transform = confirmTransform;
         cancelButton.transform = cancelTransform;
@@ -80,9 +94,6 @@ public class ConfirmationDialogBox extends DialogBox
 
         confirmButton.awake();
         cancelButton.awake();
-
-        confirmButton.text.setText("Confirm");
-        cancelButton.text.setText("Cancel");
     }
 
     public boolean getResult()
@@ -95,9 +106,10 @@ public class ConfirmationDialogBox extends DialogBox
     {
         if(finished)
             return;
-        
+
         confirmButton.update();
-        cancelButton.update();
+        if(showCancelButton)
+            cancelButton.update();
     }
 
     @Override
@@ -107,6 +119,25 @@ public class ConfirmationDialogBox extends DialogBox
             return;
 
         confirmButton.render(painter);
-        cancelButton.render(painter);
+        if(showCancelButton)
+            cancelButton.render(painter);
+    }
+
+    public Button getConfirmButton()
+    {
+        return confirmButton;
+    }
+    public Button getCancelButton()
+    {
+        return cancelButton;
+    }
+
+    public void setShowCancelButton(boolean value)
+    {
+        showCancelButton = value;
+    }
+    public boolean getShowCancelButton()
+    {
+        return showCancelButton;
     }
 }

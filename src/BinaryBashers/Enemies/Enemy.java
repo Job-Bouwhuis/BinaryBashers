@@ -39,7 +39,6 @@ public abstract class Enemy
         return showDecimal;
     }
 
-
     public void kill()
     {
         isDead = true;
