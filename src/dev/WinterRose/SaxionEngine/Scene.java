@@ -63,6 +63,13 @@ public class Scene
             obj.wakeObject();
     }
 
+    public GameObject createObject(String name)
+    {
+        GameObject newObj = new GameObject(name);
+        addObject(newObj);
+        return newObj;
+    }
+
     public void handleCallbacks(KeyboardEvent e)
     {
         for (var obj : objects)

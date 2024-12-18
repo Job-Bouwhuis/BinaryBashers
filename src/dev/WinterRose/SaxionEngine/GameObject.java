@@ -41,10 +41,10 @@ public class GameObject
      * Adds the given component to the object and sets the transform and owner reference within this component instane. Adding an instance of Transform is ignored.
      * @param component
      */
-    public void addComponent(Component component)
+    public Component addComponent(Component component)
     {
         assertDestroyed();
-        if (component instanceof Transform) return; // ignore transform additions to this object. that is illegal
+        if (component instanceof Transform) return transform; // ignore transform additions to this object. that is illegal
 
         component.transform = transform;
         component.owner = this;
@@ -65,6 +65,7 @@ public class GameObject
         {
             component.awake();
         }
+        return component;
     }
 
     public <T> T getComponent(Class<T> componentType)

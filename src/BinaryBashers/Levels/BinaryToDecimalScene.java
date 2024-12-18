@@ -6,7 +6,7 @@ import BinaryBashers.Player;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 
-public class BinaryToDecimal
+public class BinaryToDecimalScene
 {
     public void createScene(Application app)
     {
@@ -20,7 +20,7 @@ public class BinaryToDecimal
             scene.addObject(backgroundObject);
 
 
-            EnemySpawner<?> enemySpawner = new EnemySpawner<>(BinaryEnemy.class,false);
+            EnemySpawner<?> enemySpawner = new EnemySpawner<>(BinaryEnemy.class, false);
             GameObject spawner = new GameObject("spawner");
             Sprite timerSprite = new Sprite("resources/sprites/ui/timer/Timer1.png");
             Timer enemySpawnTimer = new Timer(5, true, true, 1);
