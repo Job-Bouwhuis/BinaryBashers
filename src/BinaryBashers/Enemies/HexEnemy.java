@@ -1,17 +1,17 @@
 package BinaryBashers.Enemies;
 
-import dev.WinterRose.SaxionEngine.Vector2;
 import BinaryBashers.Utils.Util;
+import dev.WinterRose.SaxionEngine.Vector2;
 
 import java.util.Random;
 
-public class BinaryEnemy extends Enemy
+public class HexEnemy extends Enemy
 {
-    private Integer binaryNum = 0;
+    String hexValue = "";
 
-    public BinaryEnemy(Integer id, Vector2 enemyPos, Integer difficulty, Boolean showDecimal)
+    public HexEnemy(Integer id, Vector2 enemyPos, Integer difficulty, Boolean fromDecimal)
     {
-        super(id, enemyPos, showDecimal);
+        super(id, enemyPos,fromDecimal);
         switch (difficulty)
         {
             case 0:
@@ -25,33 +25,31 @@ public class BinaryEnemy extends Enemy
             case 3:
                 decimalNum = new Random().nextInt(32, 128);
         }
-//        decimalNum = new Random().nextInt(16);
-        binaryNum = Util.decimalToBinary(decimalNum);
-
-        if(showDecimal){
-            text = Integer.toString(decimalNum); //showing decimal
+        hexValue = Util.decimalToHex(decimalNum);
+        if(fromDecimal){
+            text = Integer.toString(decimalNum);
         }
         else
         {
-            text = Integer.toString(binaryNum); // showing binary
+            text = hexValue;
         }
     }
 
     @Override
     public boolean compairInput(String input)
     {
-        if (input.equals(""))
+        if(input.equals(""))
             return false;
 
         if(showDecimal)
         {
-            // compare if the enemy decimal number is correct in Binary
+            //if the hexvalue in decimal is the players decimal input
             int in = Integer.parseInt(input);
-            return in == binaryNum;
-
-        }else {
-            // compare if the enemy binary number is correct in decimal based on input
-            int in = Integer.parseInt(input);
+            return Util.hexToDecimal(hexValue) == in;
+        }
+        else{
+            //if the players hex input is the decimal input
+            int in = Util.hexToDecimal(input);
             return in == decimalNum;
         }
     }
@@ -60,13 +58,12 @@ public class BinaryEnemy extends Enemy
     public int getInputLength()
     {
         int count = 0;
-        int temp = Util.binaryToDecimal(binaryNum);
-        while (temp != 0)
-        {
+        int temp = decimalNum;
+        while(temp != 0){
             temp = temp / 10;
             count++;
         }
-        return count;
+
+        return 0;
     }
 }
-

@@ -7,9 +7,10 @@ import java.util.Random;
 
 public class DecimalEnemy extends Enemy
 {
-    public DecimalEnemy(Integer id, Vector2 enemyPos, Integer difficulty)
+
+    public DecimalEnemy(Integer id, Vector2 enemyPos, Integer difficulty, Boolean fromDecimal)
     {
-        super(id, enemyPos);
+        super(id, enemyPos,fromDecimal);
         switch (difficulty)
         {
             case 0:
