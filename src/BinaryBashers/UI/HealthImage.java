@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class HealthImage
 {
-    public static Sprite heartImage = new Sprite("resources/sprites/ui/Heart.png");
+    public Sprite heartImage = new Sprite("resources/sprites/ui/Heart.png");
     private final Vector2 position;
     private final Transform transform;
     private final Vector2 origin = new Vector2(.5f, .5f);

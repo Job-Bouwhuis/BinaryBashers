@@ -1,12 +1,12 @@
 package BinaryBashers;
 
 import BinaryBashers.Enemies.EnemySpawner;
-import dev.WinterRose.SaxionEngine.DialogBoxes.ConfirmationDialogBox;
-import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
 import BinaryBashers.UI.HealthImage;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 import dev.WinterRose.SaxionEngine.ColorPallets.SpritePalletChanger;
+import dev.WinterRose.SaxionEngine.DialogBoxes.ConfirmationDialogBox;
+import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
 
 public class Player extends Renderer
 {
@@ -30,10 +30,8 @@ public class Player extends Renderer
         this.spawner = spawner;
         spawner.onEnemyCountChanged.add(newEnemyCount -> {
 
-            if(newEnemyCount == 0)
-                damageTimer.stop();
-            else if (!damageTimer.isRunning())
-                damageTimer.restart();
+            if (newEnemyCount == 0) damageTimer.stop();
+            else if (!damageTimer.isRunning()) damageTimer.restart();
 
             damageTimer.setSpeedMultiplier(switch (newEnemyCount)
             {
@@ -52,20 +50,18 @@ public class Player extends Renderer
         damageTimer.onTimeAction.add(t -> takeDamage(1));
         damageTimer.stop();
 
-        Sprite heartImage = HealthImage.heartImage;
+        Sprite heartImage = new HealthImage(new Vector2(), new Vector2(1)).heartImage;
         final float heartScale = .8f;
         Vector2 effectiveScale = new Vector2(heartImage.getwidth() * heartScale, heartImage.getHeight() * heartScale);
-        heart1 = new HealthImage(
-                new Vector2(0 + effectiveScale.x, Painter.renderHeight - effectiveScale.y),
-                new Vector2(heartScale));
+        heart1 = new HealthImage(new Vector2(0 + effectiveScale.x, Painter.renderHeight - effectiveScale.y), new Vector2(heartScale));
 
-        heart2 = new HealthImage(
-                new Vector2(heart1.getPosition().x + effectiveScale.x + 3, heart1.getPosition().y),
-                new Vector2(heartScale));
+        heart2 = new HealthImage(new Vector2(heart1.getPosition().x + effectiveScale.x + 3, heart1.getPosition().y), new Vector2(heartScale));
 
-        heart3 = new HealthImage(
-                new Vector2(heart2.getPosition().x + effectiveScale.x + 3, heart2.getPosition().y),
-                new Vector2(heartScale));
+        heart3 = new HealthImage(new Vector2(heart2.getPosition().x + effectiveScale.x + 3, heart2.getPosition().y), new Vector2(heartScale));
+
+        if (heart1 != null) heart1.heartImage = SpritePalletChanger.changePallet(heart1.heartImage, owner.getScene().getScenePallet());
+        if (heart2 != null) heart2.heartImage = SpritePalletChanger.changePallet(heart2.heartImage, owner.getScene().getScenePallet());
+        if (heart3 != null) heart3.heartImage = SpritePalletChanger.changePallet(heart3.heartImage, owner.getScene().getScenePallet());
     }
 
     public int getHealth()
@@ -80,17 +76,16 @@ public class Player extends Renderer
             spawner.startRandomEnemyDamageAnimation();
             health -= damage;
             System.out.println("Player takes " + damage + " damage. Remaining health: " + health);
-            if (health <= 0)
-                death();
+            if (health <= 0) death();
         }
 
-        if(health == 3)
+        if (health == 3)
         {
             heart1.setAlive(true);
             heart2.setAlive(true);
             heart3.setAlive(true);
         }
-        if(health == 2)
+        if (health == 2)
         {
             heart1.setAlive(true);
             heart2.setAlive(true);
@@ -103,7 +98,7 @@ public class Player extends Renderer
             heart2.setAlive(false);
             heart3.setAlive(false);
         }
-        if(health == 0)
+        if (health == 0)
         {
             heart1.setAlive(false);
             heart2.setAlive(false);
@@ -114,9 +109,10 @@ public class Player extends Renderer
     public void death()
     {
         damageTimer.stop();
-        DialogBoxManager.getInstance().enqueue(new ConfirmationDialogBox("DEDE", "You died. Score: TO BE DETERMINED", confirmationDialogBox -> {
-            Application.getInstance().closeGame();
-        }));
+        DialogBoxManager.getInstance()
+                .enqueue(new ConfirmationDialogBox("DEDE", "You died. Score: TO BE DETERMINED", confirmationDialogBox -> {
+                    Application.getInstance().closeGame();
+                }));
     }
 
     @Override
@@ -130,6 +126,8 @@ public class Player extends Renderer
     @Override
     public void onColorPalleteChange(ColorPallet colorPallet)
     {
-        HealthImage.heartImage = SpritePalletChanger.changePallet(HealthImage.heartImage, colorPallet);
+        if (heart1 != null) heart1.heartImage = SpritePalletChanger.changePallet(heart1.heartImage, colorPallet);
+        if (heart2 != null) heart2.heartImage = SpritePalletChanger.changePallet(heart2.heartImage, colorPallet);
+        if (heart3 != null) heart3.heartImage = SpritePalletChanger.changePallet(heart3.heartImage, colorPallet);
     }
 }

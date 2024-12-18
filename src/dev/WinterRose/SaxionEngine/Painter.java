@@ -4,10 +4,13 @@ import dev.WinterRose.SaxionEngine.TextProviders.DefaultTextProvider;
 import dev.WinterRose.SaxionEngine.TextProviders.TextProvider;
 import nl.saxion.app.SaxionApp;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 
 public class Painter
@@ -390,6 +393,23 @@ public class Painter
         var saxionImage = createSaxionImage(scaledCanvas, 0, 0, targetWidth, targetHeight);
         nl.saxion.app.SaxionApp.clear();
         SaxionApp.add(saxionImage);
+
+        if (Input.getKey(Keys.F12))
+        {
+            // Generate the file name with timestamp
+            String timestamp = java.time.LocalDateTime.now()
+                    .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss_SSS"));
+            File outputFile = new File("output_" + timestamp + ".png");
+
+            try
+            {
+                ImageIO.write(scaledCanvas, "png", outputFile);
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
 
         graphics.dispose();
         renderCanvas = null;
