@@ -209,6 +209,6 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
 
     public static int getRandomValue(int lowerBound, int upperBound) {
         Random random = new Random();
-        return random.nextInt(upperBound - lowerBound + 1) + lowerBound;
+        return random.nextInt(upperBound - lowerBound) + lowerBound;
     }
 }

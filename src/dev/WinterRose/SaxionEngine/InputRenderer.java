@@ -64,7 +64,7 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
     @Override
     public void keyPress(KeyEvent key)
     {
-        int keyCode = key.getKeyCode();
+        int keyCode = key.getKeyChar();
         if (keyCode == KeyEvent.VK_ENTER)
         {
             onEnterKeyPressed.invoke(this);

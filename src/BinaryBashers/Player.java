@@ -114,6 +114,8 @@ public class Player extends Renderer
         damageTimer.stop();
 
         var box = new ConfirmationDialogBox("DEDE", "You died. Score: TO BE DETERMINED", confirmationDialogBox -> {
+            confirmationDialogBox.setPlaySounds(false);
+            DialogBoxManager.getInstance().clearAll(true);
             Application.current().loadScene("LevelSelect");
         });
 

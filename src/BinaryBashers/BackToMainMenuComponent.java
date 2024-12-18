@@ -20,6 +20,8 @@ public class BackToMainMenuComponent extends Behavior
                         .enqueue("Attention!", "Do you want to go back to the level select?\n\nYour current progress in this level will be lost!", box -> {
                             if (box.getResult())
                             {
+                                box.setPlaySounds(false);
+                                DialogBoxManager.getInstance().clearAll(true);
                                 Application.current().loadScene("LevelSelect");
                             }
                         });

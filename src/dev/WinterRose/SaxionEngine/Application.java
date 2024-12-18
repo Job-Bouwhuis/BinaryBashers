@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.DoubleAccumulator;
 import java.util.function.Consumer;
 
 public abstract class Application
@@ -55,6 +56,8 @@ public abstract class Application
 
         int frames = 0;
         long secondTimer = System.nanoTime();
+
+        applicationWindow.setVisible(true);
 
         while (gameRunning)
         {
@@ -138,23 +141,18 @@ public abstract class Application
         activeScene.drawScene(appPainter);
         dialogManager.render(appPainter);
 
-        // DEBUG STUFF
-        appPainter.drawText(Input.getMousePosition().toString(), new Vector2(), new Vector2(), Color.white);
         appPainter.drawText(fps.toString(), new Vector2(), new Vector2(), Color.white);
 
-        if (Input.getMouseUp(MouseButton.Left))
-            appPainter.drawText("true", new Vector2(0, 25), new Vector2(), Color.white);
-        else
-            appPainter.drawText("false", new Vector2(0, 25), new Vector2(), Color.white);
-        // END DEBUG
         appPainter.end();
 
-        if (Input.getKey(Keys.F11))
+        if (Input.getKeyDown(Keys.F11))
         {
+            applicationWindow.setVisible(false);
+            applicationWindow.dispose();
             isFullscreen = !isFullscreen;
-            Input.clear();
             prepareApplicationWindow(initialWindowSize);
             appPainter = new Painter(applicationWindow);
+            applicationWindow.setVisible(true);
         }
 
         Input.update();
@@ -186,14 +184,21 @@ public abstract class Application
 
     public void loadScene(String sceneName)
     {
+        loadScene(sceneName, true);
+    }
+
+    @SuppressWarnings("LoopConditionNotUpdatedInsideLoop") // suppressed to avoid redundant if statements since the while loops would act as the if statements.
+    public void loadScene(String sceneName, boolean doAnimation)
+    {
         Transform screenCoverPosition = new Transform();
         screenCoverPosition.setPosition(new Vector2(0, -Painter.renderHeight));
-        while(true)
+        while(doAnimation)
         {
             appPainter.begin();
             if(activeScene != null)
                 activeScene.drawScene(appPainter);
-            screenCoverPosition.translateY(200 * Time.getUnscaledDeltaTime());
+            appPainter.drawSprite(screenCover, screenCoverPosition, new Vector2(), Color.white);
+            screenCoverPosition.translateY(800 * Time.getUnscaledDeltaTime());
             appPainter.end();
 
             long currentTime = System.nanoTime();
@@ -227,12 +232,12 @@ public abstract class Application
         activeScene = scene;
         activeScene.wakeScene();
 
-        while(true)
+        while(doAnimation)
         {
             appPainter.begin();
             if(activeScene != null)
                 activeScene.drawScene(appPainter);
-            screenCoverPosition.translateY(200 * Time.getUnscaledDeltaTime());
+            screenCoverPosition.translateY(800 * Time.getUnscaledDeltaTime());
             appPainter.drawSprite(screenCover, screenCoverPosition, new Vector2(), Color.white);
             appPainter.end();
 
@@ -359,6 +364,21 @@ public abstract class Application
                 mouseEvent(event);
             }
         });
+
+        canvas.addKeyListener(new KeyListener() {
+            public void keyTyped(KeyEvent e) {
+                if(activeScene != null)
+                    activeScene.handleCallbacks(e);
+            }
+
+            public void keyPressed(KeyEvent e) {
+                Input.keyboardEvent(e, true);
+            }
+
+            public void keyReleased(KeyEvent e) {
+                Input.keyboardEvent(e, false);
+            }
+        });
     }
 
 
@@ -390,20 +410,6 @@ public abstract class Application
             }
 
             applicationWindow.setLayout(null);
-            applicationWindow.addKeyListener(new KeyListener() {
-                public void keyTyped(KeyEvent e) {
-                    if(activeScene != null)
-                        activeScene.handleCallbacks(e);
-                }
-
-                public void keyPressed(KeyEvent e) {
-                    Input.keyboardEvent(e, true);
-                }
-
-                public void keyReleased(KeyEvent e) {
-                    Input.keyboardEvent(e, false);
-                }
-            });
 
             applicationWindow.setFocusable(true);
             applicationWindow.setFocusTraversalKeysEnabled(false);
@@ -415,7 +421,7 @@ public abstract class Application
             if (!isFullscreen)
                 applicationWindow.setLocation((screenWidth / 2) - (applicationWindow.getWidth() / 2), (screenHeight / 2) - (applicationWindow.getHeight() / 2));
 
-            applicationWindow.setVisible(true);
+            applicationWindow.getContentPane().setBackground(Color.BLACK);
 
             applicationWindow.addWindowListener(new WindowAdapter()
             {

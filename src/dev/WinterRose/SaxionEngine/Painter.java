@@ -367,7 +367,7 @@ public class Painter
     /**
      * Ends the drawing and submits the current requests to the screen. Auto scales the render resolution to the window resolution without creating a blurry image.
      */
-    public void end()
+    public void  end()
     {
         ensureStarted();
 

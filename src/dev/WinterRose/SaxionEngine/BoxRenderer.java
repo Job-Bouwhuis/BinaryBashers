@@ -42,7 +42,7 @@ public class BoxRenderer extends ActiveRenderer
     public void hideImmediately()
     {
         animatingIn = false;
-        bounds.setRect(targetBounds.x, targetBounds.y, 0, 0);
+        bounds.setRect(targetBounds.x, targetBounds.y, -10, -10);
     }
 
     public boolean isAnimatingIn()

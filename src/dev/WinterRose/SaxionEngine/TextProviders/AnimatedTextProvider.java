@@ -47,7 +47,7 @@ public class AnimatedTextProvider extends TextProvider
     {
         if (currentCharacterIndex == text.length()) return; // no more characters to add.
 
-        if (currentCharacterIndex % soundEveryXCharacters == 0)
+        if (currentCharacterIndex % soundEveryXCharacters == 0 && playSound)
             sounds.playRandom();
 
         String textOnScreen = getText();
@@ -72,5 +72,10 @@ public class AnimatedTextProvider extends TextProvider
         float target = text.length();
 
         return onScreen / target;
+    }
+
+    public void setPlaySounds(boolean playSounds)
+    {
+        playSound = playSounds;
     }
 }
