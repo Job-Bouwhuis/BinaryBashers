@@ -15,7 +15,7 @@ import java.util.Random;
 public class EnemySpawner<T extends Enemy> extends ActiveRenderer
 {
     public Action<Integer> onEnemyCountChanged = new Action<>();
-    private Class<T> enemyType;
+    private Class<?> enemyType;
     private Constructor<T> enemyConstructor;
     private ScoreManager scoreManager = ScoreManager.getInstance();
     public InputRenderer inputRenderer;
@@ -27,13 +27,18 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         return instance;
     }
 
-    private List<T> enemies;
+    private List<Enemy> enemies;
     private float spawnInterval = 30f;
     private float spawnTimer;
     private Random random;
     private Timer timer;
     private DifficultyGenerator difficultyGenerator = new DifficultyGenerator();
     private Boolean fromDecimal;
+    private Boolean isInfiniteLevel;
+    private int enemyCorpses;
+    private final int ENDLESS_LEVEL_ENEMY_SWAP_AFTER_KILLS = 1;
+    private Class<?>[] endlessLevelEnemyTypes;
+    private int currentEnemyTypeCounter;
 
     public EnemySpawner(Class<T> enemyType, Boolean fromDecimal)
     {
@@ -44,6 +49,20 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         this.fromDecimal = fromDecimal;
     }
 
+    public EnemySpawner(Boolean infiniteLevel)
+    {
+        if (!infiniteLevel) {
+            System.out.println("false??? what do you mean false??? you think i coded functionality for this..? enjoy a broken game idiot");
+        }
+        isInfiniteLevel = infiniteLevel;
+        endlessLevelEnemyTypes = new Class<?>[] {BinaryEnemy.class, BinaryEnemy.class, BinaryEnemy.class};
+        enemyType = endlessLevelEnemyTypes[0];
+        this.enemies = new ArrayList<>();
+        this.random = new Random();
+        spawnTimer = 5;
+        fromDecimal = true;
+    }
+
     @Override
     public void awake()
     {
@@ -52,7 +71,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         timer.setSprites(new Sprite[0]);
         try
         {
-            enemyConstructor = enemyType.getDeclaredConstructor(Integer.class, Vector2.class, Integer.class, Boolean.class);
+            enemyConstructor = (Constructor<T>) enemyType.getDeclaredConstructor(Integer.class, Vector2.class, Integer.class, Boolean.class);
         }
         catch (NoSuchMethodException e)
         {
@@ -166,6 +185,10 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
             timer.skipTo(timer.getMaxTime() - 5); // no enemies, set timer to 5 seconds until a new one spawns to keep gameflow going
             timer.setSpeedMultiplier(1f);
         }
+        enemyCorpses++;
+        if (isInfiniteLevel) {
+            checkEnemyTypeSwitch();
+        }
     }
 
     public boolean hasEnemies()
@@ -173,7 +196,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         return !enemies.isEmpty();
     }
 
-    public List<T> getEnemies()
+    public List<Enemy> getEnemies()
     {
         return enemies;
     }
@@ -187,7 +210,6 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     @Override
     public void render(Painter painter)
     {
-        painter.drawScaledText("Time until next enemy: " + Math.round(spawnTimer) + "s", new Vector2(2), new Vector2(0.9f), new Vector2(), Color.white, FontType.Bold);
 
         for (int i = 0; i < enemies.size(); i++)
         {
@@ -208,5 +230,19 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
 
     public void startRandomEnemyDamageAnimation() {
         enemies.get(SaxionApp.getRandomValueBetween(0, enemies.size())).getSprite().startAttackAnimation();
+    }
+
+    public void checkEnemyTypeSwitch() {
+        if (enemyCorpses % ENDLESS_LEVEL_ENEMY_SWAP_AFTER_KILLS == 0) {
+            currentEnemyTypeCounter++;
+            currentEnemyTypeCounter = currentEnemyTypeCounter%(endlessLevelEnemyTypes.length - 1);
+            enemyType = endlessLevelEnemyTypes[currentEnemyTypeCounter];
+            if (currentEnemyTypeCounter == 1) {
+                fromDecimal = true;
+            }
+            else {
+                fromDecimal = false;
+            }
+        }
     }
 }
