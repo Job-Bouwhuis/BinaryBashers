@@ -14,8 +14,9 @@ public abstract class Enemy
     private boolean isDead;
     private SoundPack deathSounds;
     public Integer decimalNum = 0;
+    protected Boolean showDecimal;
 
-    public Enemy(int spriteId, Vector2 enemyPosition)
+    public Enemy(int spriteId, Vector2 enemyPosition,Boolean showDecimal)
     {
         this.sprite = new EnemySprite();
         this.sprite.setSpriteId(spriteId);
@@ -32,6 +33,11 @@ public abstract class Enemy
     {
         return sprite;
     }
+
+    protected Boolean getShowDecimal(){
+        return showDecimal;
+    }
+
 
     public void kill()
     {

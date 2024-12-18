@@ -20,7 +20,7 @@ public class DecimalToBinary
             scene.addObject(backgroundObject);
 
 
-            EnemySpawner<?> enemySpawner = new EnemySpawner<>(DecimalEnemy.class);
+            EnemySpawner<?> enemySpawner = new EnemySpawner<>(DecimalEnemy.class,false);
             GameObject spawner = new GameObject("spawner");
             Sprite timerSprite = new Sprite("resources/sprites/ui/timer/Timer1.png");
             Timer enemySpawnTimer = new Timer(5, true, true, 1);
@@ -36,7 +36,7 @@ public class DecimalToBinary
             scene.addObject(spawner);
             scene.addObject(playerObj);
             GameObject inputField = new GameObject("inputRenderer");
-            InputRenderer inputRenderer = new InputRenderer(4);
+            InputRenderer inputRenderer = new InputRenderer(0);
             enemySpawner.inputRenderer = inputRenderer;
             inputRenderer.onEnterKeyPressed.add(inputRenderer1 -> {
                 enemySpawner.checkAndKillEnemies(inputRenderer1.getInputAsString());
