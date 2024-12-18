@@ -1,5 +1,6 @@
 package BinaryBashers.Levels;
 
+import BinaryBashers.BackToMainMenuComponent;
 import BinaryBashers.Testing.ShowMousePosOnScreen;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
@@ -69,6 +70,8 @@ public class LevelSelectScene
                 DialogBoxManager.getInstance().enqueue("Attention!", "The infinite level is due for sprint 3, stay tuned for infinite madness!\n\n" +
                         "Originally it was planned for this sprint, however we did not manage to do this in time due to other tasks required for this one taking longer than expected", dialog -> {});
             });
+
+            scene.createObject("gameCloser").addComponent(new BackToMainMenuComponent());
 
             //scene.setScenePallet(new ColorPallet(new Sprite("resources\\colorPallets\\midnight-ablaze.png")));
         });
