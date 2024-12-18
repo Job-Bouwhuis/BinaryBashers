@@ -19,7 +19,11 @@ public class Timer extends ActiveRenderer
             new Sprite("resources/sprites/ui/timer/Timer1.png"),
             new Sprite("resources/sprites/ui/timer/Timer2.png"),
             new Sprite("resources/sprites/ui/timer/Timer3.png"),
-            new Sprite("resources/sprites/ui/timer/Timer4.png")
+            new Sprite("resources/sprites/ui/timer/Timer4.png"),
+            new Sprite("resources/sprites/ui/timer/Timer5.png"),
+            new Sprite("resources/sprites/ui/timer/Timer6.png"),
+            new Sprite("resources/sprites/ui/timer/Timer7.png"),
+            new Sprite("resources/sprites/ui/timer/Timer8.png")
     };
     private boolean paused;
 
