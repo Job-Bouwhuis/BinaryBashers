@@ -20,7 +20,7 @@ public class BinaryToDecimal
             scene.addObject(backgroundObject);
 
 
-            EnemySpawner<?> enemySpawner = new EnemySpawner<>(BinaryEnemy.class);
+            EnemySpawner<?> enemySpawner = new EnemySpawner<>(BinaryEnemy.class,false);
             GameObject spawner = new GameObject("spawner");
             Sprite timerSprite = new Sprite("resources/sprites/ui/timer/Timer1.png");
             Timer enemySpawnTimer = new Timer(5, true, true, 1);

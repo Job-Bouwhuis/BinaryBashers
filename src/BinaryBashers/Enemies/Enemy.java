@@ -27,6 +27,7 @@ public abstract class Enemy
         textPosition = enemyPosition.subtract(new Vector2(0, sprite.getSolid().getHeight() + 10));
         deathSounds = new SoundPack("resources/audio/enemyDeaths");
         deathSounds.setAllVolume(0.8f);
+        this.showDecimal = showDecimal;
     }
 
     public EnemySprite getSprite()
