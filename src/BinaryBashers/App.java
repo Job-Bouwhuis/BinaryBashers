@@ -1,6 +1,8 @@
 package BinaryBashers;
 
 import BinaryBashers.Enemies.EnemySprite;
+import BinaryBashers.Levels.DecimalToBinaryScene;
+import BinaryBashers.Levels.HexToDecimalScene;
 import BinaryBashers.Levels.LevelSelectScene;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
@@ -61,10 +63,11 @@ public class App extends Application
             scene.addObject(timerObject);
             scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/midnightAblaze/midnight-ablaze.png")));
         });
-         new BinaryToDecimalScene().createScene(this);
+        new BinaryToDecimalScene().createScene(this);
+        new HexToDecimalScene().createScene(this);
+        new DecimalToBinaryScene().createScene(this);
         LevelSelectScene.createScene(this);
         loadScene("LevelSelect");
-         new HexToDecimal().createScene(this);
 
     }
 
