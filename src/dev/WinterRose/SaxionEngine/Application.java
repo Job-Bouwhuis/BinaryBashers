@@ -140,27 +140,27 @@ public abstract class Application implements GameLoop
 
     public void loadScene(String sceneName)
     {
-        Transform screenCoverPosition = new Transform();
-        screenCoverPosition.setPosition(new Vector2(0, -Painter.renderHeight));
-        while(true)
-        {
-            appPainter.begin();
-            if(activeScene != null)
-                activeScene.drawScene(appPainter);
-            appPainter.drawSprite(screenCover, screenCoverPosition, new Vector2(), Color.white);
-            screenCoverPosition.translateY(5);
-            appPainter.end();
+//        Transform screenCoverPosition = new Transform();
+//        screenCoverPosition.setPosition(new Vector2(0, -Painter.renderHeight));
+//        while(true)
+//        {
+//            appPainter.begin();
+//            if(activeScene != null)
+//                activeScene.drawScene(appPainter);
+//            appPainter.drawSprite(screenCover, screenCoverPosition, new Vector2(), Color.white);
+//            screenCoverPosition.translateY(5);
+//            appPainter.end();
+//
+//            if(screenCoverPosition.getPosition().y > 0)
+//            {
+//                screenCoverPosition.setPosition(new Vector2());
+//                break;
+//            }
+//        }
 
-            if(screenCoverPosition.getPosition().y > 0)
-            {
-                screenCoverPosition.setPosition(new Vector2());
-                break;
-            }
-        }
-
-        appPainter.begin();
-        appPainter.drawSprite(screenCover, screenCoverPosition, new Vector2(), Color.white);
-        appPainter.end();
+//        appPainter.begin();
+//        appPainter.drawSprite(screenCover, screenCoverPosition, new Vector2(), Color.white);
+//        appPainter.end();
 
         Consumer<Scene> sceneConfigurer = scenes.get(sceneName);
         if (sceneConfigurer == null) throw new RuntimeException("No scene with name: " + sceneName);
@@ -180,26 +180,26 @@ public abstract class Application implements GameLoop
         activeScene = scene;
         activeScene.wakeScene();
 
-        appPainter.begin();
-
-        while(true)
-        {
-            if(!appPainter.hasStarted())
-                appPainter.begin();
-            if(activeScene != null)
-                activeScene.drawScene(appPainter);
-            appPainter.drawSprite(screenCover, screenCoverPosition, new Vector2(), Color.white);
-            screenCoverPosition.translateY(5);
-            appPainter.end();
-
-            if(screenCoverPosition.getPosition().y > Painter.renderHeight)
-            {
-                screenCoverPosition.setPosition(new Vector2(0, Painter.renderHeight));
-                break;
-            }
-        }
-
-        System.out.println("test");
+//        appPainter.begin();
+//
+//        while(true)
+//        {
+//            if(!appPainter.hasStarted())
+//                appPainter.begin();
+//            if(activeScene != null)
+//                activeScene.drawScene(appPainter);
+//            appPainter.drawSprite(screenCover, screenCoverPosition, new Vector2(), Color.white);
+//            screenCoverPosition.translateY(5);
+//            appPainter.end();
+//
+//            if(screenCoverPosition.getPosition().y > Painter.renderHeight)
+//            {
+//                screenCoverPosition.setPosition(new Vector2(0, Painter.renderHeight));
+//                break;
+//            }
+//        }
+//
+//        System.out.println("test");
     }
 
     @Override
