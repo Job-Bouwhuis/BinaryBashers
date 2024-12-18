@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.DoubleAccumulator;
 import java.util.function.Consumer;
 
@@ -31,6 +32,10 @@ public abstract class Application
     private Painter appPainter;
     private Point initialWindowSize;
     private Integer fps = 0;
+
+    private final java.util.Queue<MouseEvent> mouseEventQueue = new ConcurrentLinkedQueue();
+    private final java.util.Queue<KeyEvent> keyEventQueue = new ConcurrentLinkedQueue();
+
 
     private Sprite screenCover;
     public Application(boolean fullscreen)
@@ -118,8 +123,22 @@ public abstract class Application
      */
     public abstract void createPrefabs();
 
+    private void processInputEvents() {
+        while (!mouseEventQueue.isEmpty()) {
+            MouseEvent event = mouseEventQueue.poll();
+            mouseEvent(event); // Process the event
+        }
+
+        while (!keyEventQueue.isEmpty()) {
+            KeyEvent event = keyEventQueue.poll();
+            Input.keyboardEvent(event, true); // Or false depending on the state
+        }
+    }
+
     private void loop()
     {
+        processInputEvents();
+
         forceQuitDialog();
 
         long currentTime = System.nanoTime();
@@ -280,105 +299,92 @@ public abstract class Application
         canvas.setLayout(new BorderLayout());
 
         // Add mouse listener
-        canvas.addMouseListener(new MouseListener()
-        {
+        canvas.addMouseListener(new MouseListener() {
             @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {}
-
-            @Override
-            public void mousePressed(java.awt.event.MouseEvent e)
-            {
-                MouseButton button = switch (e.getButton())
-                {
-                    case 0 -> MouseButton.None;
-                    case 1 -> MouseButton.Left;
-                    case 2 -> MouseButton.Middle;
-                    case 3 -> MouseButton.Right;
-                    default -> MouseButton.None;
-                };
-                var event = new MouseEvent(button, new Vector2(e.getXOnScreen(), e.getYOnScreen()), e.getClickCount() == 2);
-                event.clicked = true;
-                mouseEvent(event);
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                // No action needed for now
             }
 
             @Override
-            public void mouseReleased(java.awt.event.MouseEvent e)
-            {
-                MouseButton button = switch (e.getButton())
-                {
-                    case 0 -> MouseButton.None;
-                    case 1 -> MouseButton.Left;
-                    case 2 -> MouseButton.Middle;
-                    case 3 -> MouseButton.Right;
-                    default -> MouseButton.None;
-                };
-                var event = new MouseEvent(button, new Vector2(e.getXOnScreen(), e.getYOnScreen()), e.getClickCount() == 2);
+            public void mousePressed(java.awt.event.MouseEvent e) {
+                var event = new MouseEvent(
+                        buttonFromAWT(e),
+                        new Vector2(e.getXOnScreen(), e.getYOnScreen()),
+                        e.getClickCount() == 2
+                );
+                mouseEventQueue.add(event); // Enqueue the mouse event
+            }
+
+            @Override
+            public void mouseReleased(java.awt.event.MouseEvent e) {
+                var event = new MouseEvent(
+                        buttonFromAWT(e),
+                        new Vector2(e.getXOnScreen(), e.getYOnScreen()),
+                        e.getClickCount() == 2
+                );
                 event.released = true;
-                mouseEvent(event);
+                mouseEventQueue.add(event); // Enqueue the mouse event
             }
 
             @Override
-            public void mouseEntered(java.awt.event.MouseEvent e)
-            {
+            public void mouseEntered(java.awt.event.MouseEvent e) {
                 var event = new MouseEvent(new Vector2(e.getXOnScreen(), e.getYOnScreen()));
                 event.mouseEnteredGameWindow = true;
-                mouseEvent(event);
+                mouseEventQueue.add(event); // Enqueue the mouse enter event
             }
 
             @Override
-            public void mouseExited(java.awt.event.MouseEvent e)
-            {
+            public void mouseExited(java.awt.event.MouseEvent e) {
                 var event = new MouseEvent(new Vector2(e.getXOnScreen(), e.getYOnScreen()));
                 event.mouseExitedGameWindow = true;
-                mouseEvent(event);
+                mouseEventQueue.add(event); // Enqueue the mouse exit event
+            }
+
+            private MouseButton buttonFromAWT(java.awt.event.MouseEvent e) {
+                return switch (e.getButton()) {
+                    case java.awt.event.MouseEvent.BUTTON1 -> MouseButton.Left;
+                    case java.awt.event.MouseEvent.BUTTON2 -> MouseButton.Middle;
+                    case java.awt.event.MouseEvent.BUTTON3 -> MouseButton.Right;
+                    default -> MouseButton.None;
+                };
             }
         });
 
-        // Add mouse motion listener
-        canvas.addMouseMotionListener(new MouseMotionListener()
-        {
+        canvas.addMouseMotionListener(new MouseMotionListener() {
             @Override
-            public void mouseDragged(java.awt.event.MouseEvent e)
-            {
-                doEvent(e);
+            public void mouseDragged(java.awt.event.MouseEvent e) {
+                enqueueMouseMotionEvent(e);
             }
 
             @Override
-            public void mouseMoved(java.awt.event.MouseEvent e)
-            {
-                doEvent(e);
+            public void mouseMoved(java.awt.event.MouseEvent e) {
+                enqueueMouseMotionEvent(e);
             }
 
-            private void doEvent(java.awt.event.MouseEvent e)
-            {
-                MouseButton button = switch (e.getButton())
-                {
-                    case 0 -> MouseButton.None;
-                    case 1 -> MouseButton.Left;
-                    case 2 -> MouseButton.Middle;
-                    case 3 -> MouseButton.Right;
-                    default -> MouseButton.None;
-                };
+            private void enqueueMouseMotionEvent(java.awt.event.MouseEvent e) {
                 var event = new MouseEvent(new Vector2(e.getXOnScreen(), e.getYOnScreen()));
-                event.button = button;
-                mouseEvent(event);
+                mouseEventQueue.add(event); // Enqueue the mouse motion event
             }
         });
 
         canvas.addKeyListener(new KeyListener() {
+            @Override
             public void keyTyped(KeyEvent e) {
-                if(activeScene != null)
-                    activeScene.handleCallbacks(e);
+                // Enqueue the key typed event, if needed for the game
+                keyEventQueue.add(e);
             }
 
+            @Override
             public void keyPressed(KeyEvent e) {
-                Input.keyboardEvent(e, true);
+                keyEventQueue.add(e); // Enqueue the key pressed event
             }
 
+            @Override
             public void keyReleased(KeyEvent e) {
-                Input.keyboardEvent(e, false);
+                keyEventQueue.add(e); // Enqueue the key released event
             }
         });
+
     }
 
 
