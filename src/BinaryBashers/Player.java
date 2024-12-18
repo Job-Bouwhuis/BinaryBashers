@@ -7,6 +7,9 @@ import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 import dev.WinterRose.SaxionEngine.ColorPallets.SpritePalletChanger;
 import dev.WinterRose.SaxionEngine.DialogBoxes.ConfirmationDialogBox;
 import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
+import dev.WinterRose.SaxionEngine.TextProviders.DefaultTextProvider;
+
+import java.awt.*;
 
 public class Player extends Renderer
 {
@@ -109,10 +112,17 @@ public class Player extends Renderer
     public void death()
     {
         damageTimer.stop();
+
+        var box = new ConfirmationDialogBox("DEDE", "You died. Score: TO BE DETERMINED", confirmationDialogBox -> {
+            Application.getInstance().loadScene("LevelSelect");
+        });
+
+        box.setShowCancelButton(false);
+        box.getConfirmButton().text = new DefaultTextProvider("Return");
+        box.getConfirmButton().text.setColor(Color.black);
+
         DialogBoxManager.getInstance()
-                .enqueue(new ConfirmationDialogBox("DEDE", "You died. Score: TO BE DETERMINED", confirmationDialogBox -> {
-                    Application.getInstance().closeGame();
-                }));
+                .enqueue(box);
     }
 
     @Override

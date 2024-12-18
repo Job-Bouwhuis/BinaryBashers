@@ -1,13 +1,10 @@
 package BinaryBashers;
 
-import BinaryBashers.Enemies.EnemySprite;
 import BinaryBashers.Levels.DecimalToBinaryScene;
 import BinaryBashers.Levels.HexToDecimalScene;
 import BinaryBashers.Levels.LevelSelectScene;
 import dev.WinterRose.SaxionEngine.*;
-import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 import BinaryBashers.Levels.BinaryToDecimalScene;
-import nl.saxion.app.SaxionApp;
 
 public class App extends Application
 {

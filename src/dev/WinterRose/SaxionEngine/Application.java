@@ -30,7 +30,6 @@ public abstract class Application implements GameLoop
     private JFrame gameWindow;
     private Painter appPainter;
     private Point initialWindowSize;
-    private String nextSceneToLoad;
 
     private Sprite screenCover;
     public Application(boolean fullscreen)
@@ -52,11 +51,6 @@ public abstract class Application implements GameLoop
     public abstract void createScenes();
 
     public abstract void createPrefabs();
-
-    public void enqueueScene(String name)
-    {
-        nextSceneToLoad = name;
-    }
 
     @Override
     public void init()
@@ -109,12 +103,6 @@ public abstract class Application implements GameLoop
         var bounds = gameWindow.getBounds();
         Input.windowPosition = new Vector2(bounds.x, bounds.y);
         Input.windowSize = new Point(bounds.width, bounds.height);
-
-        if(nextSceneToLoad != null)
-        {
-            loadScene(nextSceneToLoad);
-            nextSceneToLoad = null;
-        }
     }
 
     /**
@@ -414,6 +402,11 @@ public abstract class Application implements GameLoop
         {
             throw new RuntimeException(e);
         }
+    }
+
+    public Scene getActiveScene()
+    {
+        return activeScene;
     }
 }
 
