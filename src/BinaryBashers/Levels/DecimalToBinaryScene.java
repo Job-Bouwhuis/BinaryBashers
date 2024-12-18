@@ -6,7 +6,7 @@ import BinaryBashers.Player;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 
-public class DecimalToBinary
+public class DecimalToBinaryScene
 {
     public void createScene(Application app)
     {
