@@ -9,14 +9,14 @@ public abstract class Enemy
 {
     public EnemySpawner spawner;
     private EnemySprite sprite;
-    private final Vector2 textPosition;
-    protected String text;
+    private Vector2 textPosition;
+    private String text;
     private boolean isDead;
     private SoundPack deathSounds;
     public Integer decimalNum = 0;
     protected Boolean showDecimal;
 
-    public Enemy(int spriteId, Vector2 enemyPosition,Boolean showDecimal)
+    public Enemy(int spriteId, Vector2 enemyPosition, Boolean showDecimal)
     {
         this.sprite = new EnemySprite();
         this.sprite.setSpriteId(spriteId);
@@ -24,7 +24,7 @@ public abstract class Enemy
         sprite.transform.setPosition(enemyPosition); // is ugly, but it worki
 
         text = "...";
-        textPosition = enemyPosition.subtract(new Vector2(0, sprite.getSolid().getHeight() + 10));
+        textPosition = enemyPosition.subtract(new Vector2(Painter.measureString(text).x, sprite.getSolid().getHeight() + 10));
         deathSounds = new SoundPack("resources/audio/enemyDeaths");
         deathSounds.setAllVolume(0.8f);
         this.showDecimal = showDecimal;
@@ -35,7 +35,15 @@ public abstract class Enemy
         return sprite;
     }
 
-    protected Boolean getShowDecimal(){
+    public void setText(String text)
+    {
+        this.text = text;
+        textPosition = sprite.transform.getPosition().subtract(new Vector2(Painter.measureString(text).x / 2, sprite.getSolid().getHeight() + 10));
+
+    }
+
+    protected Boolean getShowDecimal()
+    {
         return showDecimal;
     }
 
@@ -50,7 +58,7 @@ public abstract class Enemy
     public void render(Painter painter)
     {
         sprite.render(painter);
-        if(!isDead)
+        if (!isDead)
             painter.drawScaledText(text, textPosition, new Vector2(1.2f), new Vector2(0.5f, 0.5f), Color.cyan, FontType.Bold);
     }
 

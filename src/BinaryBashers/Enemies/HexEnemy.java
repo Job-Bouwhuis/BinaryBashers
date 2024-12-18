@@ -28,10 +28,10 @@ public class HexEnemy extends Enemy
         hexValue = Util.decimalToHex(decimalNum);
         if (fromDecimal)
         {
-            text = Integer.toString(decimalNum);
+            setText("0d "+ Integer.toString(decimalNum));
         } else
         {
-            text = hexValue;
+            setText("0x\n"+ hexValue);
         }
     }
 

@@ -33,7 +33,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     private Random random;
     private Timer timer;
     private DifficultyGenerator difficultyGenerator = new DifficultyGenerator();
-    private Boolean fromDecimal;
+    private Boolean showDecimal;
 
     public EnemySpawner(Class<T> enemyType, Boolean fromDecimal)
     {
@@ -41,7 +41,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         this.enemies = new ArrayList<>();
         this.random = new Random();
         spawnTimer = 5;
-        this.fromDecimal = fromDecimal;
+        this.showDecimal = fromDecimal;
     }
 
     @Override
@@ -101,7 +101,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         T newEnemy = null;
         try
         {
-            newEnemy = enemyConstructor.newInstance(randomId, enemyPos, difficultyGenerator.getDifficultyNumber(scoreManager.getCurrentScore()), fromDecimal);
+            newEnemy = enemyConstructor.newInstance(randomId, enemyPos, difficultyGenerator.getDifficultyNumber(scoreManager.getCurrentScore()), showDecimal);
             if (newEnemy.getInputLength() > inputRenderer.characterMax)
             {
                 inputRenderer.characterMax = newEnemy.getInputLength();

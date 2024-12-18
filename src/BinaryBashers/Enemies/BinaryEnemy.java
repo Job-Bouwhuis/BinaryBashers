@@ -28,12 +28,12 @@ public class BinaryEnemy extends Enemy
 //        decimalNum = new Random().nextInt(16);
         binaryNum = Util.decimalToBinary(decimalNum);
 
-        if(showDecimal){
-            text = Integer.toString(decimalNum); //showing decimal
-        }
-        else
+        if (showDecimal)
         {
-            text = Integer.toString(binaryNum); // showing binary
+            setText("0d" + Integer.toString(decimalNum)); //showing decimal
+        } else
+        {
+            setText("0b" + Integer.toString(binaryNum)); // showing binary
         }
     }
 
@@ -43,13 +43,14 @@ public class BinaryEnemy extends Enemy
         if (input.equals(""))
             return false;
 
-        if(showDecimal)
+        if (showDecimal)
         {
             // compare if the enemy decimal number is correct in Binary
             int in = Integer.parseInt(input);
             return in == binaryNum;
 
-        }else {
+        } else
+        {
             // compare if the enemy binary number is correct in decimal based on input
             int in = Integer.parseInt(input);
             return in == decimalNum;

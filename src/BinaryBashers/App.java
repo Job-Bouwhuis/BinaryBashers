@@ -71,7 +71,8 @@ public class App extends Application
         new HexToDecimalScene().createScene(this);
         new DecimalToBinaryScene().createScene(this);
         LevelSelectScene.createScene(this);
-        loadScene("LevelSelect");
+        //loadScene("LevelSelect");
+        loadScene("HexLevel");
 
     }
 
