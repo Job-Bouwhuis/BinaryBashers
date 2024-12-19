@@ -4,5 +4,5 @@ import java.awt.event.KeyEvent;
 
 public interface IKeystrokeCallback extends ICallback
 {
-    void keyPress(KeyEvent key);
+    void keyPress(KeyEvent key, boolean pressed);
 }

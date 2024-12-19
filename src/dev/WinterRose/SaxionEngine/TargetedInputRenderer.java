@@ -63,8 +63,11 @@ public class TargetedInputRenderer extends Renderer implements IKeystrokeCallbac
     }
 
     @Override
-    public void keyPress(KeyEvent key)
+    public void keyPress(KeyEvent key, boolean pressed)
     {
+        if(!pressed)
+            return;
+
         try
         {
             int keyCode = key.getKeyCode();

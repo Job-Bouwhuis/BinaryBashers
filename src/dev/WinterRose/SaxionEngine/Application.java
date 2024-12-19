@@ -6,25 +6,18 @@ import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.DoubleAccumulator;
 import java.util.function.Consumer;
 
 public abstract class Application
 {
     private static Application instance;
-    private boolean gameRunning;
     public Action<Application> onAppClosing = new Action();
-
-    public static Application current()
-    {
-        return instance;
-    }
-
     Map<String, Consumer<Scene>> scenes = new HashMap<>();
     Scene activeScene;
+    private boolean gameRunning;
     private boolean isFullscreen = true;
     private long lastFrameTime = System.nanoTime();
     private JFrame applicationWindow;
@@ -32,17 +25,20 @@ public abstract class Application
     private Painter appPainter;
     private Point initialWindowSize;
     private Integer fps = 0;
-
-    private final java.util.Queue<MouseEvent> mouseEventQueue = new ConcurrentLinkedQueue();
-    private final java.util.Queue<KeyEvent> keyEventQueue = new ConcurrentLinkedQueue();
-
-
     private Sprite screenCover;
+
+    boolean finishedFrame = true;
+
     public Application(boolean fullscreen)
     {
         isFullscreen = fullscreen;
         instance = this;
         screenCover = Sprite.square(Painter.renderWidth, Painter.renderHeight, Color.black);
+    }
+
+    public static Application current()
+    {
+        return instance;
     }
 
     public void run(int width, int height, int targetFramerate)
@@ -74,12 +70,18 @@ public abstract class Application
 
             if (accumulatedTime >= frameDuration)
             {
-                loop();
+                if(!finishedFrame)
+                    continue;
+                finishedFrame = false;
+
+               loop();
+
                 frames++;
                 accumulatedTime -= frameDuration;
             }
 
-            if (System.nanoTime() - secondTimer >= 1_000_000_000L) {
+            if (System.nanoTime() - secondTimer >= 1_000_000_000L)
+            {
                 fps = frames;
                 frames = 0;
                 secondTimer += 1_000_000_000L;
@@ -88,8 +90,7 @@ public abstract class Application
             try
             {
                 long sleepTime = (frameDuration - (System.nanoTime() - previousTime)) / 1_000_000;
-                if (sleepTime > 0)
-                    Thread.sleep(sleepTime);
+                if (sleepTime > 0) Thread.sleep(sleepTime);
             }
             catch (InterruptedException e)
             {
@@ -113,6 +114,7 @@ public abstract class Application
     {
         scenes.put(name, sceneConfigurer);
     }
+
     /**
      * Use method createScene(String, Consumer) to add scenes. then loadScene(String) to load the first scene.
      */
@@ -123,22 +125,9 @@ public abstract class Application
      */
     public abstract void createPrefabs();
 
-    private void processInputEvents() {
-        while (!mouseEventQueue.isEmpty()) {
-            MouseEvent event = mouseEventQueue.poll();
-            mouseEvent(event); // Process the event
-        }
-
-        while (!keyEventQueue.isEmpty()) {
-            KeyEvent event = keyEventQueue.poll();
-            Input.keyboardEvent(event, true); // Or false depending on the state
-        }
-    }
-
     private void loop()
     {
-        processInputEvents();
-
+        SwingUtilities.invokeLater(Input::update);
         forceQuitDialog();
 
         long currentTime = System.nanoTime();
@@ -150,7 +139,7 @@ public abstract class Application
 
         boolean hasActiveDialogBox = dialogManager.update();
 
-        if(!hasActiveDialogBox)
+        if (!hasActiveDialogBox)
         {
             activeScene.updateScene();
         }
@@ -174,10 +163,13 @@ public abstract class Application
             applicationWindow.setVisible(true);
         }
 
-        Input.update();
+
+
         var bounds = applicationWindow.getBounds();
         Input.windowPosition = new Vector2(bounds.x, bounds.y);
         Input.windowSize = new Point(bounds.width, bounds.height);
+
+        finishedFrame = true;
     }
 
     /**
@@ -206,16 +198,16 @@ public abstract class Application
         loadScene(sceneName, true);
     }
 
-    @SuppressWarnings("LoopConditionNotUpdatedInsideLoop") // suppressed to avoid redundant if statements since the while loops would act as the if statements.
+    @SuppressWarnings("LoopConditionNotUpdatedInsideLoop")
+    // suppressed to avoid redundant if statements since the while loops would act as the if statements.
     public void loadScene(String sceneName, boolean doAnimation)
     {
         Transform screenCoverPosition = new Transform();
         screenCoverPosition.setPosition(new Vector2(0, -Painter.renderHeight));
-        while(doAnimation)
+        while (doAnimation)
         {
             appPainter.begin();
-            if(activeScene != null)
-                activeScene.drawScene(appPainter);
+            if (activeScene != null) activeScene.drawScene(appPainter);
             appPainter.drawSprite(screenCover, screenCoverPosition, new Vector2(), Color.white);
             screenCoverPosition.translateY(800 * Time.getUnscaledDeltaTime());
             appPainter.end();
@@ -226,7 +218,7 @@ public abstract class Application
 
             Time.update(deltaTime);
 
-            if(screenCoverPosition.getPosition().y > 0)
+            if (screenCoverPosition.getPosition().y > 0)
             {
                 screenCoverPosition.setPosition(new Vector2());
                 break;
@@ -251,11 +243,10 @@ public abstract class Application
         activeScene = scene;
         activeScene.wakeScene();
 
-        while(doAnimation)
+        while (doAnimation)
         {
             appPainter.begin();
-            if(activeScene != null)
-                activeScene.drawScene(appPainter);
+            if (activeScene != null) activeScene.drawScene(appPainter);
             screenCoverPosition.translateY(800 * Time.getUnscaledDeltaTime());
             appPainter.drawSprite(screenCover, screenCoverPosition, new Vector2(), Color.white);
             appPainter.end();
@@ -266,7 +257,7 @@ public abstract class Application
 
             Time.update(deltaTime);
 
-            if(screenCoverPosition.getPosition().y > Painter.renderHeight)
+            if (screenCoverPosition.getPosition().y > Painter.renderHeight)
             {
                 screenCoverPosition.setPosition(new Vector2(0, Painter.renderHeight));
                 break;
@@ -278,6 +269,12 @@ public abstract class Application
     {
         Input.mouseEvent(event);
         if (activeScene != null) activeScene.handleCallbacks(event);
+    }
+
+    private void keyboardEvent(KeyEvent event, boolean pressed)
+    {
+        Input.keyboardEvent(event, pressed);
+        if(activeScene != null) activeScene.handleCallbacks(event, pressed);
     }
 
     public boolean isFullscreen()
@@ -299,49 +296,49 @@ public abstract class Application
         canvas.setLayout(new BorderLayout());
 
         // Add mouse listener
-        canvas.addMouseListener(new MouseListener() {
+        canvas.addMouseListener(new MouseListener()
+        {
             @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
-                // No action needed for now
+            public void mouseClicked(java.awt.event.MouseEvent e)
+            {
             }
 
             @Override
-            public void mousePressed(java.awt.event.MouseEvent e) {
-                var event = new MouseEvent(
-                        buttonFromAWT(e),
-                        new Vector2(e.getXOnScreen(), e.getYOnScreen()),
-                        e.getClickCount() == 2
-                );
-                mouseEventQueue.add(event); // Enqueue the mouse event
+            public void mousePressed(java.awt.event.MouseEvent e)
+            {
+                var event = new MouseEvent(buttonFromAWT(e), new Vector2(e.getXOnScreen(), e.getYOnScreen()), e.getClickCount() == 2);
+                event.clicked = true;
+                mouseEvent(event);
             }
 
             @Override
-            public void mouseReleased(java.awt.event.MouseEvent e) {
-                var event = new MouseEvent(
-                        buttonFromAWT(e),
-                        new Vector2(e.getXOnScreen(), e.getYOnScreen()),
-                        e.getClickCount() == 2
-                );
+            public void mouseReleased(java.awt.event.MouseEvent e)
+            {
+                var event = new MouseEvent(buttonFromAWT(e), new Vector2(e.getXOnScreen(), e.getYOnScreen()), e.getClickCount() == 2);
                 event.released = true;
-                mouseEventQueue.add(event); // Enqueue the mouse event
+                mouseEvent(event);
             }
 
             @Override
-            public void mouseEntered(java.awt.event.MouseEvent e) {
+            public void mouseEntered(java.awt.event.MouseEvent e)
+            {
                 var event = new MouseEvent(new Vector2(e.getXOnScreen(), e.getYOnScreen()));
                 event.mouseEnteredGameWindow = true;
-                mouseEventQueue.add(event); // Enqueue the mouse enter event
+                mouseEvent(event);
             }
 
             @Override
-            public void mouseExited(java.awt.event.MouseEvent e) {
+            public void mouseExited(java.awt.event.MouseEvent e)
+            {
                 var event = new MouseEvent(new Vector2(e.getXOnScreen(), e.getYOnScreen()));
                 event.mouseExitedGameWindow = true;
-                mouseEventQueue.add(event); // Enqueue the mouse exit event
+                mouseEvent(event);
             }
 
-            private MouseButton buttonFromAWT(java.awt.event.MouseEvent e) {
-                return switch (e.getButton()) {
+            private MouseButton buttonFromAWT(java.awt.event.MouseEvent e)
+            {
+                return switch (e.getButton())
+                {
                     case java.awt.event.MouseEvent.BUTTON1 -> MouseButton.Left;
                     case java.awt.event.MouseEvent.BUTTON2 -> MouseButton.Middle;
                     case java.awt.event.MouseEvent.BUTTON3 -> MouseButton.Right;
@@ -350,38 +347,44 @@ public abstract class Application
             }
         });
 
-        canvas.addMouseMotionListener(new MouseMotionListener() {
+        canvas.addMouseMotionListener(new MouseMotionListener()
+        {
             @Override
-            public void mouseDragged(java.awt.event.MouseEvent e) {
+            public void mouseDragged(java.awt.event.MouseEvent e)
+            {
                 enqueueMouseMotionEvent(e);
             }
 
             @Override
-            public void mouseMoved(java.awt.event.MouseEvent e) {
+            public void mouseMoved(java.awt.event.MouseEvent e)
+            {
                 enqueueMouseMotionEvent(e);
             }
 
-            private void enqueueMouseMotionEvent(java.awt.event.MouseEvent e) {
+            private void enqueueMouseMotionEvent(java.awt.event.MouseEvent e)
+            {
                 var event = new MouseEvent(new Vector2(e.getXOnScreen(), e.getYOnScreen()));
-                mouseEventQueue.add(event); // Enqueue the mouse motion event
+                mouseEvent(event);
             }
         });
 
-        canvas.addKeyListener(new KeyListener() {
+        canvas.addKeyListener(new KeyListener()
+        {
             @Override
-            public void keyTyped(KeyEvent e) {
-                // Enqueue the key typed event, if needed for the game
-                keyEventQueue.add(e);
+            public void keyTyped(KeyEvent e)
+            {
             }
 
             @Override
-            public void keyPressed(KeyEvent e) {
-                keyEventQueue.add(e); // Enqueue the key pressed event
+            public void keyPressed(KeyEvent e)
+            {
+                keyboardEvent(e, true);
             }
 
             @Override
-            public void keyReleased(KeyEvent e) {
-                keyEventQueue.add(e); // Enqueue the key released event
+            public void keyReleased(KeyEvent e)
+            {
+                keyboardEvent(e, false);
             }
         });
 
@@ -434,9 +437,9 @@ public abstract class Application
                 @Override
                 public void windowClosing(WindowEvent e)
                 {
-                    if(activeScene != null)
+                    if (activeScene != null)
                     {
-                        if(activeScene.name.equals("LevelSelect"))
+                        if (activeScene.name.equals("LevelSelect"))
                         {
                             closeGame();
                             return;

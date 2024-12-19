@@ -70,10 +70,10 @@ public class Scene
         return newObj;
     }
 
-    public void handleCallbacks(KeyEvent e)
+    public void handleCallbacks(KeyEvent e, boolean pressed)
     {
         for (var obj : objects)
-            obj.handleKeystrokeCallbacks(e);
+            obj.handleKeystrokeCallbacks(e, pressed);
     }
 
     public void handleCallbacks(MouseEvent mouseEvent)

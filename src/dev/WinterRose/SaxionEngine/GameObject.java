@@ -126,12 +126,12 @@ public class GameObject
         return scene;
     }
 
-    void handleKeystrokeCallbacks(KeyEvent eventArgs)
+    void handleKeystrokeCallbacks(KeyEvent eventArgs, boolean pressed)
     {
         for (int i = 0; i < keystrokeCallbacks.size(); i++)
         {
             IKeystrokeCallback callback = keystrokeCallbacks.get(i);
-            callback.keyPress(eventArgs);
+            callback.keyPress(eventArgs, pressed);
         }
     }
 
