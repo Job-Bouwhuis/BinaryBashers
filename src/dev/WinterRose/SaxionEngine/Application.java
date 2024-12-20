@@ -6,7 +6,6 @@ import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;

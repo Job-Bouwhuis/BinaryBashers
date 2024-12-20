@@ -4,14 +4,14 @@ import dev.WinterRose.SaxionEngine.TextProviders.DefaultTextProvider;
 import dev.WinterRose.SaxionEngine.TextProviders.TextProvider;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 
 public class Painter
 {
@@ -49,7 +49,6 @@ public class Painter
 
         float width = 0;
         float height = fontMetrics.getAscent() - fontMetrics.getDescent();
-        ;
 
         final float padding = 1;
 

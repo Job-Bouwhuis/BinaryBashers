@@ -70,7 +70,7 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
     {
         if (!pressed) return;
 
-        int keyCode = key.getKeyChar();
+        int keyCode = key.getKeyCode();
         if (keyCode == KeyEvent.VK_ENTER)
         {
             if (inputText.isEmpty()) return;
