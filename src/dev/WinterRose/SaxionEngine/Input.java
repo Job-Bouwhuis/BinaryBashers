@@ -3,9 +3,6 @@ package dev.WinterRose.SaxionEngine;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 public class Input
 {
@@ -88,7 +85,7 @@ public class Input
         }
         else
         {
-            if (keysHeld.contains(keyCode)) keysHeld.remove((Object)keyCode);
+            if (keysHeld.contains(keyCode)) keysHeld.remove((Object) keyCode);
             keysReleased.add(keyCode);
         }
     }
@@ -127,8 +124,12 @@ public class Input
     {
         for (int j = 0; j < keysHeld.size(); j++)
         {
-            int keyCode = keysHeld.get(j);
-            if (key.matches((char) keyCode))
+            if (keysHeld.size() < j + 1) return false;
+
+            Integer num = keysHeld.get(j);
+            if (num == null) continue;
+            int i = num;
+            if (key.matches((char) i))
             {
                 return true;
             }
@@ -140,7 +141,11 @@ public class Input
     {
         for (int j = 0; j < keysPressed.size(); j++)
         {
-            int i = keysPressed.get(j);
+            if (keysPressed.size() < j + 1) return false;
+
+            Integer num = keysPressed.get(j);
+            if (num == null) continue;
+            int i = num;
             if (key.matches((char) i))
             {
                 return true;
@@ -153,7 +158,11 @@ public class Input
     {
         for (int j = 0; j < keysReleased.size(); j++)
         {
-            int i = keysReleased.get(j);
+            if (keysReleased.size() < j + 1) return false;
+
+            Integer num = keysReleased.get(j);
+            if (num == null) continue;
+            int i = num;
             if (key.matches((char) i))
             {
                 return true;
@@ -164,7 +173,6 @@ public class Input
 
     public static void update()
     {
-
         keysPressed.clear();
         keysReleased.clear();
 

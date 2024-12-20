@@ -149,7 +149,7 @@ public abstract class Application
         activeScene.drawScene(appPainter);
         dialogManager.render(appPainter);
 
-        appPainter.drawText(fps.toString(), new Vector2(), new Vector2(), Color.white);
+        //appPainter.drawText(fps.toString(), new Vector2(), new Vector2(), Color.white);
 
         appPainter.end();
 

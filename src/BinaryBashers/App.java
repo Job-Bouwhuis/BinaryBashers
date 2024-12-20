@@ -15,7 +15,7 @@ public class App extends Application
 
     public static void main(String[] args)
     {
-        new App(false).run(1280, 720, 60);
+        new App(false).run(1280, 720, 50);
     }
 
     @Override
