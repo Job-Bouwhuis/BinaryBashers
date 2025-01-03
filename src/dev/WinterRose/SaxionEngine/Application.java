@@ -6,16 +6,20 @@ import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Consumer;
 
 public abstract class Application
 {
     private static Application instance;
     public Action<Application> onAppClosing = new Action();
+    public boolean showFPS = false;
     Map<String, Consumer<Scene>> scenes = new HashMap<>();
     Scene activeScene;
+    boolean finishedFrame = true;
     private boolean gameRunning;
     private boolean isFullscreen = true;
     private long lastFrameTime = System.nanoTime();
@@ -25,8 +29,10 @@ public abstract class Application
     private Point initialWindowSize;
     private Integer fps = 0;
     private Sprite screenCover;
+    private ConcurrentLinkedDeque<KeyEvent> keyboardDownEvents = new ConcurrentLinkedDeque<>();
+    private ConcurrentLinkedDeque<KeyEvent> keyboardUpEvents = new ConcurrentLinkedDeque<>();
 
-    boolean finishedFrame = true;
+    private ConcurrentLinkedDeque<MouseEvent> mouseEvents = new ConcurrentLinkedDeque<>();
 
     public Application(boolean fullscreen)
     {
@@ -69,11 +75,10 @@ public abstract class Application
 
             if (accumulatedTime >= frameDuration)
             {
-                if(!finishedFrame)
-                    continue;
+                if (!finishedFrame) continue;
                 finishedFrame = false;
 
-               loop();
+                loop();
 
                 frames++;
                 accumulatedTime -= frameDuration;
@@ -124,9 +129,47 @@ public abstract class Application
      */
     public abstract void createPrefabs();
 
+    private void handleInputEvents()
+    {
+        while(true)
+        {
+            KeyEvent event = keyboardDownEvents.poll();
+            if(event == null)
+                break;
+            Input.keyboardEvent(event, true);
+            if(activeScene != null)
+                activeScene.handleCallbacks(event, true);
+        }
+
+        while(true)
+        {
+            KeyEvent event = keyboardUpEvents.poll();
+            if(event == null)
+                break;
+            Input.keyboardEvent(event, false);
+            if(activeScene != null)
+                activeScene.handleCallbacks(event, false);
+        }
+
+        while(true)
+        {
+            MouseEvent event = mouseEvents.poll();
+            if(event == null)
+                break;
+            Input.mouseEvent(event);
+            if(activeScene != null)
+                activeScene.handleCallbacks(event);
+        }
+    }
+
     private void loop()
     {
-        SwingUtilities.invokeLater(Input::update);
+        handleInputEvents();
+
+        boolean oHeld2 = Input.getKey(Keys.F11);
+        boolean oPressed2 = Input.getKeyDown(Keys.F11);
+        boolean oReleased2 = Input.getKeyUp(Keys.F11);
+
         forceQuitDialog();
 
         long currentTime = System.nanoTime();
@@ -134,21 +177,19 @@ public abstract class Application
         lastFrameTime = currentTime;
 
         Time.update(deltaTime);
+
         var dialogManager = DialogBoxManager.getInstance();
-
         boolean hasActiveDialogBox = dialogManager.update();
-
         if (!hasActiveDialogBox)
-        {
             activeScene.updateScene();
-        }
 
         appPainter.begin();
 
         activeScene.drawScene(appPainter);
         dialogManager.render(appPainter);
 
-        //appPainter.drawText(fps.toString(), new Vector2(), new Vector2(), Color.white);
+        if (showFPS)
+            appPainter.drawText(fps.toString(), new Vector2(), new Vector2(), Color.white);
 
         appPainter.end();
 
@@ -162,12 +203,11 @@ public abstract class Application
             applicationWindow.setVisible(true);
         }
 
-
-
         var bounds = applicationWindow.getBounds();
         Input.windowPosition = new Vector2(bounds.x, bounds.y);
         Input.windowSize = new Point(bounds.width, bounds.height);
 
+        Input.update();
         finishedFrame = true;
     }
 
@@ -266,14 +306,31 @@ public abstract class Application
 
     private void mouseEvent(MouseEvent event)
     {
-        Input.mouseEvent(event);
-        if (activeScene != null) activeScene.handleCallbacks(event);
+        mouseEvents.push(event);
     }
 
     private void keyboardEvent(KeyEvent event, boolean pressed)
     {
-        Input.keyboardEvent(event, pressed);
-        if(activeScene != null) activeScene.handleCallbacks(event, pressed);
+        if (pressed)
+        {
+            keyboardDownEvents.push(event);
+            return;
+        }
+
+        if (!pressedEventForKeyExists(event))
+            keyboardUpEvents.push(event);
+    }
+
+    private boolean pressedEventForKeyExists(KeyEvent event)
+    {
+        var snapshot = new ArrayList<>(keyboardDownEvents);
+
+        for (var evnt : snapshot)
+        {
+            if (evnt.equals(event)) return true;
+            if (evnt.getKeyCode() == event.getKeyCode()) return true;
+        }
+        return false;
     }
 
     public boolean isFullscreen()
