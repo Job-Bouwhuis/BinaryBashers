@@ -1,10 +1,7 @@
 package BinaryBashers;
 
-import BinaryBashers.Levels.DecimalToBinaryScene;
-import BinaryBashers.Levels.HexToDecimalScene;
-import BinaryBashers.Levels.LevelSelectScene;
+import BinaryBashers.Levels.*;
 import dev.WinterRose.SaxionEngine.*;
-import BinaryBashers.Levels.BinaryToDecimalScene;
 
 public class App extends Application
 {
@@ -24,6 +21,7 @@ public class App extends Application
         new BinaryToDecimalScene().createScene(this);
         new HexToDecimalScene().createScene(this);
         new DecimalToBinaryScene().createScene(this);
+        new EndlessLevelScene().createScene(this);
         LevelSelectScene.createScene(this);
         loadScene("LevelSelect", false);
     }

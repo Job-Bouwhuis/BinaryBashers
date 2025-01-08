@@ -265,22 +265,30 @@ public abstract class Application
         }
 
         Consumer<Scene> sceneConfigurer = scenes.get(sceneName);
-        if (sceneConfigurer == null) throw new RuntimeException("No scene with name: " + sceneName);
-
-        Scene scene = new Scene(sceneName);
-
-        try
+        if (sceneConfigurer == null)
         {
-            sceneConfigurer.accept(scene);
+            DialogBoxManager.getInstance().enqueue("Error", "No scene with name: " + sceneName + ". Please scream at your local developer to resolve this issue!", 10);
+            //throw new RuntimeException("No scene with name: " + sceneName);
         }
-        catch (Exception e)
+        else
         {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to create scene", e);
+            Scene scene = new Scene(sceneName);
+
+            try
+            {
+                sceneConfigurer.accept(scene);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                throw new RuntimeException("Failed to create scene", e);
+            }
+
+            activeScene = scene;
+            activeScene.wakeScene();
         }
 
-        activeScene = scene;
-        activeScene.wakeScene();
+
 
         while (doAnimation)
         {

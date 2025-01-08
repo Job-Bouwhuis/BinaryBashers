@@ -42,7 +42,6 @@ public class HexToDecimalScene
                 enemySpawner.checkAndKillEnemies(inputRenderer1.getInputAsString());
                 inputRenderer1.inputText.clear();
             });
-            inputRenderer.acceptedCharacters = new Character[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9','A','B','C','D','E','F'};
             inputField.addComponent(inputRenderer);
             inputField.transform.setPosition(new Vector2(Painter.renderCenter).add(new Vector2(0, (float) Painter.renderHeight / 2)));
             scene.addObject(inputField);

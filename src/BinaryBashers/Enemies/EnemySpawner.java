@@ -4,7 +4,6 @@ import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
 
-import java.awt.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -35,7 +34,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     private Boolean fromDecimal;
     private Boolean isInfiniteLevel;
     private int enemyCorpses;
-    private final int ENDLESS_LEVEL_ENEMY_SWAP_AFTER_KILLS = 1;
+    private final int ENDLESS_LEVEL_ENEMY_SWAP_AFTER_KILLS = 2;
     private Class<?>[] endlessLevelEnemyTypes;
     private int currentEnemyTypeCounter;
 
@@ -46,15 +45,17 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         this.random = new Random();
         spawnTimer = 5;
         this.fromDecimal = fromDecimal;
+        isInfiniteLevel = false;
     }
 
     public EnemySpawner(Boolean infiniteLevel)
     {
-        if (!infiniteLevel) {
+        if (!infiniteLevel)
+        {
             System.out.println("false??? what do you mean false??? you think i coded functionality for this..? enjoy a broken game idiot");
         }
         isInfiniteLevel = infiniteLevel;
-        endlessLevelEnemyTypes = new Class<?>[] {BinaryEnemy.class, BinaryEnemy.class, BinaryEnemy.class};
+        endlessLevelEnemyTypes = new Class<?>[]{ BinaryEnemy.class, DecimalEnemy.class, HexEnemy.class };
         enemyType = endlessLevelEnemyTypes[0];
         this.enemies = new ArrayList<>();
         this.random = new Random();
@@ -121,14 +122,17 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         {
             newEnemy = enemyConstructor.newInstance(randomId, enemyPos, difficultyGenerator.getDifficultyNumber(scoreManager.getCurrentScore()), fromDecimal);
             if (newEnemy.getInputLength() > inputRenderer.characterMax)
-            {
                 inputRenderer.characterMax = newEnemy.getInputLength();
-            }
         }
-        catch (InstantiationException | InvocationTargetException | IllegalAccessException e)
+        catch (InstantiationException | IllegalAccessException e)
         {
             throw new RuntimeException(e);
         }
+        catch (InvocationTargetException e)
+        {
+            e.getTargetException().printStackTrace();
+        }
+        inputRenderer.allowFormat(newEnemy.getInputFormat());
         newEnemy.startAnimation();
         enemies.add(newEnemy);
         newEnemy.spawner = this;
@@ -143,22 +147,10 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     private Vector2 getNewEnemyPosition()
     {
         int size = enemies.size();
-        if (size == 1)
-        {
-            return Painter.renderCenter.subtract(new Vector2(Painter.renderCenter.x / 2, 0));
-        }
-        else if (size == 0)
-        {
-            return Painter.renderCenter;
-        }
-        else if (size == 2)
-        {
-            return Painter.renderCenter.add(new Vector2(Painter.renderCenter.x / 2, 0));
-        }
-        else
-        {
-            throw new IllegalStateException("Invalid Position");
-        }
+        if (size == 1) return Painter.renderCenter.subtract(new Vector2(Painter.renderCenter.x / 2, 0));
+        else if (size == 0) return Painter.renderCenter;
+        else if (size == 2) return Painter.renderCenter.add(new Vector2(Painter.renderCenter.x / 2, 0));
+        else throw new IllegalStateException("Invalid Position");
     }
 
     public void checkAndKillEnemies(String input)
@@ -169,8 +161,15 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
             if (e.compairInput(input))
             {
                 e.kill();
+                inputRenderer.disallowFormat(e.getInputFormat());
                 scoreManager.addPoints(1);
             }
+        }
+
+        for (int i = 0; i < enemies.size(); i++)
+        {
+            EnemyFormat typeFormat = enemies.get(i).getInputFormat();
+            inputRenderer.allowFormat(typeFormat);
         }
     }
 
@@ -185,7 +184,8 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
             timer.setSpeedMultiplier(1f);
         }
         enemyCorpses++;
-        if (isInfiniteLevel) {
+        if (isInfiniteLevel)
+        {
             checkEnemyTypeSwitch();
         }
     }
@@ -227,21 +227,25 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         }
     }
 
-    public void startRandomEnemyDamageAnimation() {
-        enemies.get(SaxionApp.getRandomValueBetween(0, enemies.size())).getSprite().startAttackAnimation();
+    public void startRandomEnemyDamageAnimation()
+    {
+        enemies.get(getRandomValue(0, enemies.size())).getSprite().startAttackAnimation();
     }
 
-    public void checkEnemyTypeSwitch() {
-        if (enemyCorpses % ENDLESS_LEVEL_ENEMY_SWAP_AFTER_KILLS == 0) {
+    public static int getRandomValue(int lowerBound, int upperBound)
+    {
+        Random random = new Random();
+        return random.nextInt(upperBound - lowerBound) + lowerBound;
+    }
+
+    public void checkEnemyTypeSwitch()
+    {
+        if (enemyCorpses % ENDLESS_LEVEL_ENEMY_SWAP_AFTER_KILLS == 0)
+        {
             currentEnemyTypeCounter++;
-            currentEnemyTypeCounter = currentEnemyTypeCounter%(endlessLevelEnemyTypes.length - 1);
+            currentEnemyTypeCounter = currentEnemyTypeCounter % (endlessLevelEnemyTypes.length - 1);
             enemyType = endlessLevelEnemyTypes[currentEnemyTypeCounter];
-            if (currentEnemyTypeCounter == 1) {
-                fromDecimal = true;
-            }
-            else {
-                fromDecimal = false;
-            }
+            fromDecimal = currentEnemyTypeCounter == 1;
         }
     }
 }

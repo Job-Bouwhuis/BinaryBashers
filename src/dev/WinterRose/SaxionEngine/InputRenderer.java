@@ -1,5 +1,6 @@
 package dev.WinterRose.SaxionEngine;
 
+import BinaryBashers.Enemies.EnemyFormat;
 import dev.WinterRose.SaxionEngine.Callbacks.IKeystrokeCallback;
 
 import java.awt.*;
@@ -14,8 +15,16 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
     public ArrayList<DrawableCharacter> inputText = new ArrayList<>();
     public Vector2 origin = new Vector2(0.5f, 0.5f);
     public Action<InputRenderer> onEnterKeyPressed = new Action<>();
-    public Character[] acceptedCharacters;
+    public final ArrayList<Character> binaryCharacters = new ArrayList<>(Arrays.asList('1', '0'));
+    public final ArrayList<Character> hexCharacters = new ArrayList<>(Arrays.asList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'));
+    public final ArrayList<Character> decimalCharacters = new ArrayList<>(Arrays.asList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'));
+    public final ArrayList<Character> customAllowedCharacters = new ArrayList<>();
+    public boolean allowAllCharacters = false;
     public boolean onlyCapitalLetters = true;
+
+    private ArrayList<EnemyFormat> acceptedFormats = new ArrayList<>();
+
+    ArrayList<Character> cachedAllowedCharacters;
 
     /**
      * A predefined collection of characters that cant be typed in as a character
@@ -104,13 +113,15 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
         if (Arrays.stream(blacklistedCharacters)
                 .anyMatch(blacklistedChar -> blacklistedChar.charValue() == finalKeyCode)) return;
 
-        if (acceptedCharacters == null)
+        if (allowAllCharacters)
         {
             addCharacter((char) keyCode);
             return;
         }
 
-        if (!Arrays.stream(acceptedCharacters).anyMatch(c -> ((int) c.charValue()) == finalKeyCode)) return;
+        var chars = getUnifiedAllowedCharacters();
+        if(!chars.contains((char)finalKeyCode))
+            return; // disallowed character
 
         addCharacter((char) keyCode);
     }
@@ -120,10 +131,48 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
         return EngineUtil.getStringFromDrawableCharacters(inputText);
     }
 
+    private ArrayList<Character> getUnifiedAllowedCharacters()
+    {
+        if(cachedAllowedCharacters != null)
+            return cachedAllowedCharacters;
+
+        ArrayList<Character> result = new ArrayList<>();
+        if(acceptedFormats.contains(EnemyFormat.Decimal))
+        {
+            result.addAll(decimalCharacters);
+        }
+        if(acceptedFormats.contains(EnemyFormat.Hex))
+        {
+            result.addAll(hexCharacters);
+        }
+        if(acceptedFormats.contains(EnemyFormat.Binary))
+        {
+            result.addAll(binaryCharacters);
+        }
+        result.addAll(customAllowedCharacters);
+        return cachedAllowedCharacters = result;
+    }
+
     private void addCharacter(Character c)
     {
         if (inputText.size() == characterMax) return; // already max size.
         inputText.add(new DrawableCharacter(c, typedCharacterColor));
         typeLetterSound.play();
+    }
+
+    public void allowFormat(EnemyFormat inputFormat)
+    {
+        if(acceptedFormats.contains(inputFormat))
+            return;
+
+        acceptedFormats.add(inputFormat);
+        cachedAllowedCharacters = null;
+    }
+
+    public void disallowFormat(EnemyFormat format)
+    {
+        if(acceptedFormats.contains(format))
+            acceptedFormats.remove(format);
+        cachedAllowedCharacters = null;
     }
 }

@@ -19,7 +19,6 @@ public class EndlessLevelScene
             backgroundObject.addComponent(spriteRenderer);
             scene.addObject(backgroundObject);
 
-
             EnemySpawner<?> enemySpawner = new EnemySpawner<>(true);
             GameObject spawner = new GameObject("spawner");
             Sprite timerSprite = new Sprite("resources/sprites/ui/timer/Timer1.png");
@@ -42,7 +41,6 @@ public class EndlessLevelScene
                 enemySpawner.checkAndKillEnemies(inputRenderer1.getInputAsString());
                 inputRenderer1.inputText.clear();
             });
-            inputRenderer.acceptedCharacters = new Character[]{'0', '1','2','3','4','5','6','7','8','9'};
             inputField.addComponent(inputRenderer);
             inputField.transform.setPosition(new Vector2(Painter.renderCenter).add(new Vector2(0, (float) Painter.renderHeight / 2)));
             scene.addObject(inputField);

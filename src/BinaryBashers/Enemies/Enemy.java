@@ -4,13 +4,15 @@ import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 
 import java.awt.*;
+import java.util.Set;
 
 public abstract class Enemy
 {
+    private final Vector2 enemyPosition;
     public EnemySpawner spawner;
     private EnemySprite sprite;
-    private final Vector2 textPosition;
-    protected String text;
+    private Vector2 textPosition;
+    private String text;
     private boolean isDead;
     private SoundPack deathSounds;
     public Integer decimalNum = 0;
@@ -18,6 +20,7 @@ public abstract class Enemy
 
     public Enemy(int spriteId, Vector2 enemyPosition,Boolean showDecimal)
     {
+        this.enemyPosition = enemyPosition;
         this.sprite = new EnemySprite();
         this.sprite.setSpriteId(spriteId);
         sprite.transform = new Transform();
@@ -30,6 +33,17 @@ public abstract class Enemy
         this.showDecimal = showDecimal;
     }
 
+    protected void setText(String text)
+    {
+        this.text = getFormatString(getDisplayFormat()) + text + " > " + getInputFormat();
+        textPosition = enemyPosition.subtract(new Vector2(0, sprite.getSolid().getHeight() + 10));
+        Vector2 size = Painter.measureString(text);
+        textPosition = textPosition.subtract(new Vector2(size.x/2, 0));
+    }
+
+    public abstract EnemyFormat getDisplayFormat();
+    public abstract EnemyFormat getInputFormat();
+
     public EnemySprite getSprite()
     {
         return sprite;
@@ -37,6 +51,16 @@ public abstract class Enemy
 
     protected Boolean getShowDecimal(){
         return showDecimal;
+    }
+
+    private String getFormatString(EnemyFormat format)
+    {
+        return switch(format)
+        {
+            case Decimal -> "";
+            case Binary -> "0b";
+            case Hex -> "0x";
+        };
     }
 
     public void kill()

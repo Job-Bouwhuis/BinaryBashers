@@ -29,12 +29,28 @@ public class BinaryEnemy extends Enemy
         binaryNum = Util.decimalToBinary(decimalNum);
 
         if(showDecimal){
-            text = Integer.toString(decimalNum); //showing decimal
+            setText(Integer.toString(decimalNum)); //showing decimal
         }
         else
         {
-            text = Integer.toString(binaryNum); // showing binary
+            setText(Integer.toString(binaryNum)); // showing binary
         }
+    }
+
+    @Override
+    public EnemyFormat getDisplayFormat()
+    {
+        if(showDecimal)
+            return EnemyFormat.Decimal;
+        return EnemyFormat.Binary;
+    }
+
+    @Override
+    public EnemyFormat getInputFormat()
+    {
+        if(showDecimal)
+            return EnemyFormat.Binary;
+        return EnemyFormat.Decimal;
     }
 
     @Override

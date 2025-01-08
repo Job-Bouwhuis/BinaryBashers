@@ -20,12 +20,11 @@ public class DecimalEnemy extends Enemy
                 decimalNum = new Random().nextInt(32);
                 break;
             case 2:
-                decimalNum = new Random().nextInt(64);
+                decimalNum = new Random().nextInt(16, 64);
             case 3:
                 decimalNum = new Random().nextInt(32, 128);
         }
-//        decimalNum = new Random().nextInt(16);
-        text = Integer.toString(decimalNum);
+       setText(Integer.toString(decimalNum));
     }
 
     @Override
@@ -45,4 +44,15 @@ public class DecimalEnemy extends Enemy
         return Util.calculateBitSize(decimalNum);
     }
 
+    @Override
+    public EnemyFormat getDisplayFormat()
+    {
+        return EnemyFormat.Decimal;
+    }
+
+    @Override
+    public EnemyFormat getInputFormat()
+    {
+        return EnemyFormat.Binary;
+    }
 }

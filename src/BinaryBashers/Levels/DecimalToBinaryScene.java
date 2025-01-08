@@ -42,7 +42,6 @@ public class DecimalToBinaryScene
                 enemySpawner.checkAndKillEnemies(inputRenderer1.getInputAsString());
                 inputRenderer1.inputText.clear();
             });
-            inputRenderer.acceptedCharacters = new Character[]{'0', '1'};
             inputField.addComponent(inputRenderer);
             inputField.transform.setPosition(new Vector2(Painter.renderCenter).add(new Vector2(0, (float) Painter.renderHeight / 2)));
             scene.addObject(inputField);

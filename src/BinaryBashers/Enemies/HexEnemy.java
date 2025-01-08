@@ -21,17 +21,17 @@ public class HexEnemy extends Enemy
                 decimalNum = new Random().nextInt(32);
                 break;
             case 2:
-                decimalNum = new Random().nextInt(64);
+                decimalNum = new Random().nextInt(16, 64);
             case 3:
                 decimalNum = new Random().nextInt(32, 128);
         }
         hexValue = Util.decimalToHex(decimalNum);
         if (fromDecimal)
         {
-            text = Integer.toString(decimalNum);
+            setText(Integer.toString(decimalNum));
         } else
         {
-            text = hexValue;
+           setText(hexValue);
         }
     }
 
@@ -72,5 +72,21 @@ public class HexEnemy extends Enemy
 
             return count;
         }
+    }
+
+    @Override
+    public EnemyFormat getDisplayFormat()
+    {
+        if(showDecimal)
+            return EnemyFormat.Decimal;
+        return EnemyFormat.Hex;
+    }
+
+    @Override
+    public EnemyFormat getInputFormat()
+    {
+        if (showDecimal)
+            return EnemyFormat.Hex;
+        return EnemyFormat.Decimal;
     }
 }
