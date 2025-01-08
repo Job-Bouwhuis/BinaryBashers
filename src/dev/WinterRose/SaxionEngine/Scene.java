@@ -1,8 +1,8 @@
 package dev.WinterRose.SaxionEngine;
 
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
-import nl.saxion.app.interaction.KeyboardEvent;
 
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class Scene
@@ -70,10 +70,10 @@ public class Scene
         return newObj;
     }
 
-    public void handleCallbacks(KeyboardEvent e)
+    public void handleCallbacks(KeyEvent e, boolean pressed)
     {
         for (var obj : objects)
-            obj.handleKeystrokeCallbacks(e);
+            obj.handleKeystrokeCallbacks(e, pressed);
     }
 
     public void handleCallbacks(MouseEvent mouseEvent)

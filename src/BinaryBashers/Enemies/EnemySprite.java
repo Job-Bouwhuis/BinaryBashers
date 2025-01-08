@@ -15,7 +15,7 @@ public class EnemySprite extends ActiveRenderer {
 
     private final String BASE_SPRITE_DIR = "resources/sprites/enemies/";
 
-    private final float introTimerDuration = 4;
+    private final float introTimerDuration = 1.5f;
     public boolean isIntroTimerActive;
     private float introTimer;
     private float timeBetweenSprites;

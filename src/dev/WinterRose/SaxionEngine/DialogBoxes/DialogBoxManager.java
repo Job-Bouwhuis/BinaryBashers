@@ -1,7 +1,8 @@
 package dev.WinterRose.SaxionEngine.DialogBoxes;
 
-import dev.WinterRose.SaxionEngine.TextProviders.AnimatedTextProvider;
+import dev.WinterRose.SaxionEngine.Queue;
 import dev.WinterRose.SaxionEngine.*;
+import dev.WinterRose.SaxionEngine.TextProviders.AnimatedTextProvider;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -10,9 +11,10 @@ import java.util.function.Consumer;
 public class DialogBoxManager
 {
     private static DialogBoxManager instance;
-    public static DialogBoxManager getInstance()
+
+    static
     {
-        return instance;
+        instance = new DialogBoxManager();
     }
 
     private Sound dialogEnterSound;
@@ -23,10 +25,11 @@ public class DialogBoxManager
 
     private Queue<DialogBox> dialogQueue = new Queue<>();
 
+    private boolean lastSoundSetting = true;
+
     DialogBoxManager()
     {
-        if(instance != null)
-            return;
+        if (instance != null) return;
 
         boxRenderer = new BoxRenderer(new Vector2(Painter.renderWidth / 2, Painter.renderHeight / 2));
         boxRenderer.transform = new Transform();
@@ -39,47 +42,49 @@ public class DialogBoxManager
         instance = this;
     }
 
-    static
+    public static DialogBoxManager getInstance()
     {
-        instance = new DialogBoxManager();
+        return instance;
     }
 
     public boolean update()
     {
         boxRenderer.update();
-        if(currentDialog != null)
+        if (currentDialog != null)
         {
-            if(currentDialog.isFinished())
+            lastSoundSetting = currentDialog.getPlaySounds();
+            if (currentDialog.isFinished())
             {
                 currentDialog = null;
-                if(dialogQueue.pop() instanceof DialogBox box)
+                if (dialogQueue.pop() instanceof DialogBox box)
                 {
                     currentDialog = box;
                     box.init(this);
                 }
             }
-            else if(boxRenderer.getAnimationProgress() > .96f)
-                currentDialog.update();
+            else if (boxRenderer.getAnimationProgress() > .96f) currentDialog.update();
         }
 
-        if(currentDialog == null)
+        if (currentDialog == null)
         {
-            if(dialogQueue.pop() instanceof DialogBox box)
+            if (dialogQueue.pop() instanceof DialogBox box)
             {
                 currentDialog = box;
                 box.init(this);
             }
-            if(boxRenderer.isAnimatingIn())
+            if (boxRenderer.isAnimatingIn())
             {
                 boxRenderer.animateOut();
-                dialogExitSound.play();
+                if(lastSoundSetting)
+                    dialogExitSound.play();
             }
             return false;
         }
-        if(!boxRenderer.isAnimatingIn())
+        if (!boxRenderer.isAnimatingIn())
         {
             boxRenderer.animateIn();
-            dialogEnterSound.play();
+            if(currentDialog.getPlaySounds())
+                dialogEnterSound.play();
         }
         return true;
     }
@@ -88,10 +93,9 @@ public class DialogBoxManager
     {
         boxRenderer.render(painter);
 
-        if(currentDialog == null)
-            return;
+        if (currentDialog == null) return;
 
-        if(boxRenderer.isAnimatingIn() && boxRenderer.getAnimationProgress() > .96f)
+        if (boxRenderer.isAnimatingIn() && boxRenderer.getAnimationProgress() > .96f)
         {
             currentDialog.render(painter);
             var bounds = boxRenderer.getTargetBounds();
@@ -100,13 +104,11 @@ public class DialogBoxManager
             {
                 Transform t = new Transform();
                 t.setPosition(t.getPosition().add(new Vector2(3, 0)));
-                if(currentDialog.title.getColor() == Color.white)
-                    currentDialog.title.setColor(Color.cyan);
+                if (currentDialog.title.getColor() == Color.white) currentDialog.title.setColor(Color.cyan);
                 painter.drawText(currentDialog.title, t, new Vector2(0, 0), bounds);
             }
 
-            if(currentDialog.title instanceof AnimatedTextProvider atp && atp.getAnimationPercent() < .7f)
-                return;
+            if (currentDialog.title instanceof AnimatedTextProvider atp && atp.getAnimationPercent() < .7f) return;
 
             // text
             {
@@ -145,5 +147,19 @@ public class DialogBoxManager
     public Rectangle2D.Float getBoxTargetBounds()
     {
         return boxRenderer.getTargetBounds();
+    }
+
+    public void clearAll(boolean forceHideBoxRenderer)
+    {
+        dialogQueue.clear();
+
+        if (forceHideBoxRenderer) boxRenderer.hideImmediately();
+    }
+
+    public void enqueue(String title, String text, Consumer<ConfirmationDialogBox> onButtonClicked, boolean playSounds)
+    {
+        var box = new ConfirmationDialogBox(title, text, onButtonClicked);
+        box.setPlaySounds(playSounds);
+        enqueue(box);
     }
 }

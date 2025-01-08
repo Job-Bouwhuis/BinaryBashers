@@ -35,5 +35,14 @@ public class MouseEvent
 
 //        System.out.println(Input.windowPosition.toString());
     }
+
+    @Override
+    public String toString()
+    {
+        return String.format(
+                "MouseEvent{button=%s, clicked=%b, released=%b, location=%s, isDoubleClick=%b, withShift=%b, withControl=%b, withAlt=%b, mouseEnteredGameWindow=%b, mouseExitedGameWindow=%b}",
+                button, clicked, released, location, isDoubleClick, withShift, withControl, withAlt, mouseEnteredGameWindow, mouseExitedGameWindow);
+    }
+
 }
 

@@ -33,4 +33,9 @@ public class Queue<T>
     {
         return items.size();
     }
+
+    public void clear()
+    {
+        items.clear();
+    }
 }

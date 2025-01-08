@@ -1,16 +1,14 @@
 package dev.WinterRose.SaxionEngine;
 
-import nl.saxion.app.interaction.KeyboardEvent;
-
 import java.awt.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 public class Input
 {
-    private static final Set<Integer> keysHeld = new HashSet<>();
-    private static final Set<Integer> keysPressed = new HashSet<>();
-    private static final Set<Integer> keysReleased = new HashSet<>();
+    private static final ArrayList<Integer> keysHeld = new ArrayList<>();
+    private static final ArrayList<Integer> keysPressed = new ArrayList<>();
+    private static final ArrayList<Integer> keysReleased = new ArrayList<>();
 
     static Point windowSize = new Point();
     static Vector2 windowPosition = new Vector2();
@@ -76,18 +74,18 @@ public class Input
         }
     }
 
-    static void keyboardEvent(KeyboardEvent event)
+    static void keyboardEvent(KeyEvent event, boolean pressed)
     {
         int keyCode = event.getKeyCode();
 
-        if (event.isKeyPressed())
+        if (pressed)
         {
             if (!keysHeld.contains(keyCode)) keysPressed.add(keyCode);
             keysHeld.add(keyCode);
         }
         else
         {
-            if (keysHeld.contains(keyCode)) keysHeld.remove(keyCode);
+            if (keysHeld.contains(keyCode)) keysHeld.remove((Object) keyCode);
             keysReleased.add(keyCode);
         }
     }
@@ -124,9 +122,14 @@ public class Input
 
     public static boolean getKey(Keys key)
     {
-        for (int keyCode : keysHeld)
+        for (int j = 0; j < keysHeld.size(); j++)
         {
-            if (key.matches((char) keyCode))
+            if (keysHeld.size() < j + 1) return false;
+
+            Integer num = keysHeld.get(j);
+            if (num == null) continue;
+            int i = num;
+            if (key.matches((char) i))
             {
                 return true;
             }
@@ -136,9 +139,14 @@ public class Input
 
     public static boolean getKeyDown(Keys key)
     {
-        for (int keyCode : keysPressed)
+        for (int j = 0; j < keysPressed.size(); j++)
         {
-            if (key.matches((char) keyCode))
+            if (keysPressed.size() < j + 1) return false;
+
+            Integer num = keysPressed.get(j);
+            if (num == null) continue;
+            int i = num;
+            if (key.matches((char) i))
             {
                 return true;
             }
@@ -148,9 +156,14 @@ public class Input
 
     public static boolean getKeyUp(Keys key)
     {
-        for (int keyCode : keysReleased)
+        for (int j = 0; j < keysReleased.size(); j++)
         {
-            if (key.matches((char) keyCode))
+            if (keysReleased.size() < j + 1) return false;
+
+            Integer num = keysReleased.get(j);
+            if (num == null) continue;
+            int i = num;
+            if (key.matches((char) i))
             {
                 return true;
             }

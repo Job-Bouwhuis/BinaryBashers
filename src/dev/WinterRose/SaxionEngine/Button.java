@@ -1,5 +1,7 @@
 package dev.WinterRose.SaxionEngine;
 
+import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
+import dev.WinterRose.SaxionEngine.ColorPallets.SpritePalletChanger;
 import dev.WinterRose.SaxionEngine.TextProviders.DefaultTextProvider;
 import dev.WinterRose.SaxionEngine.TextProviders.TextProvider;
 
@@ -9,8 +11,8 @@ public class Button extends ActiveRenderer
 {
     public Action<Button> onClick = new Action<>();
     public Color normalColor = Color.white;
-    public Color hoverColor = Color.yellow;
-    public Color clickColor = Color.blue;
+    public Color hoverColor = Color.lightGray;
+    public Color clickColor = new Color(230, 230, 230);
     public Vector2 origin = new Vector2(.5f, .5f);
     public TextProvider text;
 
@@ -85,5 +87,11 @@ public class Button extends ActiveRenderer
 
         painter.drawSprite(sprite, transform, origin, drawingColor);
         painter.drawText(text, textTransform, new Vector2(), Painter.renderBounds);
+    }
+
+    @Override
+    public void onColorPalleteChange(ColorPallet colorPallet)
+    {
+        sprite = SpritePalletChanger.changePallet(sprite, colorPallet);
     }
 }

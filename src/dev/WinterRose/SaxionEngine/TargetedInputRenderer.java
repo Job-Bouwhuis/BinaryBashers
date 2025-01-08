@@ -1,7 +1,6 @@
 package dev.WinterRose.SaxionEngine;
 
 import dev.WinterRose.SaxionEngine.Callbacks.IKeystrokeCallback;
-import nl.saxion.app.interaction.KeyboardEvent;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -64,14 +63,15 @@ public class TargetedInputRenderer extends Renderer implements IKeystrokeCallbac
     }
 
     @Override
-    public void keyPress(KeyboardEvent key)
+    public void keyPress(KeyEvent key, boolean pressed)
     {
-        if (!key.isKeyPressed()) return;
+        if(!pressed)
+            return;
 
         try
         {
             int keyCode = key.getKeyCode();
-            if (keyCode == KeyboardEvent.VK_BACK_SPACE)
+            if (keyCode == KeyEvent.VK_BACK_SPACE)
             {
                 if (inputText.isEmpty()) return;
                 inputText.removeLast();

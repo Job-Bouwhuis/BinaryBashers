@@ -6,6 +6,7 @@ import dev.WinterRose.SaxionEngine.TextProviders.TextProvider;
 
 public abstract class DialogBox
 {
+    protected boolean playSounds = true;
     protected TextProvider title;
     protected TextProvider text;
 
@@ -59,5 +60,21 @@ public abstract class DialogBox
     protected void finish()
     {
         finished = true;
+    }
+
+    public void setPlaySounds(boolean playSounds)
+    {
+        this.playSounds = playSounds;
+
+        if(title instanceof AnimatedTextProvider anim)
+            anim.setPlaySounds(playSounds);
+
+        if(text instanceof AnimatedTextProvider anim)
+            anim.setPlaySounds(playSounds);
+    }
+
+    public boolean getPlaySounds()
+    {
+        return playSounds;
     }
 }
