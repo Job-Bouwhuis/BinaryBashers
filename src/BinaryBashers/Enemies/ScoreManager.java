@@ -5,7 +5,7 @@ import java.util.*;
 
 public class ScoreManager {
     private static ScoreManager instance;
-    private static final String DIRECTORY_PATH = "BinaryBashers/resources/highScores";
+    private static final String DIRECTORY_PATH = "resources/highScores";
     private static final String FILE_NAME = DIRECTORY_PATH + "/highscores.txt";
     private int currentScore;
     private List<Integer> highScores;

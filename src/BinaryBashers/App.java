@@ -15,7 +15,7 @@ public class App extends Application
 
     public static void main(String[] args)
     {
-        new App(false).run(1280, 720);
+        new App(false).run(1280, 720, 50);
     }
 
     @Override
@@ -25,7 +25,7 @@ public class App extends Application
         new HexToDecimalScene().createScene(this);
         new DecimalToBinaryScene().createScene(this);
         LevelSelectScene.createScene(this);
-        loadScene("LevelSelect");
+        loadScene("LevelSelect", false);
     }
 
     @Override

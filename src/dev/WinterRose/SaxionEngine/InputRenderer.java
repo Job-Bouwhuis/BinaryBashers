@@ -1,7 +1,6 @@
 package dev.WinterRose.SaxionEngine;
 
 import dev.WinterRose.SaxionEngine.Callbacks.IKeystrokeCallback;
-import nl.saxion.app.interaction.KeyboardEvent;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -44,6 +43,10 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
     public Color typedCharacterColor = Color.cyan;
     public Color placeholderCharacterColor = Color.white;
 
+    private Sound removeLetterSound = new Sound("resources/audio/letterTyping/removeLetter.wav");
+    private Sound typeLetterSound = new Sound("resources/audio/letterTyping/typeLetter.wav");
+    private Sound inputConfirmSound = new Sound("resources/audio/letterTyping/inputConfirm.wav");
+
     public InputRenderer(int characterMax)
     {
         this.characterMax = characterMax;
@@ -63,40 +66,43 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
     }
 
     @Override
-    public void keyPress(KeyboardEvent key)
+    public void keyPress(KeyEvent key, boolean pressed)
     {
-        if (!key.isKeyPressed()) return;
+        if (!pressed) return;
 
         int keyCode = key.getKeyCode();
-        if (keyCode == KeyboardEvent.VK_ENTER)
+        if (keyCode == KeyEvent.VK_ENTER)
         {
+            if (inputText.isEmpty()) return;
             onEnterKeyPressed.invoke(this);
+            inputConfirmSound.play();
             return;
         }
-        if(keyCode >= KeyboardEvent.VK_NUMPAD0 && keyCode <= KeyboardEvent.VK_NUMPAD9)
+        if (keyCode >= KeyEvent.VK_NUMPAD0 && keyCode <= KeyEvent.VK_NUMPAD9)
         {
             keyCode -= 48;
         }
-        if(keyCode >= 65 && keyCode <= 65 + 26)
+        if (keyCode >= 65 && keyCode <= 65 + 26)
         {
-            if(!onlyCapitalLetters)
+            if (!onlyCapitalLetters)
             {
-                if(!key.isShiftDown())
+                if (!key.isShiftDown())
                 {
                     int offset = keyCode - 65;
                     keyCode = 97 + offset;
                 }
             }
         }
-        if (keyCode == KeyboardEvent.VK_BACK_SPACE)
+        if (keyCode == KeyEvent.VK_BACK_SPACE)
         {
             if (inputText.isEmpty()) return;
             inputText.removeLast();
+            removeLetterSound.play();
             return;
         }
         int finalKeyCode = keyCode;
-        if (Arrays.stream(blacklistedCharacters).anyMatch(blacklistedChar -> blacklistedChar.charValue() == finalKeyCode))
-            return;
+        if (Arrays.stream(blacklistedCharacters)
+                .anyMatch(blacklistedChar -> blacklistedChar.charValue() == finalKeyCode)) return;
 
         if (acceptedCharacters == null)
         {
@@ -118,5 +124,6 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
     {
         if (inputText.size() == characterMax) return; // already max size.
         inputText.add(new DrawableCharacter(c, typedCharacterColor));
+        typeLetterSound.play();
     }
 }

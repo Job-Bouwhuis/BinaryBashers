@@ -25,4 +25,9 @@ public class Time
     {
         Time.deltaTime = deltaTime;
     }
+
+    public static float getUnscaledDeltaTime()
+    {
+        return deltaTime;
+    }
 }

@@ -25,6 +25,7 @@ public class Player extends Renderer
     private HealthImage heart3;
 
     private int score = 0; // NOTE: has to be moved to scoreboard eventually
+    private Sound damageSound = new Sound("resources/audio/takeDamage.wav");
 
     public Player(int health, EnemySpawner<?> spawner)
     {
@@ -78,6 +79,7 @@ public class Player extends Renderer
         {
             spawner.startRandomEnemyDamageAnimation();
             health -= damage;
+            damageSound.play();
             System.out.println("Player takes " + damage + " damage. Remaining health: " + health);
             if (health <= 0) death();
         }
@@ -114,7 +116,9 @@ public class Player extends Renderer
         damageTimer.stop();
 
         var box = new ConfirmationDialogBox("DEDE", "You died. Score: TO BE DETERMINED", confirmationDialogBox -> {
-            Application.getInstance().loadScene("LevelSelect");
+            confirmationDialogBox.setPlaySounds(false);
+            DialogBoxManager.getInstance().clearAll(true);
+            Application.current().loadScene("LevelSelect");
         });
 
         box.setShowCancelButton(false);

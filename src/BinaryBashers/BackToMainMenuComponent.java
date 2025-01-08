@@ -14,13 +14,15 @@ public class BackToMainMenuComponent extends Behavior
         if (Input.getKeyDown(Keys.ESCAPE))
         {
 
-            if (!Application.getInstance().getActiveScene().name.equals("LevelSelect"))
+            if (!Application.current().getActiveScene().name.equals("LevelSelect"))
             {
                 DialogBoxManager.getInstance()
                         .enqueue("Attention!", "Do you want to go back to the level select?\n\nYour current progress in this level will be lost!", box -> {
                             if (box.getResult())
                             {
-                                Application.getInstance().loadScene("LevelSelect");
+                                box.setPlaySounds(false);
+                                DialogBoxManager.getInstance().clearAll(true);
+                                Application.current().loadScene("LevelSelect");
                             }
                         });
                return;
@@ -30,7 +32,7 @@ public class BackToMainMenuComponent extends Behavior
                     .enqueue("Attention!", "Are you sure you wish to exit?", box -> {
                         if (box.getResult())
                         {
-                            Application.getInstance().closeGame();
+                            Application.current().closeGame();
                         }
                     });
 

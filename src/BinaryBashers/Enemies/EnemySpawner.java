@@ -3,7 +3,6 @@ package BinaryBashers.Enemies;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
-import nl.saxion.app.SaxionApp;
 
 import java.awt.*;
 import java.lang.reflect.Constructor;
@@ -205,6 +204,11 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     }
 
     public void startRandomEnemyDamageAnimation() {
-        enemies.get(SaxionApp.getRandomValueBetween(0, enemies.size())).getSprite().startAttackAnimation();
+        enemies.get(getRandomValue(0, enemies.size())).getSprite().startAttackAnimation();
+    }
+
+    public static int getRandomValue(int lowerBound, int upperBound) {
+        Random random = new Random();
+        return random.nextInt(upperBound - lowerBound) + lowerBound;
     }
 }
