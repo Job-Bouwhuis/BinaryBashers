@@ -3,7 +3,6 @@ package BinaryBashers.Enemies;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
-import nl.saxion.app.SaxionApp;
 
 import java.awt.*;
 import java.lang.reflect.Constructor;
