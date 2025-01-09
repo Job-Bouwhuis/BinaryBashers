@@ -35,14 +35,17 @@ public abstract class Enemy
 
     protected void setText(String text)
     {
-        this.text = getFormatString(getDisplayFormat()) + text + " > " + getInputFormat();
+        this.text = getFormatString(getDisplayFormat()) + text + " as " + getInputFormat();
         textPosition = enemyPosition.subtract(new Vector2(0, sprite.getSolid().getHeight() + 10));
-        Vector2 size = Painter.measureString(text);
-        textPosition = textPosition.subtract(new Vector2(size.x/2, 0));
+        Vector2 size = Painter.measureString(this.text);
+        textPosition = textPosition.subtract(new Vector2(size.x / 2, 0));
     }
 
     public abstract EnemyFormat getDisplayFormat();
     public abstract EnemyFormat getInputFormat();
+
+    public abstract String problem();
+    public abstract String answer();
 
     public EnemySprite getSprite()
     {

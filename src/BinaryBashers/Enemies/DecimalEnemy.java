@@ -7,7 +7,6 @@ import java.util.Random;
 
 public class DecimalEnemy extends Enemy
 {
-
     public DecimalEnemy(Integer id, Vector2 enemyPos, Integer difficulty, Boolean fromDecimal)
     {
         super(id, enemyPos,fromDecimal);
@@ -25,6 +24,24 @@ public class DecimalEnemy extends Enemy
                 decimalNum = new Random().nextInt(32, 128);
         }
        setText(Integer.toString(decimalNum));
+    }
+
+    @Override
+    public String problem()
+    {
+        if(showDecimal)
+            return Util.decimalToBinary(decimalNum).toString();
+
+        return decimalNum.toString();
+    }
+
+    @Override
+    public String answer()
+    {
+        if(showDecimal)
+            return decimalNum.toString();
+
+        return Util.decimalToBinary(decimalNum).toString();
     }
 
     @Override

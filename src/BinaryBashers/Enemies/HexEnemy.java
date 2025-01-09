@@ -36,6 +36,24 @@ public class HexEnemy extends Enemy
     }
 
     @Override
+    public String problem()
+    {
+        if(showDecimal)
+            return Util.hexToDecimal(hexValue).toString();
+
+        return hexValue.toString();
+    }
+
+    @Override
+    public String answer()
+    {
+        if(showDecimal)
+            return hexValue.toString();
+
+        return Util.hexToDecimal(hexValue).toString();
+    }
+
+    @Override
     public boolean compairInput(String input)
     {
         if (input.equals(""))

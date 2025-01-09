@@ -7,7 +7,6 @@ import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class EnemySpawner<T extends Enemy> extends ActiveRenderer
@@ -25,8 +24,8 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         return instance;
     }
 
-    private List<Enemy> enemies;
-    private float spawnInterval = 30f;
+    private ArrayList<Enemy> enemies;
+    private float spawnInterval = 2f;
     private float spawnTimer;
     private Random random;
     private Timer timer;
@@ -51,9 +50,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     public EnemySpawner(Boolean infiniteLevel)
     {
         if (!infiniteLevel)
-        {
             System.out.println("false??? what do you mean false??? you think i coded functionality for this..? enjoy a broken game idiot");
-        }
         isInfiniteLevel = infiniteLevel;
         endlessLevelEnemyTypes = new Class<?>[]{ BinaryEnemy.class, DecimalEnemy.class, HexEnemy.class };
         enemyType = endlessLevelEnemyTypes[0];
@@ -66,6 +63,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     @Override
     public void awake()
     {
+        instance = this;
         timer = owner.getComponent(Timer.class);
         timer.onTimeAction.add(t -> timeElapsed(t));
         timer.setSprites(new Sprite[0]);
@@ -121,8 +119,9 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         try
         {
             newEnemy = enemyConstructor.newInstance(randomId, enemyPos, difficultyGenerator.getDifficultyNumber(scoreManager.getCurrentScore()), fromDecimal);
-            if (newEnemy.getInputLength() > inputRenderer.characterMax)
-                inputRenderer.characterMax = newEnemy.getInputLength();
+            int length  = newEnemy.getInputLength();
+            if (length > inputRenderer.characterMax)
+                inputRenderer.characterMax = length;
         }
         catch (InstantiationException | IllegalAccessException e)
         {
@@ -195,7 +194,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         return !enemies.isEmpty();
     }
 
-    public List<Enemy> getEnemies()
+    public ArrayList<Enemy> getEnemies()
     {
         return enemies;
     }
