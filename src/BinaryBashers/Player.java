@@ -115,7 +115,7 @@ public class Player extends Renderer
     {
         damageTimer.stop();
 
-        var box = new ConfirmationDialogBox("DEDE", "You died. Score: TO BE DETERMINED", confirmationDialogBox -> {
+        var box = new ConfirmationDialogBox("404", "You died. Score: TO BE DETERMINED", confirmationDialogBox -> {
             confirmationDialogBox.setPlaySounds(false);
             DialogBoxManager.getInstance().clearAll(true);
             Application.current().loadScene("LevelSelect");
@@ -123,7 +123,7 @@ public class Player extends Renderer
 
         box.setShowCancelButton(false);
         box.getConfirmButton().text = new DefaultTextProvider("Return");
-        box.getConfirmButton().text.setColor(Color.black);
+        box.getConfirmButton().text.setColor(Application.current().getActiveScene().getScenePallet().getColorFromIndex(4));
 
         DialogBoxManager.getInstance()
                 .enqueue(box);

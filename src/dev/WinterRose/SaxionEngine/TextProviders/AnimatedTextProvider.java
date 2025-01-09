@@ -1,5 +1,6 @@
 package dev.WinterRose.SaxionEngine.TextProviders;
 
+import dev.WinterRose.SaxionEngine.Application;
 import dev.WinterRose.SaxionEngine.Sound;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class AnimatedTextProvider extends TextProvider
         forceSetText("");
         sound = new Sound("resources/audio/letterTyping/animatedTextProviderBlip.wav");
         sound.setVolume(.8f);
+
     }
 
     @Override

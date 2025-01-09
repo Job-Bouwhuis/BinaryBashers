@@ -50,7 +50,7 @@ public abstract class Enemy
     {
         sprite.render(painter);
         if(!isDead)
-            painter.drawScaledText(text, textPosition, new Vector2(1.2f), new Vector2(0.5f, 0.5f), Color.cyan, FontType.Bold);
+            painter.drawScaledText(text, textPosition, new Vector2(1.2f), new Vector2(0.5f, 0.5f), Application.current().getActiveScene().getScenePallet().getColorFromIndex(6), FontType.Bold);
     }
 
     public void update()
