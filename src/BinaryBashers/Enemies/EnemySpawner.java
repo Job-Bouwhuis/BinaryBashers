@@ -25,7 +25,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     }
 
     private ArrayList<Enemy> enemies;
-    private float spawnInterval = 2f;
+    private float spawnInterval = 14f;
     private float spawnTimer;
     private Random random;
     private Timer timer;
