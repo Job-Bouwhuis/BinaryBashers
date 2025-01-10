@@ -38,6 +38,40 @@ public class BinaryEnemy extends Enemy
     }
 
     @Override
+    public String problem()
+    {
+        if(showDecimal)
+            return Util.binaryToDecimal(binaryNum).toString();
+
+        return binaryNum.toString();
+    }
+
+    @Override
+    public String answer()
+    {
+        if(showDecimal)
+            return binaryNum.toString();
+
+        return Util.binaryToDecimal(binaryNum).toString();
+    }
+
+    @Override
+    public EnemyFormat getDisplayFormat()
+    {
+        if(showDecimal)
+            return EnemyFormat.Decimal;
+        return EnemyFormat.Binary;
+    }
+
+    @Override
+    public EnemyFormat getInputFormat()
+    {
+        if(showDecimal)
+            return EnemyFormat.Binary;
+        return EnemyFormat.Decimal;
+    }
+
+    @Override
     public boolean compairInput(String input)
     {
         if (input.equals(""))
@@ -57,9 +91,15 @@ public class BinaryEnemy extends Enemy
         }
     }
 
+
     @Override
     public int getInputLength()
     {
+        if(showDecimal)
+        {
+            return binaryNum.toString().length();
+        }
+
         int count = 0;
         int temp = Util.binaryToDecimal(binaryNum);
         while (temp != 0)

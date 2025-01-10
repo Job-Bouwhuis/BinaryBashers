@@ -7,7 +7,6 @@ import java.util.Random;
 
 public class DecimalEnemy extends Enemy
 {
-
     public DecimalEnemy(Integer id, Vector2 enemyPos, Integer difficulty, Boolean fromDecimal)
     {
         super(id, enemyPos,fromDecimal);
@@ -20,12 +19,30 @@ public class DecimalEnemy extends Enemy
                 decimalNum = new Random().nextInt(32);
                 break;
             case 2:
-                decimalNum = new Random().nextInt(64);
+                decimalNum = new Random().nextInt(16, 64);
             case 3:
                 decimalNum = new Random().nextInt(32, 128);
         }
 //        decimalNum = new Random().nextInt(16);
         setText("0d"+Integer.toString(decimalNum));
+    }
+
+    @Override
+    public String problem()
+    {
+        if(showDecimal)
+            return Util.decimalToBinary(decimalNum).toString();
+
+        return decimalNum.toString();
+    }
+
+    @Override
+    public String answer()
+    {
+        if(showDecimal)
+            return decimalNum.toString();
+
+        return Util.decimalToBinary(decimalNum).toString();
     }
 
     @Override
@@ -45,4 +62,15 @@ public class DecimalEnemy extends Enemy
         return Util.calculateBitSize(decimalNum);
     }
 
+    @Override
+    public EnemyFormat getDisplayFormat()
+    {
+        return EnemyFormat.Decimal;
+    }
+
+    @Override
+    public EnemyFormat getInputFormat()
+    {
+        return EnemyFormat.Binary;
+    }
 }

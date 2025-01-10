@@ -1,8 +1,8 @@
 package dev.WinterRose.SaxionEngine;
 
+import BinaryBashers.Enemies.EnemyFormat;
 import dev.WinterRose.SaxionEngine.Callbacks.IKeystrokeCallback;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
-import dev.WinterRose.SaxionEngine.ColorPallets.SpritePalletChanger;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -48,6 +48,14 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
     private Sound removeLetterSound = new Sound("resources/audio/letterTyping/removeLetter.wav");
     private Sound typeLetterSound = new Sound("resources/audio/letterTyping/typeLetter.wav");
     private Sound inputConfirmSound = new Sound("resources/audio/letterTyping/inputConfirm.wav");
+    private ArrayList<Character> cachedAllowedCharacters;
+    private boolean allowAllCharacters = false;
+
+    public final ArrayList<Character> binaryCharacters = new ArrayList<>(Arrays.asList('1', '0'));
+    public final ArrayList<Character> hexCharacters = new ArrayList<>(Arrays.asList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'));
+    public final ArrayList<Character> decimalCharacters = new ArrayList<>(Arrays.asList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'));
+    public final ArrayList<Character> customAllowedCharacters = new ArrayList<>();
+    private ArrayList<EnemyFormat> acceptedFormats = new ArrayList<>();
 
     public InputRenderer(int characterMax)
     {
@@ -106,13 +114,15 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
         if (Arrays.stream(blacklistedCharacters)
                 .anyMatch(blacklistedChar -> blacklistedChar.charValue() == finalKeyCode)) return;
 
-        if (acceptedCharacters == null)
+        if (allowAllCharacters)
         {
-            addCharacter((char) keyCode);
+            addCharacter((char)keyCode);
             return;
         }
 
-        if (!Arrays.stream(acceptedCharacters).anyMatch(c -> ((int) c.charValue()) == finalKeyCode)) return;
+        var chars = getUnifiedAllowedCharacters();
+        if(!chars.contains((char)finalKeyCode))
+            return; // disallowed character
 
         addCharacter((char) keyCode);
     }
@@ -134,5 +144,43 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
         typedCharacterColor = colorPallet.getColorFromIndex(6);
         placeholderCharacterColor = colorPallet.getColorFromIndex(5);
 
+    }
+
+    private ArrayList<Character> getUnifiedAllowedCharacters()
+    {
+        if(cachedAllowedCharacters != null)
+            return cachedAllowedCharacters;
+
+        ArrayList<Character> result = new ArrayList<>();
+        if(acceptedFormats.contains(EnemyFormat.Decimal))
+        {
+            result.addAll(decimalCharacters);
+        }
+        if(acceptedFormats.contains(EnemyFormat.Hex))
+        {
+            result.addAll(hexCharacters);
+        }
+        if(acceptedFormats.contains(EnemyFormat.Binary))
+        {
+            result.addAll(binaryCharacters);
+        }
+        result.addAll(customAllowedCharacters);
+        return cachedAllowedCharacters = result;
+    }
+
+    public void allowFormat(EnemyFormat inputFormat)
+    {
+        if(acceptedFormats.contains(inputFormat))
+            return;
+
+        acceptedFormats.add(inputFormat);
+        cachedAllowedCharacters = null;
+    }
+
+    public void disallowFormat(EnemyFormat format)
+    {
+        if(acceptedFormats.contains(format))
+            acceptedFormats.remove(format);
+        cachedAllowedCharacters = null;
     }
 }

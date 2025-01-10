@@ -21,7 +21,7 @@ public class HexEnemy extends Enemy
                 decimalNum = new Random().nextInt(32);
                 break;
             case 2:
-                decimalNum = new Random().nextInt(64);
+                decimalNum = new Random().nextInt(16, 64);
             case 3:
                 decimalNum = new Random().nextInt(32, 128);
         }
@@ -33,6 +33,24 @@ public class HexEnemy extends Enemy
         {
             setText("0x\n"+ hexValue);
         }
+    }
+
+    @Override
+    public String problem()
+    {
+        if(showDecimal)
+            return Util.hexToDecimal(hexValue).toString();
+
+        return hexValue.toString();
+    }
+
+    @Override
+    public String answer()
+    {
+        if(showDecimal)
+            return hexValue.toString();
+
+        return Util.hexToDecimal(hexValue).toString();
     }
 
     @Override
@@ -72,5 +90,21 @@ public class HexEnemy extends Enemy
 
             return count;
         }
+    }
+
+    @Override
+    public EnemyFormat getDisplayFormat()
+    {
+        if(showDecimal)
+            return EnemyFormat.Decimal;
+        return EnemyFormat.Hex;
+    }
+
+    @Override
+    public EnemyFormat getInputFormat()
+    {
+        if (showDecimal)
+            return EnemyFormat.Hex;
+        return EnemyFormat.Decimal;
     }
 }

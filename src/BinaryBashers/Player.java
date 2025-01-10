@@ -1,5 +1,6 @@
 package BinaryBashers;
 
+import BinaryBashers.Enemies.Enemy;
 import BinaryBashers.Enemies.EnemySpawner;
 import BinaryBashers.UI.HealthImage;
 import dev.WinterRose.SaxionEngine.*;
@@ -10,6 +11,7 @@ import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
 import dev.WinterRose.SaxionEngine.TextProviders.DefaultTextProvider;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Player extends Renderer
 {
@@ -115,7 +117,12 @@ public class Player extends Renderer
     {
         damageTimer.stop();
 
-        var box = new ConfirmationDialogBox("404", "You died. Score: TO BE DETERMINED", confirmationDialogBox -> {
+        StringBuilder remainingEnemyAnswers = new StringBuilder();
+        ArrayList<Enemy> es = EnemySpawner.getInstance().getEnemies();
+        for (Enemy e : es)
+            remainingEnemyAnswers.append("%s = %s".formatted(e.problem(), e.answer()) + "\n");
+
+        var box = new ConfirmationDialogBox("DEDE", "You died. Score: TO BE DETERMINED\n\n" + remainingEnemyAnswers, confirmationDialogBox -> {
             confirmationDialogBox.setPlaySounds(false);
             DialogBoxManager.getInstance().clearAll(true);
             Application.current().loadScene("LevelSelect");
@@ -123,7 +130,7 @@ public class Player extends Renderer
 
         box.setShowCancelButton(false);
         box.getConfirmButton().text = new DefaultTextProvider("Return");
-        box.getConfirmButton().text.setColor(Application.current().getActiveScene().getScenePallet().getColorFromIndex(4));
+        box.getConfirmButton().text.setColor(Color.black);
 
         DialogBoxManager.getInstance()
                 .enqueue(box);

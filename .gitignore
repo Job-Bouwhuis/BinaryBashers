@@ -26,5 +26,8 @@ replay_pid*
 # cached sprites folder
 /CachedSprites/*
 
-# specifically allow SaxionApp.Jar
-!lib/SaxionApp.jar
+# the out folder
+/out/
+
+# except the java started C# app
+!out/artifacts/BinaryBashers_jar/JavaStarter.exe

@@ -31,16 +31,7 @@ public class Util
 
     public static Integer calculateBitSize(int num)
     {
-        if (num == 0)
-            return 1;
-
-        int bitSize = 0;
-        while (num > 0)
-        {
-            num >>= 1;
-            bitSize++;
-        }
-        return bitSize;
+        return decimalToBinary(num).toString().length();
     }
 
     public static Integer decimalToBinary(int num)
@@ -61,7 +52,7 @@ public class Util
         return binaryNumber;
     }
 
-    public  static int binaryToDecimal(int num){
+    public  static Integer binaryToDecimal(int num){
         String temp = String.valueOf(num);
         int decimal = 0;
         decimal = Integer.parseInt(temp,2);
