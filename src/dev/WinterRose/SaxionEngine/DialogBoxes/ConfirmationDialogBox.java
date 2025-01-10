@@ -39,8 +39,15 @@ public class ConfirmationDialogBox extends DialogBox
         super.text.setColor(Application.current().getActiveScene().getScenePallet().getColorFromIndex(5));
         callback = onButtonClicked;
 
-        confirmButton = new Button(Sprite.square(buttonWidth, buttonHeight, Application.current().getActiveScene().getScenePallet().getColorFromIndex(6)));
-        cancelButton = new Button(Sprite.square(buttonWidth, buttonHeight, Application.current().getActiveScene().getScenePallet().getColorFromIndex(6)));
+        confirmButton = new Button(Sprite.square(buttonWidth, buttonHeight, Color.white));
+        cancelButton = new Button(Sprite.square(buttonWidth, buttonHeight, Color.white));
+
+        confirmButton.normalColor =  Application.current().getActiveScene().getScenePallet().getColorFromIndex(6);
+        cancelButton.normalColor =  Application.current().getActiveScene().getScenePallet().getColorFromIndex(6);
+        confirmButton.hoverColor =  Application.current().getActiveScene().getScenePallet().getColorFromIndex(5);
+        cancelButton.hoverColor =  Application.current().getActiveScene().getScenePallet().getColorFromIndex(5);
+        confirmButton.clickColor =  Application.current().getActiveScene().getScenePallet().getColorFromIndex(4);
+        cancelButton.clickColor =  Application.current().getActiveScene().getScenePallet().getColorFromIndex(4);
 
         confirmButton.text.setText("Confirm");
         confirmButton.text.setColor(Application.current().getActiveScene().getScenePallet().getColorFromIndex(0));

@@ -2,14 +2,13 @@ package dev.WinterRose.SaxionEngine;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 
 public class BoxRenderer extends ActiveRenderer
 {
     private Rectangle.Float bounds;
     private Rectangle.Float targetBounds;
 
-    public Color boxColor = Color.white;
+    public Color borderColor = Color.white;
     public Color backgroundColor = new Color(66, 66, 66, 66);
 
     public float widthAnimationSpeed = 6f;
@@ -60,11 +59,7 @@ public class BoxRenderer extends ActiveRenderer
         float targetWidth = targetBounds.width * scale.x;
         float targetHeight = targetBounds.height * scale.y;
 
-        targetBounds.setRect(
-                pos.x - targetWidth / 2,
-                pos.y - targetHeight / 2,
-                targetWidth,
-                targetHeight);
+        targetBounds.setRect(pos.x - targetWidth / 2, pos.y - targetHeight / 2, targetWidth, targetHeight);
 
         bounds.x = targetBounds.x;
         bounds.y = targetBounds.y;
@@ -102,14 +97,13 @@ public class BoxRenderer extends ActiveRenderer
     @Override
     public void render(Painter painter)
     {
-        if(bounds.width <= 1.5f && bounds.height <= 1.5f)
-            return;
+        if (bounds.width <= 1.5f && bounds.height <= 1.5f) return;
 
         float centeredX = transform.getPosition().x - (bounds.width / 2);
         float centeredY = transform.getPosition().y - (bounds.height / 2);
 
         Rectangle.Float centeredRect = new Rectangle.Float(centeredX, centeredY, bounds.width, bounds.height);
-        painter.drawAndFillRectangle(centeredRect, boxColor, backgroundColor);
+        painter.drawAndFillRectangle(centeredRect, borderColor, backgroundColor);
     }
 
     private float lerp(float start, float end, float t)
@@ -121,20 +115,20 @@ public class BoxRenderer extends ActiveRenderer
     {
         animatingIn = false;
     }
+
     public void animateIn()
     {
         animatingIn = true;
 
-        if (Application.current().getActiveScene().checkIfPalletExists()) {
-            boxColor = Application.current().getActiveScene().getScenePallet().getColorFromIndex(6);
-            backgroundColor = Application.current().getActiveScene().getScenePallet().getColorFromIndex(1);
-        }
+        borderColor = Application.current().getActiveScene().getScenePallet().getColorFromIndex(6);
+        backgroundColor = Application.current().getActiveScene().getScenePallet().getColorFromIndex(1);
     }
 
     public Vector2 getCurrentWidthHeight()
     {
         return new Vector2(bounds.width, bounds.height);
     }
+
     public Rectangle.Float getCurrentBounds()
     {
         return bounds;

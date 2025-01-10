@@ -9,8 +9,6 @@ public class ColorPallet
 {
     private ArrayList<ColorMap> colorMappings = new ArrayList<>();
 
-    public ColorPallet() {}
-
     /**
      * The two input sprites must be a texture of 1 single row of pixels. the same index of color in each image is mapped.
      * @param from The color in the pallet cha
@@ -30,6 +28,10 @@ public class ColorPallet
     public ColorPallet(Sprite to)
     {
         this(new Sprite("resources/colorPallets/main.png"), to);
+    }
+    public ColorPallet()
+    {
+        this(new Sprite("resources/colorPallets/main.png"), new Sprite("resources/colorPallets/main.png"));
     }
 
     public void add(Color from, Color to)

@@ -109,6 +109,8 @@ public class Scene
     }
     public ColorPallet getScenePallet()
     {
+        if(scenePallet == null)
+            return new ColorPallet();
         return scenePallet;
     }
 }
