@@ -2,6 +2,7 @@ package BinaryBashers;
 
 import BinaryBashers.Levels.*;
 import dev.WinterRose.SaxionEngine.*;
+import dev.WinterRose.SaxionEngine.TextProviders.AnimatedTextProvider;
 
 public class App extends Application
 {
@@ -23,7 +24,8 @@ public class App extends Application
         new DecimalToBinaryScene().createScene(this);
         new EndlessLevelScene().createScene(this);
         LevelSelectScene.createScene(this);
-        loadScene("LevelSelect", false);
+        TitlescreenScene.createScene(this);
+        loadScene("TitleScreen", false);
     }
 
     @Override

@@ -289,7 +289,7 @@ public abstract class Application
             activeScene = scene;
             activeScene.wakeScene();
         }
-        
+
         while (doAnimation)
         {
             appPainter.begin();
