@@ -31,6 +31,15 @@ public abstract class TextProvider
         return characterYPadding;
     }
 
+    public void setDefaultColor(Color color)
+    {
+        defaultColor = color;
+    }
+    public Color getDefaultColor()
+    {
+        return defaultColor;
+    }
+
     public String getText()
     {
         return textValue;
@@ -108,65 +117,14 @@ public abstract class TextProvider
     {
         textValue = text;
         defaultColor = color;
-        for(Word wrd : words)
+        for (Word wrd : words)
             wrd.fontType = fontType;
         buildWordsList();
     }
 
-    /**
-     * Represents a word that can be drawn to the screen with unique font, color, and font type
-     */
-    public class Word
+    public void setWords(ArrayList<Word> words)
     {
-        /**
-         * The font to use for this specific word. keep NULL to use Painter.Font by default
-         */
-        public Font font;
-        public FontType fontType = FontType.Normal;
-
-        DrawableCharacter[] characters;
-        public Character paddingChar = null; // the space, newline, return, etc character if applicable
-
-        public Word(Stream<Character> text, TextProvider owner)
-        {
-            ArrayList<DrawableCharacter> chars = new ArrayList<>();
-
-            DrawableCharacter c = new DrawableCharacter(text.takeNext(), owner.defaultColor);
-            while(c.character != null && !c.isSpaceNewlineOrReturn())
-            {
-                chars.add(c);
-                c = new DrawableCharacter(text.takeNext(), owner.defaultColor);
-            }
-
-            if (c.character != null && c.isSpaceNewlineOrReturn()) // end of stream
-            {
-                paddingChar = c.character;
-                owner.continueReadingText(text);
-            }
-
-            // copy letters from chars to the characters array so they are stored.
-            characters = new DrawableCharacter[chars.size()];
-            for (int i = 0; i < chars.size(); i++)
-            {
-                var ch = chars.get(i);
-                characters[i] = ch;
-            }
-        }
-
-        public DrawableCharacter[] getCharacters()
-        {
-            return characters;
-        }
-
-        /**
-         * Sets the color of all characters in this word to the given color
-         * @param color the color to give to the characters in the word
-         */
-        public void setColor(Color color)
-        {
-            for(var c : characters)
-                c.color = color;
-        }
+        this.words = words;
     }
 }
 

@@ -2,7 +2,6 @@ package BinaryBashers;
 
 import BinaryBashers.Levels.*;
 import dev.WinterRose.SaxionEngine.*;
-import dev.WinterRose.SaxionEngine.TextProviders.AnimatedTextProvider;
 
 public class App extends Application
 {
@@ -13,7 +12,7 @@ public class App extends Application
 
     public static void main(String[] args)
     {
-        new App(false).run(1280, 720, 50);
+        new App(true).run(1280, 720, 50);
     }
 
     @Override

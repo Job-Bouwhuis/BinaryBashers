@@ -505,7 +505,7 @@ public abstract class Application
                 {
                     if (activeScene != null)
                     {
-                        if (activeScene.name.equals("LevelSelect"))
+                        if (activeScene.name.equals("LevelSelect") || activeScene.name.equals("TitleScreen"))
                         {
                             closeGame();
                             return;
