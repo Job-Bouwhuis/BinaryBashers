@@ -3,9 +3,11 @@ package dev.WinterRose.SaxionEngine;
 import dev.WinterRose.SaxionEngine.DialogBoxes.ConfirmationDialogBox;
 import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -287,9 +289,7 @@ public abstract class Application
             activeScene = scene;
             activeScene.wakeScene();
         }
-
-
-
+        
         while (doAnimation)
         {
             appPainter.begin();
@@ -460,6 +460,8 @@ public abstract class Application
         try
         {
             applicationWindow = new JFrame();
+
+            applicationWindow.setIconImage(ImageIO.read( new File("resources/sprites/Appicon.png")));
 
             GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
             Rectangle screenBounds = gd.getDefaultConfiguration().getBounds();
