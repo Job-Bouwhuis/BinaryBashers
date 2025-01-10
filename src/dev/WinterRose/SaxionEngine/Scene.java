@@ -103,6 +103,10 @@ public class Scene
         }
     }
 
+    public boolean checkIfPalletExists()
+    {
+        return scenePallet != null;
+    }
     public ColorPallet getScenePallet()
     {
         return scenePallet;

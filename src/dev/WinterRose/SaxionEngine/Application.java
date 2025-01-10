@@ -222,7 +222,7 @@ public abstract class Application
             ConfirmationDialogBox box = new ConfirmationDialogBox("Warning!", "Are you sure you want to force quit the game?\n" + "Any unsaved progress will be lost!", cdb -> {
                 if (cdb.getResult()) Application.current().closeGame();
             });
-            box.getTitle().setColor(Color.red);
+            box.getTitle().setColor(Application.current().getActiveScene().getScenePallet().getColorFromIndex(6));
             DialogBoxManager.getInstance().enqueue(box);
         }
     }
@@ -513,7 +513,7 @@ public abstract class Application
                     ConfirmationDialogBox box = new ConfirmationDialogBox("Warning!", "Are you sure you want to force quit the game?\n" + "Any unsaved progress will be lost!", cdb -> {
                         if (cdb.getResult()) Application.current().closeGame();
                     });
-                    box.getTitle().setColor(Color.red);
+                    box.getTitle().setColor(Application.current().getActiveScene().getScenePallet().getColorFromIndex(6));
                     DialogBoxManager.getInstance().enqueue(box);
                 }
             });

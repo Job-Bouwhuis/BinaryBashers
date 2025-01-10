@@ -1,9 +1,6 @@
 package BinaryBashers.UI;
 
-import dev.WinterRose.SaxionEngine.Painter;
-import dev.WinterRose.SaxionEngine.Sprite;
-import dev.WinterRose.SaxionEngine.Transform;
-import dev.WinterRose.SaxionEngine.Vector2;
+import dev.WinterRose.SaxionEngine.*;
 
 import java.awt.*;
 
@@ -20,8 +17,10 @@ public class HealthImage
     {
         if(alive)
             tint = Color.white;
-        else
-            tint = Color.darkGray;
+        else {
+            heartImage = heartImage.getSolid();
+            tint = Application.current().getActiveScene().getScenePallet().getColorFromIndex(1);
+        }
     }
 
     public HealthImage(Vector2 position, Vector2 scale)

@@ -104,7 +104,7 @@ public class DialogBoxManager
             {
                 Transform t = new Transform();
                 t.setPosition(t.getPosition().add(new Vector2(3, 0)));
-                if (currentDialog.title.getColor() == Color.white) currentDialog.title.setColor(Color.cyan);
+                if (currentDialog.title.getColor() == Color.white) currentDialog.title.setColor(Application.current().getActiveScene().getScenePallet().getColorFromIndex(6));
                 painter.drawText(currentDialog.title, t, new Vector2(0, 0), bounds);
             }
 
