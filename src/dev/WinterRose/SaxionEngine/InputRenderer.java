@@ -1,6 +1,8 @@
 package dev.WinterRose.SaxionEngine;
 
 import dev.WinterRose.SaxionEngine.Callbacks.IKeystrokeCallback;
+import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
+import dev.WinterRose.SaxionEngine.ColorPallets.SpritePalletChanger;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -125,5 +127,12 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
         if (inputText.size() == characterMax) return; // already max size.
         inputText.add(new DrawableCharacter(c, typedCharacterColor));
         typeLetterSound.play();
+    }
+
+    @Override
+    public void onColorPalleteChange(ColorPallet colorPallet) {
+        typedCharacterColor = colorPallet.getColorFromIndex(6);
+        placeholderCharacterColor = colorPallet.getColorFromIndex(5);
+
     }
 }

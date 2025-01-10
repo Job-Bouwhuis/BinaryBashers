@@ -2,6 +2,7 @@ package dev.WinterRose.SaxionEngine;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 
 public class BoxRenderer extends ActiveRenderer
 {
@@ -123,6 +124,11 @@ public class BoxRenderer extends ActiveRenderer
     public void animateIn()
     {
         animatingIn = true;
+
+        if (Application.current().getActiveScene().checkIfPalletExists()) {
+            boxColor = Application.current().getActiveScene().getScenePallet().getColorFromIndex(6);
+            backgroundColor = Application.current().getActiveScene().getScenePallet().getColorFromIndex(1);
+        }
     }
 
     public Vector2 getCurrentWidthHeight()

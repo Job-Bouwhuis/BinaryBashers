@@ -36,13 +36,16 @@ public class ConfirmationDialogBox extends DialogBox
     {
         super.title = new AnimatedTextProvider(title, 1);
         super.text = new AnimatedTextProvider(text, 1);
+        super.text.setColor(Application.current().getActiveScene().getScenePallet().getColorFromIndex(5));
         callback = onButtonClicked;
 
-        confirmButton = new Button(Sprite.square(buttonWidth, buttonHeight, Color.white));
-        cancelButton = new Button(Sprite.square(buttonWidth, buttonHeight, Color.white));
+        confirmButton = new Button(Sprite.square(buttonWidth, buttonHeight, Application.current().getActiveScene().getScenePallet().getColorFromIndex(6)));
+        cancelButton = new Button(Sprite.square(buttonWidth, buttonHeight, Application.current().getActiveScene().getScenePallet().getColorFromIndex(6)));
 
         confirmButton.text.setText("Confirm");
+        confirmButton.text.setColor(Application.current().getActiveScene().getScenePallet().getColorFromIndex(0));
         cancelButton.text.setText("Cancel");
+        cancelButton.text.setColor(Application.current().getActiveScene().getScenePallet().getColorFromIndex(0));
     }
 
     public ConfirmationDialogBox(TextProvider title, TextProvider text, Consumer<ConfirmationDialogBox> onButtonClicked)
@@ -55,7 +58,9 @@ public class ConfirmationDialogBox extends DialogBox
         cancelButton = new Button(Sprite.square(buttonWidth, buttonHeight, Color.white));
 
         confirmButton.text.setText("Confirm");
+        confirmButton.text.setColor(Application.current().getActiveScene().getScenePallet().getColorFromIndex(0));
         cancelButton.text.setText("Cancel");
+        cancelButton.text.setColor(Application.current().getActiveScene().getScenePallet().getColorFromIndex(0));
     }
 
     @Override
