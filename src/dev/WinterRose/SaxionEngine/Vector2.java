@@ -92,7 +92,7 @@ public class Vector2
         return new Vector2(x - value.x, y - value.y);
     }
 
-    private Vector2 invert()
+    public Vector2 invert()
     {
         return new Vector2(-x, -y);
     }
@@ -110,5 +110,16 @@ public class Vector2
     public Vector2 divide(Vector2 divider)
     {
         return new Vector2(x / divider.x, y / divider.y);
+    }
+
+    public Vector2 abs()
+    {
+        return new Vector2(Math.abs(x), Math.abs(y));
+    }
+
+    public Vector2 lerp(Vector2 destination, float time) {
+        float newX = this.x + (destination.x - this.x) * time;
+        float newY = this.y + (destination.y - this.y) * time;
+        return new Vector2(newX, newY);
     }
 }

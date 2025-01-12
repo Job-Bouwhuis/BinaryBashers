@@ -1,22 +1,26 @@
 package BinaryBashers.Enemies;
 
-import BinaryBashers.EnemySprite;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 
 import java.awt.*;
+import java.util.Set;
 
 public abstract class Enemy
 {
+    private final Vector2 enemyPosition;
     public EnemySpawner spawner;
     private EnemySprite sprite;
-    private final Vector2 textPosition;
-    protected String text;
+    private Vector2 textPosition;
+    private String text;
     private boolean isDead;
     private SoundPack deathSounds;
+    public Integer decimalNum = 0;
+    protected Boolean showDecimal;
 
-    public Enemy(int spriteId, Vector2 enemyPosition)
+    public Enemy(int spriteId, Vector2 enemyPosition,Boolean showDecimal)
     {
+        this.enemyPosition = enemyPosition;
         this.sprite = new EnemySprite();
         this.sprite.setSpriteId(spriteId);
         sprite.transform = new Transform();
@@ -26,11 +30,40 @@ public abstract class Enemy
         textPosition = enemyPosition.subtract(new Vector2(0, sprite.getSolid().getHeight() + 10));
         deathSounds = new SoundPack("resources/audio/enemyDeaths");
         deathSounds.setAllVolume(0.8f);
+        this.showDecimal = showDecimal;
     }
+
+    protected void setText(String text)
+    {
+        this.text = getFormatString(getDisplayFormat()) + text + " as " + getInputFormat();
+        textPosition = enemyPosition.subtract(new Vector2(0, sprite.getSolid().getHeight() + 10));
+        Vector2 size = Painter.measureString(this.text);
+        textPosition = textPosition.subtract(new Vector2(size.x / 2, 0));
+    }
+
+    public abstract EnemyFormat getDisplayFormat();
+    public abstract EnemyFormat getInputFormat();
+
+    public abstract String problem();
+    public abstract String answer();
 
     public EnemySprite getSprite()
     {
         return sprite;
+    }
+
+    protected Boolean getShowDecimal(){
+        return showDecimal;
+    }
+
+    private String getFormatString(EnemyFormat format)
+    {
+        return switch(format)
+        {
+            case Decimal -> "";
+            case Binary -> "0b";
+            case Hex -> "0x";
+        };
     }
 
     public void kill()
@@ -45,7 +78,7 @@ public abstract class Enemy
     {
         sprite.render(painter);
         if(!isDead)
-            painter.drawScaledText(text, textPosition, new Vector2(1.2f), new Vector2(0.5f, 0.5f), Color.cyan, FontType.Bold);
+            painter.drawScaledText(text, textPosition, new Vector2(1.2f), new Vector2(0.5f, 0.5f), Application.current().getActiveScene().getScenePallet().getColorFromIndex(6), FontType.Bold);
     }
 
     public void update()
@@ -71,4 +104,6 @@ public abstract class Enemy
     {
         sprite.onColorPalleteChange(newPallet);
     }
+
+    public abstract int getInputLength();
 }
