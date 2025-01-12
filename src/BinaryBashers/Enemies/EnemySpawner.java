@@ -89,6 +89,10 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
             var e = enemies.get(i);
             e.update();
         }
+
+        if (enemiesKilled > maxEnemies){
+            DialogBoxManager.getInstance().enqueue('');
+        }
     }
 
     private void timeElapsed(Timer timer)
