@@ -38,6 +38,7 @@ public abstract class Enemy
         isDead = true;
         sprite.showDeathAnimation();
         deathSounds.playRandom();
+        spawner.enemiesKilled++;
     }
 
     public void render(Painter painter)

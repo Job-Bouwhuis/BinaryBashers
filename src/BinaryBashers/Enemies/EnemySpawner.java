@@ -23,10 +23,18 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         return instance;
     }
 
+    public int enemiesKilled;
+
+    public int maxEnemies = 10;
+
     private List<T> enemies;
     private float spawnInterval = 30f;
     private float spawnTimer;
     private Random random;
+
+
+
+
 
     public EnemySpawner(Class<T> enemyType)
     {
@@ -75,6 +83,10 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         {
             var e = enemies.get(i);
             e.update();
+        }
+
+        if (enemiesKilled > maxEnemies){
+            DialogBoxManager.getInstance().enqueue('');
         }
     }
 

@@ -1,5 +1,6 @@
 package BinaryBashers;
 
+import BinaryBashers.Enemies.ScoreManager;
 import BinaryBashers.UI.DialogBoxes.DialogBoxManager;
 import dev.WinterRose.SaxionEngine.*;
 import BinaryBashers.Enemies.BinaryEnemy;
@@ -108,6 +109,7 @@ public class App extends Application
         });
 
         loadScene("spawnerTest");
+        ScoreManager.testScoreManager();
     }
 
     @Override
