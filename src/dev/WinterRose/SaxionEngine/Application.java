@@ -269,7 +269,9 @@ public abstract class Application
         Consumer<Scene> sceneConfigurer = scenes.get(sceneName);
         if (sceneConfigurer == null)
         {
-            DialogBoxManager.getInstance().enqueue("Error", "No scene with name: " + sceneName + ". Please scream at your local developer to resolve this issue!", 10);
+            DialogBoxManager.getInstance().enqueue("Fatal Error", "No scene with name: " + sceneName + ". Please scream at your local developer to resolve this issue!\n\nGame will close after this dialog.", box -> {
+                closeGame();
+            });
             //throw new RuntimeException("No scene with name: " + sceneName);
         }
         else
@@ -283,7 +285,9 @@ public abstract class Application
             catch (Exception e)
             {
                 e.printStackTrace();
-                throw new RuntimeException("Failed to create scene", e);
+                DialogBoxManager.getInstance().enqueue("Fatal Error", e.getMessage() + "\n\nPlease notify the developers to fix this issue!\nThe game will close after closing this dialog.", box -> {
+                    Application.current().closeGame();
+                });
             }
 
             activeScene = scene;

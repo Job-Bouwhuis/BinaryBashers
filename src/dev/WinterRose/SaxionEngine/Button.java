@@ -6,6 +6,7 @@ import dev.WinterRose.SaxionEngine.TextProviders.DefaultTextProvider;
 import dev.WinterRose.SaxionEngine.TextProviders.TextProvider;
 
 import java.awt.*;
+import java.awt.Component;
 
 public class Button extends ActiveRenderer
 {
@@ -92,6 +93,13 @@ public class Button extends ActiveRenderer
     @Override
     public void onColorPalleteChange(ColorPallet colorPallet)
     {
-        sprite = SpritePalletChanger.changePallet(sprite, colorPallet);
+        normalColor = colorPallet.getColorFromIndex(6);
+        hoverColor = colorPallet.getColorFromIndex(5);
+        clickColor = colorPallet.getColorFromIndex(4);
+    }
+
+    public Sprite getSprite()
+    {
+        return sprite;
     }
 }

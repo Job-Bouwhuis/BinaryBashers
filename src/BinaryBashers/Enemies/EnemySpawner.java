@@ -12,6 +12,7 @@ import java.util.Random;
 public class EnemySpawner<T extends Enemy> extends ActiveRenderer
 {
     public Action<Integer> onEnemyCountChanged = new Action<>();
+    public final Action<Enemy> onEnemyKilled = new Action<>();
     private Class<?> enemyType;
     private Constructor<T> enemyConstructor;
     private ScoreManager scoreManager = ScoreManager.getInstance();
@@ -58,6 +59,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         this.random = new Random();
         spawnTimer = 5;
         fromDecimal = true;
+        instance = this;
     }
 
     @Override
@@ -160,8 +162,9 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
             if (e.compairInput(input))
             {
                 e.kill();
+                onEnemyKilled.invoke(e);
                 inputRenderer.disallowFormat(e.getInputFormat());
-                scoreManager.addPoints(1);
+                scoreManager.addPoints(e.getTimeTaken());
             }
         }
 
@@ -174,9 +177,6 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
 
     public void killEnemy(Enemy enemy)
     {
-        int timeTaken = enemy.getTimeTaken();
-        System.out.println(timeTaken + "this is how long it took");// this was for debugging and i wanted to show you guys that it works you can remove it if you want
-        scoreManager.addPoints(timeTaken);
         enemies.remove(enemy);
         onEnemyCountChanged.invoke(enemies.size());
         System.out.println("Enemy removed. Total enemies: " + enemies.size());

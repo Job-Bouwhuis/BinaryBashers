@@ -3,7 +3,9 @@ package BinaryBashers.Levels;
 import BinaryBashers.BackToMainMenuComponent;
 import BinaryBashers.Enemies.EnemySpawner;
 import BinaryBashers.Enemies.HexEnemy;
+import BinaryBashers.LevelEndCriteria;
 import BinaryBashers.Player;
+import BinaryBashers.UI.ScoreOnScreen;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 
@@ -30,7 +32,7 @@ public class HexToDecimalScene
             playerObj.addComponent(player);
             playerObj.addComponent(playerDamageTimer);
 
-            player.transform.setPosition(new Vector2(Painter.renderWidth - timerSprite.getwidth(), Painter.renderHeight - timerSprite.getHeight()));
+            player.transform.setPosition(new Vector2(Painter.renderWidth - timerSprite.getWidth(), Painter.renderHeight - timerSprite.getHeight()));
             spawner.addComponent(enemySpawner);
             spawner.addComponent(enemySpawnTimer);
             scene.addObject(spawner);
@@ -46,6 +48,9 @@ public class HexToDecimalScene
             inputField.transform.setPosition(new Vector2(Painter.renderCenter).add(new Vector2(0, (float) Painter.renderHeight / 2)));
             scene.addObject(inputField);
             scene.createObject("backtolevelselect").addComponent(new BackToMainMenuComponent());
+            scene.createObject("scoreText").addComponent(new ScoreOnScreen());
+
+            scene.createObject("levelEndCriteria").addComponent(new LevelEndCriteria(25, 3));
             scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/midnight-ablaze.png")));
         });
     }

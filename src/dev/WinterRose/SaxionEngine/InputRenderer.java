@@ -60,6 +60,9 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
     public InputRenderer(int characterMax)
     {
         this.characterMax = characterMax;
+        removeLetterSound.setVolume(0.7f);
+        typeLetterSound.setVolume(0.7f);
+        inputConfirmSound.setVolume(0.7f);
     }
 
     @Override
@@ -73,6 +76,11 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
         }
 
         painter.drawText(chars, transform, origin, fontType);
+    }
+
+    public void allowAllCharacters(boolean allowed)
+    {
+        allowAllCharacters = allowed;
     }
 
     @Override

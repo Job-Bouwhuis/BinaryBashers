@@ -3,9 +3,6 @@ package BinaryBashers.Enemies;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 
-import java.awt.*;
-import java.util.Set;
-
 public abstract class Enemy
 {
     private final Vector2 enemyPosition;
@@ -38,7 +35,10 @@ public abstract class Enemy
     protected void setText(String text)
     {
         this.text = getFormatString(getDisplayFormat()) + text + " as " + getInputFormat();
-        textPosition = enemyPosition.subtract(new Vector2(0, sprite.getSolid().getHeight() + 10));
+        textPosition = enemyPosition.subtract(new Vector2(0, sprite.getSolid().getHeight() + 5));
+        if(enemyPosition.equals(Painter.renderCenter)) // if the enemy is the center enemy, then move its text down so that it cant overlap with enemies on its left or right
+            textPosition = textPosition.add(new Vector2(0, 25));
+
         Vector2 size = Painter.measureString(this.text);
         textPosition = textPosition.subtract(new Vector2(size.x / 2, 0));
     }

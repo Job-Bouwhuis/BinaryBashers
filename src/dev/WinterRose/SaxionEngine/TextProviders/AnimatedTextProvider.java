@@ -1,8 +1,10 @@
 package dev.WinterRose.SaxionEngine.TextProviders;
 
 import dev.WinterRose.SaxionEngine.Application;
+import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 import dev.WinterRose.SaxionEngine.Sound;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class AnimatedTextProvider extends TextProvider
@@ -29,6 +31,22 @@ public class AnimatedTextProvider extends TextProvider
         sound = new Sound("resources/audio/letterTyping/animatedTextProviderBlip.wav");
         sound.setVolume(.8f);
 
+        var app = Application.current();
+        if (app == null)
+        {
+            setDefaultColor(new ColorPallet().getColorFromIndex(6));
+            return;
+        }
+
+        var scene = app.getActiveScene();
+        if (scene == null)
+        {
+            setDefaultColor(new ColorPallet().getColorFromIndex(6));
+            return;
+        }
+
+        var pallet = scene.getScenePallet();
+        setDefaultColor(pallet.getColorFromIndex(6));
     }
 
     @Override
@@ -51,8 +69,20 @@ public class AnimatedTextProvider extends TextProvider
         if (currentCharacterIndex % soundEveryXCharacters == 0 && playSound)
             sound.play();
 
+        Color c = Application.current().getActiveScene().getScenePallet().getColorFromIndex(6);
+        if(!words.isEmpty())
+        {
+            var chars = words.getFirst().getCharacters();
+            if(chars.length > 0)
+                c = chars[0].color;
+            else
+                c = defaultColor;
+        }
+
         String textOnScreen = getText();
         forceSetText(textOnScreen + text.charAt(currentCharacterIndex));
+
+        setColor(c);
 
         currentCharacterIndex++;
     }

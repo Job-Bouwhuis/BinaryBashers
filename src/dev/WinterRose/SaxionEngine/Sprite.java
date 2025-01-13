@@ -64,7 +64,7 @@ public class Sprite
         return texturePath;
     }
 
-    public int getwidth()
+    public int getWidth()
     {
         return (int) getSize().x;
     }
@@ -166,9 +166,9 @@ public class Sprite
         final Color transparentColor = new Color(0, 0, 0, 0);
         final Color solidColor = Color.white;
         Color[] spriteColors = getColorData();
-        int width = getwidth();
+        int width = getWidth();
 
-        BufferedImage result = new BufferedImage(getwidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage result = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics g = result.getGraphics();
 
         for (int i = 0, spriteColorsLength = spriteColors.length; i < spriteColorsLength; i++)

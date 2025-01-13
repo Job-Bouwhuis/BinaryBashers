@@ -21,9 +21,9 @@ public class SpritePalletChanger
     {
         Color[] spriteColors = sprite.getColorData();
 
-        int width = sprite.getwidth();
+        int width = sprite.getWidth();
 
-        BufferedImage result = new BufferedImage(sprite.getwidth(), sprite.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage result = new BufferedImage(sprite.getWidth(), sprite.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
         for (int i = 0, spriteColorsLength = spriteColors.length; i < spriteColorsLength; i++)
         {

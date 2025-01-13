@@ -78,12 +78,15 @@ public abstract class TextProvider
 
     protected void buildWordsList()
     {
-        words.clear();
         Font prevFont = null;
+        FontType prefFontType = FontType.Normal;
         if(!words.isEmpty())
         {
             prevFont = words.getFirst().font;
+            prefFontType = words.get(0).fontType;
         }
+        words.clear();
+
         var text = Stream.getCharacterStream(textValue);
         continueReadingText(text);
 
@@ -95,6 +98,7 @@ public abstract class TextProvider
         words = result;
         if(prevFont != null)
             setFont(prevFont);
+        setFontType(prefFontType);
     }
 
     /**
