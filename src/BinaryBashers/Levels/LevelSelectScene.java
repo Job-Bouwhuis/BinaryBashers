@@ -1,7 +1,9 @@
 package BinaryBashers.Levels;
 
 import BinaryBashers.BackToMainMenuComponent;
+import BinaryBashers.UI.LeaderboardViewer;
 import dev.WinterRose.SaxionEngine.*;
+import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
 import dev.WinterRose.SaxionEngine.TextProviders.DefaultTextProvider;
 
@@ -38,6 +40,10 @@ public class LevelSelectScene
                 app.loadScene("DecimalLevel");
             });
 
+            var level1viewer = scene.createObject("Level1Viewer");
+            LeaderboardViewer viewer1 = new LeaderboardViewer(l1button, 1);
+            level1viewer.addComponent(viewer1);
+
             var level2 = scene.createObject("level2Button");
             level2.transform.setPosition(new Vector2(248, 245));
             var l2button = new Button(new Sprite("resources/sprites/levelSelect/levelButtons/Level2.png"));
@@ -48,6 +54,10 @@ public class LevelSelectScene
                 app.loadScene("BinaryLevel");
             });
 
+            var level2viewer = scene.createObject("Level2Viewer");
+            LeaderboardViewer viewer2 = new LeaderboardViewer(l2button, 2);
+            level2viewer.addComponent(viewer2);
+
             var level3 = scene.createObject("level3Button");
             level3.transform.setPosition(new Vector2(480, 133));
             var l3button = new Button(new Sprite("resources/sprites/levelSelect/levelButtons/Level3.png"));
@@ -57,6 +67,10 @@ public class LevelSelectScene
             l3button.onClick.add(button -> {
                 app.loadScene("HexLevel");
             });
+
+            var level3viewer = scene.createObject("Level3Viewer");
+            LeaderboardViewer viewer3 = new LeaderboardViewer(l3button, 3);
+            level3viewer.addComponent(viewer3);
 
             var level4 = scene.createObject("level4Button");
             level4.transform.setPosition(new Vector2(508, 293));
