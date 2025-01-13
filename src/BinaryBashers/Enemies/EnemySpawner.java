@@ -174,6 +174,9 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
 
     public void killEnemy(Enemy enemy)
     {
+        int timeTaken = enemy.getTimeTaken();
+        System.out.println(timeTaken + "this is how long it took");// this was for debugging and i wanted to show you guys that it works you can remove it if you want
+        scoreManager.addPoints(timeTaken);
         enemies.remove(enemy);
         onEnemyCountChanged.invoke(enemies.size());
         System.out.println("Enemy removed. Total enemies: " + enemies.size());
