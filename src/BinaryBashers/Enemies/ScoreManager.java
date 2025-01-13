@@ -40,11 +40,12 @@ public class ScoreManager {
         }
     }
 
-    public void addPoints(int points) {
-        if (points > 0) {
-            currentScore += points;
-        }
+    public void addPoints(int timeTaken) {
+        int points = Math.max(1, 10 - timeTaken);
+        currentScore += points;
+        System.out.println("Points added: " + points + " (Time taken: " + timeTaken + "s)");
     }
+
 
     public void subtractPoints(int points) {
         if (points > 0) {

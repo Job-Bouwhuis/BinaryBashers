@@ -2,6 +2,7 @@ package BinaryBashers;
 
 import BinaryBashers.Enemies.Enemy;
 import BinaryBashers.Enemies.EnemySpawner;
+import BinaryBashers.Enemies.ScoreManager;
 import BinaryBashers.UI.HealthImage;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
@@ -19,6 +20,8 @@ public class Player extends Renderer
     private int health = 3;
     private EnemySpawner spawner;
 
+    private ScoreManager scoreManager;
+
     private Timer damageTimer;
 
     // the 3 hearts on the UI for health. currently not made to easily scale, perhaps in the future.
@@ -31,6 +34,7 @@ public class Player extends Renderer
 
     public Player(int health, EnemySpawner<?> spawner)
     {
+        scoreManager = ScoreManager.getInstance();
         this.health = health;
 
         this.spawner = spawner;
@@ -122,7 +126,8 @@ public class Player extends Renderer
         for (Enemy e : es)
             remainingEnemyAnswers.append("%s = %s".formatted(e.problem(), e.answer()) + "\n");
 
-        var box = new ConfirmationDialogBox("DEDE", "You died. Score: TO BE DETERMINED\n\n" + remainingEnemyAnswers, confirmationDialogBox -> {
+
+        var box = new ConfirmationDialogBox("DEDE", "You died. Score: " + scoreManager.getCurrentScore() +"\n\n" + remainingEnemyAnswers, confirmationDialogBox -> {
             confirmationDialogBox.setPlaySounds(false);
             DialogBoxManager.getInstance().clearAll(true);
             Application.current().loadScene("LevelSelect");
