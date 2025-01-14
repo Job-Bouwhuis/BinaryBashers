@@ -49,8 +49,8 @@ public class DecimalToBinaryScene
             scene.addObject(inputField);
             scene.createObject("backtolevelselect").addComponent(new BackToMainMenuComponent());
             scene.createObject("scoreText").addComponent(new ScoreOnScreen());
-            scene.createObject("levelEndCriteria").addComponent(new LevelEndCriteria(8, 1));
-            scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/midnight-ablaze.png")));
+            scene.createObject("levelEndCriteria").addComponent(new LevelEndCriteria(8, 1, 4, new ColorPallet(new Sprite("resources/colorPallets/red.png"))));
+            scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/main.png")));
         });
     }
 }

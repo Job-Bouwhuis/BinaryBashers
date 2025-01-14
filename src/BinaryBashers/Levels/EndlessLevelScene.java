@@ -48,7 +48,7 @@ public class EndlessLevelScene
             scene.addObject(inputField);
             scene.createObject("backtolevelselect").addComponent(new BackToMainMenuComponent());
             scene.createObject("scoreText").addComponent(new ScoreOnScreen());
-            scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/urple.png")));
+            scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/Yellow.png")));
 
 //            scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/midnightAblaze/midnight-ablaze.png")));
         });

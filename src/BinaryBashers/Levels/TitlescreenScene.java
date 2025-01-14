@@ -32,7 +32,7 @@ public class TitlescreenScene
 
             String[] colorPallets = new String[] {
                     "resources/colorPallets/main.png",
-                    "resources/colorPallets/midnight-ablaze.png",
+                    "resources/colorPallets/red.png",
                     "resources/colorPallets/Yellow.png",
                     "resources/colorPallets/blue.png"
             };

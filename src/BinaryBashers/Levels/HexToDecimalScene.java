@@ -50,8 +50,8 @@ public class HexToDecimalScene
             scene.createObject("backtolevelselect").addComponent(new BackToMainMenuComponent());
             scene.createObject("scoreText").addComponent(new ScoreOnScreen());
 
-            scene.createObject("levelEndCriteria").addComponent(new LevelEndCriteria(25, 3));
-            scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/midnight-ablaze.png")));
+            scene.createObject("levelEndCriteria").addComponent(new LevelEndCriteria(25, 3, 12, new ColorPallet(new Sprite("resources/colorPallets/Yellow.png"))));
+            scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/Pink.png")));
         });
     }
 }
