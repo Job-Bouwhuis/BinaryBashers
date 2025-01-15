@@ -23,7 +23,8 @@ public class DecimalEnemy extends Enemy
             case 3:
                 decimalNum = new Random().nextInt(32, 128);
         }
-       setText(Integer.toString(decimalNum));
+//        decimalNum = new Random().nextInt(16);
+        setText(Integer.toString(decimalNum));
     }
 
     @Override

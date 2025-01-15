@@ -1,6 +1,7 @@
 package BinaryBashers.Levels;
 
 import BinaryBashers.BackToMainMenuComponent;
+import BinaryBashers.Enemies.BinaryEnemy;
 import BinaryBashers.Enemies.DecimalEnemy;
 import BinaryBashers.Enemies.EnemySpawner;
 import BinaryBashers.LevelEndCriteria;
@@ -22,7 +23,7 @@ public class DecimalToBinaryScene
             backgroundObject.addComponent(spriteRenderer);
             scene.addObject(backgroundObject);
 
-            EnemySpawner<?> enemySpawner = new EnemySpawner<>(DecimalEnemy.class,true);
+            EnemySpawner<?> enemySpawner = new EnemySpawner<>(DecimalEnemy.class,false);
             GameObject spawner = new GameObject("spawner");
             Sprite timerSprite = new Sprite("resources/sprites/ui/timer/Timer1.png");
             Timer enemySpawnTimer = new Timer(3, true, true, 1);
