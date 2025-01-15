@@ -52,7 +52,7 @@ public class InputRenderer extends Renderer implements IKeystrokeCallback
     private boolean allowAllCharacters = false;
 
     public final ArrayList<Character> binaryCharacters = new ArrayList<>(Arrays.asList('1', '0'));
-    public final ArrayList<Character> hexCharacters = new ArrayList<>(Arrays.asList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'));
+    public final ArrayList<Character> hexCharacters = new ArrayList<>(Arrays.asList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'));
     public final ArrayList<Character> decimalCharacters = new ArrayList<>(Arrays.asList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'));
     public final ArrayList<Character> customAllowedCharacters = new ArrayList<>();
     private ArrayList<EnemyFormat> acceptedFormats = new ArrayList<>();

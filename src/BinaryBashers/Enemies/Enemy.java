@@ -3,9 +3,6 @@ package BinaryBashers.Enemies;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 
-import java.awt.*;
-import java.util.Set;
-
 public abstract class Enemy
 {
     private final Vector2 enemyPosition;
@@ -50,13 +47,6 @@ public abstract class Enemy
     public EnemySprite getSprite()
     {
         return sprite;
-    }
-
-    public void setText(String text)
-    {
-        this.text = text;
-        textPosition = sprite.transform.getPosition().subtract(new Vector2(Painter.measureString(text).x / 2, sprite.getSolid().getHeight() + 10));
-
     }
 
     protected Boolean getShowDecimal()

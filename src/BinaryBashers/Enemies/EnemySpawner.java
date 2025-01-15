@@ -37,14 +37,14 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     private int currentEnemyTypeCounter;
     private Boolean showDecimal;
 
-    public EnemySpawner(Class<T> enemyType, Boolean fromDecimal)
+    public EnemySpawner(Class<T> enemyType, Boolean showDecimal)
     {
         this.enemyType = enemyType;
         this.enemies = new ArrayList<>();
         this.random = new Random();
         spawnTimer = 5;
         isInfiniteLevel = false;
-        this.showDecimal = fromDecimal;
+        this.showDecimal = showDecimal;
     }
 
     public EnemySpawner(Boolean infiniteLevel)
@@ -57,7 +57,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         this.enemies = new ArrayList<>();
         this.random = new Random();
         spawnTimer = 5;
-        fromDecimal = true;
+        showDecimal = true;
     }
 
     @Override
@@ -118,7 +118,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         T newEnemy = null;
         try
         {
-            newEnemy = enemyConstructor.newInstance(randomId, enemyPos, difficultyGenerator.getDifficultyNumber(scoreManager.getCurrentScore()), fromDecimal);
+            newEnemy = enemyConstructor.newInstance(randomId, enemyPos, difficultyGenerator.getDifficultyNumber(scoreManager.getCurrentScore()), showDecimal);
             int length  = newEnemy.getInputLength();
             if (length > inputRenderer.characterMax)
                 inputRenderer.characterMax = length;
@@ -244,7 +244,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
             currentEnemyTypeCounter++;
             currentEnemyTypeCounter = currentEnemyTypeCounter % (endlessLevelEnemyTypes.length - 1);
             enemyType = endlessLevelEnemyTypes[currentEnemyTypeCounter];
-            fromDecimal = currentEnemyTypeCounter == 1;
+            showDecimal = currentEnemyTypeCounter == 1;
         }
     }
 }

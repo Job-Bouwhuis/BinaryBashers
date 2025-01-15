@@ -24,7 +24,7 @@ public class DecimalEnemy extends Enemy
                 decimalNum = new Random().nextInt(32, 128);
         }
 //        decimalNum = new Random().nextInt(16);
-        setText("0d"+Integer.toString(decimalNum));
+        setText(Integer.toString(decimalNum));
     }
 
     @Override

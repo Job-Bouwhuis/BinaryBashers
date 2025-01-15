@@ -30,10 +30,10 @@ public class BinaryEnemy extends Enemy
 
         if (showDecimal)
         {
-            setText("0d" + Integer.toString(decimalNum)); //showing decimal
+            setText(Integer.toString(decimalNum)); //showing decimal
         } else
         {
-            setText("0b" + Integer.toString(binaryNum)); // showing binary
+            setText(Integer.toString(binaryNum)); // showing binary
         }
     }
 
