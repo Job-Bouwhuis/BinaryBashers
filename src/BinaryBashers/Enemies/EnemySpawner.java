@@ -97,10 +97,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     {
         spawnEnemy();
         if (enemies.size() > 0)
-        {
             timer.setMaxTime(spawnInterval);
-        }
-
     }
 
     // Spawns an enemy with a random ID

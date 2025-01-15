@@ -71,6 +71,8 @@ public class Player extends Renderer
         if (heart1 != null) heart1.heartImage = SpritePalletChanger.changePallet(heart1.heartImage, owner.getScene().getScenePallet());
         if (heart2 != null) heart2.heartImage = SpritePalletChanger.changePallet(heart2.heartImage, owner.getScene().getScenePallet());
         if (heart3 != null) heart3.heartImage = SpritePalletChanger.changePallet(heart3.heartImage, owner.getScene().getScenePallet());
+
+        spawner.onEnemyKilled.add(swnr -> damageTimer.restart());
     }
 
     public int getHealth()
