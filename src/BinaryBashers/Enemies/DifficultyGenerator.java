@@ -1,14 +1,18 @@
 package BinaryBashers.Enemies;
 
-public class DifficultyGenerator {
-   final int[] scoreDifficultyValues = new int[]{
-        2, 10, 20, 30, 40
-   };
+public class DifficultyGenerator
+{
+    final int[] scoreDifficultyValues = new int[]{
+            30, 60, 90, 120 };
 
-    public int getDifficultyNumber(int score) {
+    public int getDifficultyNumber(int score)
+    {
         System.out.println(score);
-        for (int i = 0; i < scoreDifficultyValues.length; i++) {
-            if (score < scoreDifficultyValues[i]) {
+        for (int i = 0; i < scoreDifficultyValues.length; i++)
+        {
+            if (score < scoreDifficultyValues[i])
+            {
+                System.out.println("On Difficulty: " + i);
                 return i;
             }
         }

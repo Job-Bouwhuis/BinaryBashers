@@ -28,13 +28,7 @@ public class BackToMainMenuComponent extends Behavior
                return;
             }
 
-            DialogBoxManager.getInstance()
-                    .enqueue("Attention!", "Are you sure you wish to exit?", box -> {
-                        if (box.getResult())
-                        {
-                            Application.current().closeGame();
-                        }
-                    });
+            Application.current().loadScene("TitleScreen");
 
         }
     }

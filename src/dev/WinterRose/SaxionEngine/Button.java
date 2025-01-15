@@ -1,7 +1,6 @@
 package dev.WinterRose.SaxionEngine;
 
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
-import dev.WinterRose.SaxionEngine.ColorPallets.SpritePalletChanger;
 import dev.WinterRose.SaxionEngine.TextProviders.DefaultTextProvider;
 import dev.WinterRose.SaxionEngine.TextProviders.TextProvider;
 
@@ -9,12 +8,25 @@ import java.awt.*;
 
 public class Button extends ActiveRenderer
 {
+    public class ButtonDrawAction
+    {
+        public Button button;
+        public Painter painter;
+
+        public ButtonDrawAction(Button button, Painter painter)
+        {
+            this.button = button;
+            this.painter = painter;
+        }
+    }
+
     public Action<Button> onClick = new Action<>();
     public Color normalColor = Color.white;
     public Color hoverColor = Color.lightGray;
     public Color clickColor = new Color(230, 230, 230);
     public Vector2 origin = new Vector2(.5f, .5f);
     public TextProvider text;
+    public Action<ButtonDrawAction> onHoverDraw = new Action<>();
 
     private boolean isHovering = false;
     private boolean isClicking = false;
@@ -87,11 +99,23 @@ public class Button extends ActiveRenderer
 
         painter.drawSprite(sprite, transform, origin, drawingColor);
         painter.drawText(text, textTransform, new Vector2(), Painter.renderBounds);
+
+        if(isHovering)
+        {
+            onHoverDraw.invoke(new ButtonDrawAction(this, painter));
+        }
     }
 
     @Override
     public void onColorPalleteChange(ColorPallet colorPallet)
     {
-        sprite = SpritePalletChanger.changePallet(sprite, colorPallet);
+        normalColor = colorPallet.getColorFromIndex(6);
+        hoverColor = colorPallet.getColorFromIndex(5);
+        clickColor = colorPallet.getColorFromIndex(4);
+    }
+
+    public Sprite getSprite()
+    {
+        return sprite;
     }
 }

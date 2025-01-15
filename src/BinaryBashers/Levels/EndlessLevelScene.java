@@ -4,6 +4,7 @@ import BinaryBashers.BackToMainMenuComponent;
 import BinaryBashers.Enemies.BinaryEnemy;
 import BinaryBashers.Enemies.EnemySpawner;
 import BinaryBashers.Player;
+import BinaryBashers.UI.ScoreOnScreen;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 
@@ -30,7 +31,7 @@ public class EndlessLevelScene
             playerObj.addComponent(player);
             playerObj.addComponent(playerDamageTimer);
 
-            player.transform.setPosition(new Vector2(Painter.renderWidth - timerSprite.getwidth(), Painter.renderHeight - timerSprite.getHeight()));
+            player.transform.setPosition(new Vector2(Painter.renderWidth - timerSprite.getWidth(), Painter.renderHeight - timerSprite.getHeight()));
             spawner.addComponent(enemySpawner);
             spawner.addComponent(enemySpawnTimer);
             scene.addObject(spawner);
@@ -46,7 +47,8 @@ public class EndlessLevelScene
             inputField.transform.setPosition(new Vector2(Painter.renderCenter).add(new Vector2(0, (float) Painter.renderHeight / 2)));
             scene.addObject(inputField);
             scene.createObject("backtolevelselect").addComponent(new BackToMainMenuComponent());
-            scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/urple.png")));
+            scene.createObject("scoreText").addComponent(new ScoreOnScreen());
+            scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/Yellow.png")));
 
 //            scene.setScenePallet(new ColorPallet(new Sprite("resources/colorPallets/midnightAblaze/midnight-ablaze.png")));
         });

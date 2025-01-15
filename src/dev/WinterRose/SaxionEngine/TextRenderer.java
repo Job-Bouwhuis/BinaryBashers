@@ -1,5 +1,6 @@
 package dev.WinterRose.SaxionEngine;
 
+import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
 import dev.WinterRose.SaxionEngine.TextProviders.DefaultTextProvider;
 import dev.WinterRose.SaxionEngine.TextProviders.TextProvider;
 
@@ -20,6 +21,12 @@ public class TextRenderer extends Renderer
     {
         this();
         this.text = new DefaultTextProvider(text);
+    }
+
+    public TextRenderer(TextProvider text)
+    {
+        this();
+        this.text = text;
     }
 
     public TextProvider getText() {
@@ -58,7 +65,6 @@ public class TextRenderer extends Renderer
         text.setFontType(fontType);
     }
 
-
     @Override
     public void render(Painter painter)
     {
@@ -68,5 +74,11 @@ public class TextRenderer extends Renderer
     public TextProvider getTextProvider()
     {
         return text;
+    }
+
+    @Override
+    public void onColorPalleteChange(ColorPallet colorPallet)
+    {
+        text.setColor(colorPallet.getColorFromIndex(6));
     }
 }

@@ -2,6 +2,7 @@ package BinaryBashers;
 
 import BinaryBashers.Enemies.Enemy;
 import BinaryBashers.Enemies.EnemySpawner;
+import BinaryBashers.Enemies.ScoreManager;
 import BinaryBashers.UI.HealthImage;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
@@ -17,7 +18,9 @@ public class Player extends Renderer
 {
 
     private int health = 3;
-    private EnemySpawner spawner;
+    private final EnemySpawner spawner;
+
+    private final ScoreManager scoreManager;
 
     private Timer damageTimer;
 
@@ -26,11 +29,11 @@ public class Player extends Renderer
     private HealthImage heart2;
     private HealthImage heart3;
 
-    private int score = 0; // NOTE: has to be moved to scoreboard eventually
     private Sound damageSound = new Sound("resources/audio/takeDamage.wav");
 
     public Player(int health, EnemySpawner<?> spawner)
     {
+        scoreManager = ScoreManager.getInstance();
         this.health = health;
 
         this.spawner = spawner;
@@ -58,7 +61,7 @@ public class Player extends Renderer
 
         Sprite heartImage = new HealthImage(new Vector2(), new Vector2(1)).heartImage;
         final float heartScale = .8f;
-        Vector2 effectiveScale = new Vector2(heartImage.getwidth() * heartScale, heartImage.getHeight() * heartScale);
+        Vector2 effectiveScale = new Vector2(heartImage.getWidth() * heartScale, heartImage.getHeight() * heartScale);
         heart1 = new HealthImage(new Vector2(0 + effectiveScale.x, Painter.renderHeight - effectiveScale.y), new Vector2(heartScale));
 
         heart2 = new HealthImage(new Vector2(heart1.getPosition().x + effectiveScale.x + 3, heart1.getPosition().y), new Vector2(heartScale));
@@ -122,7 +125,8 @@ public class Player extends Renderer
         for (Enemy e : es)
             remainingEnemyAnswers.append("%s = %s".formatted(e.problem(), e.answer()) + "\n");
 
-        var box = new ConfirmationDialogBox("DEDE", "You died. Score: TO BE DETERMINED\n\n" + remainingEnemyAnswers, confirmationDialogBox -> {
+
+        var box = new ConfirmationDialogBox("DEDE", "You died. Score: " + scoreManager.getCurrentScore() +"\n\n" + remainingEnemyAnswers, confirmationDialogBox -> {
             confirmationDialogBox.setPlaySounds(false);
             DialogBoxManager.getInstance().clearAll(true);
             Application.current().loadScene("LevelSelect");

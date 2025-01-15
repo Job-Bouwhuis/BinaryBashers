@@ -3,9 +3,11 @@ package dev.WinterRose.SaxionEngine;
 import dev.WinterRose.SaxionEngine.DialogBoxes.ConfirmationDialogBox;
 import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -267,7 +269,9 @@ public abstract class Application
         Consumer<Scene> sceneConfigurer = scenes.get(sceneName);
         if (sceneConfigurer == null)
         {
-            DialogBoxManager.getInstance().enqueue("Error", "No scene with name: " + sceneName + ". Please scream at your local developer to resolve this issue!", 10);
+            DialogBoxManager.getInstance().enqueue("Fatal Error", "No scene with name: " + sceneName + ". Please scream at your local developer to resolve this issue!\n\nGame will close after this dialog.", box -> {
+                closeGame();
+            });
             //throw new RuntimeException("No scene with name: " + sceneName);
         }
         else
@@ -281,14 +285,14 @@ public abstract class Application
             catch (Exception e)
             {
                 e.printStackTrace();
-                throw new RuntimeException("Failed to create scene", e);
+                DialogBoxManager.getInstance().enqueue("Fatal Error", e.getMessage() + "\n\nPlease notify the developers to fix this issue!\nThe game will close after closing this dialog.", box -> {
+                    Application.current().closeGame();
+                });
             }
 
             activeScene = scene;
             activeScene.wakeScene();
         }
-
-
 
         while (doAnimation)
         {
@@ -461,6 +465,8 @@ public abstract class Application
         {
             applicationWindow = new JFrame();
 
+            applicationWindow.setIconImage(ImageIO.read( new File("resources/sprites/Appicon.png")));
+
             GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
             Rectangle screenBounds = gd.getDefaultConfiguration().getBounds();
             int screenWidth = screenBounds.width;
@@ -503,7 +509,7 @@ public abstract class Application
                 {
                     if (activeScene != null)
                     {
-                        if (activeScene.name.equals("LevelSelect"))
+                        if (activeScene.name.equals("LevelSelect") || activeScene.name.equals("TitleScreen"))
                         {
                             closeGame();
                             return;

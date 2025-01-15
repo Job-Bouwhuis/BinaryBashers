@@ -40,4 +40,9 @@ public class Action<T>
     {
         consumers.clear();
     }
+
+    public boolean any()
+    {
+        return !consumers.isEmpty();
+    }
 }

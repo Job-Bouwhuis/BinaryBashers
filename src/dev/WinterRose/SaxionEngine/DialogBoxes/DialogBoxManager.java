@@ -153,7 +153,12 @@ public class DialogBoxManager
     {
         dialogQueue.clear();
 
-        if (forceHideBoxRenderer) boxRenderer.hideImmediately();
+        if (forceHideBoxRenderer)
+        {
+            currentDialog = null;
+            lastSoundSetting = false;
+            boxRenderer.hideImmediately();
+        }
     }
 
     public void enqueue(String title, String text, Consumer<ConfirmationDialogBox> onButtonClicked, boolean playSounds)

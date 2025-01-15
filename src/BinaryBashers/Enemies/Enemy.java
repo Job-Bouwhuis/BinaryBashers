@@ -14,6 +14,7 @@ public abstract class Enemy
     private SoundPack deathSounds;
     public Integer decimalNum = 0;
     protected Boolean showDecimal;
+    private long spawnTime;
 
     public Enemy(int spriteId, Vector2 enemyPosition, Boolean showDecimal)
     {
@@ -28,14 +29,22 @@ public abstract class Enemy
         deathSounds = new SoundPack("resources/audio/enemyDeaths");
         deathSounds.setAllVolume(0.8f);
         this.showDecimal = showDecimal;
+        this.spawnTime = System.currentTimeMillis();
     }
 
     protected void setText(String text)
     {
         this.text = getFormatString(getDisplayFormat()) + text + " as " + getInputFormat();
-        textPosition = enemyPosition.subtract(new Vector2(0, sprite.getSolid().getHeight() + 10));
+        textPosition = enemyPosition.subtract(new Vector2(0, sprite.getSolid().getHeight() + 5));
+        if(enemyPosition.equals(Painter.renderCenter)) // if the enemy is the center enemy, then move its text down so that it cant overlap with enemies on its left or right
+            textPosition = textPosition.add(new Vector2(0, 25));
+
         Vector2 size = Painter.measureString(this.text);
         textPosition = textPosition.subtract(new Vector2(size.x / 2, 0));
+    }
+
+    public int getTimeTaken() {
+        return (int) ((System.currentTimeMillis() - spawnTime) / 1000); // Time in seconds
     }
 
     public abstract EnemyFormat getDisplayFormat();

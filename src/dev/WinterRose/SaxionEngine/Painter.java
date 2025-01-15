@@ -2,6 +2,7 @@ package dev.WinterRose.SaxionEngine;
 
 import dev.WinterRose.SaxionEngine.TextProviders.DefaultTextProvider;
 import dev.WinterRose.SaxionEngine.TextProviders.TextProvider;
+import dev.WinterRose.SaxionEngine.TextProviders.Word;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -220,7 +221,7 @@ public class Painter
         float xOffset = 0;
         float yOffset = 0;
 
-        for (TextProvider.Word word : text.getWords())
+        for (Word word : text.getWords())
         {
             Font wordFont = word.font != null ? word.font : new Font(graphics.getFont()
                     .getFontName(), switch (word.fontType) {

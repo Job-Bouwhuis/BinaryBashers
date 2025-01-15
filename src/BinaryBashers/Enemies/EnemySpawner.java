@@ -12,6 +12,7 @@ import java.util.Random;
 public class EnemySpawner<T extends Enemy> extends ActiveRenderer
 {
     public Action<Integer> onEnemyCountChanged = new Action<>();
+    public final Action<Enemy> onEnemyKilled = new Action<>();
     private Class<?> enemyType;
     private Constructor<T> enemyConstructor;
     private ScoreManager scoreManager = ScoreManager.getInstance();
@@ -58,6 +59,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         this.random = new Random();
         spawnTimer = 5;
         showDecimal = true;
+        instance = this;
     }
 
     @Override
@@ -160,8 +162,9 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
             if (e.compairInput(input))
             {
                 e.kill();
+                onEnemyKilled.invoke(e);
                 inputRenderer.disallowFormat(e.getInputFormat());
-                scoreManager.addPoints(1);
+                scoreManager.addPoints(e.getTimeTaken());
             }
         }
 
