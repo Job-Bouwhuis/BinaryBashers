@@ -43,6 +43,7 @@ public class LevelSelectScene
 
             var level1viewer = scene.createObject("Level1Viewer");
             LeaderboardViewer viewer1 = new LeaderboardViewer(l1button, 1);
+            level1viewer.transform.setPosition(l1button.transform.getPosition().add(new Vector2(viewer1.boxRenderer.getTargetBounds().width / 2 + 15, viewer1.boxRenderer.getTargetBounds().height / 2 + 15)));
             level1viewer.addComponent(viewer1);
 
             var level2 = scene.createObject("level2Button");
@@ -57,6 +58,7 @@ public class LevelSelectScene
 
             var level2viewer = scene.createObject("Level2Viewer");
             LeaderboardViewer viewer2 = new LeaderboardViewer(l2button, 2);
+            level2viewer.transform.setPosition(l2button.transform.getPosition().add(new Vector2(viewer2.boxRenderer.getTargetBounds().width / 2 + 15, viewer2.boxRenderer.getTargetBounds().height / 2 + 13)));
             level2viewer.addComponent(viewer2);
 
             var level3 = scene.createObject("level3Button");
@@ -71,6 +73,7 @@ public class LevelSelectScene
 
             var level3viewer = scene.createObject("Level3Viewer");
             LeaderboardViewer viewer3 = new LeaderboardViewer(l3button, 3);
+            level3viewer.transform.setPosition(l3button.transform.getPosition().add(new Vector2(viewer3.boxRenderer.getTargetBounds().width / 2 + 7, viewer3.boxRenderer.getTargetBounds().height / 2 + 17)));
             level3viewer.addComponent(viewer3);
 
             var level4 = scene.createObject("level4Button");
@@ -82,6 +85,11 @@ public class LevelSelectScene
             l4button.onClick.add(button -> {
                 app.loadScene("EndlessLevel");
             });
+
+            var level4viewer = scene.createObject("Level4Viewer");
+            LeaderboardViewer viewer4 = new LeaderboardViewer(l4button, 4);
+            level4viewer.transform.setPosition(l4button.transform.getPosition().subtract(new Vector2(viewer4.boxRenderer.getTargetBounds().width / 2 + 25, viewer4.boxRenderer.getTargetBounds().height / 2 + 25)));
+            level4viewer.addComponent(viewer4);
 
             // so that scores do not get taken to other levels
             ScoreManager.getInstance().resetScore();

@@ -26,7 +26,6 @@ public class App extends Application
         LevelEndScene.createScene(this);
         LevelSelectScene.createScene(this);
         TitlescreenScene.createScene(this);
-        //LevelEndScene.setNextAndNotLoad(1, new ColorPallet());
 
         loadScene("TitleScreen", false);
     }

@@ -3,6 +3,7 @@ package BinaryBashers;
 import BinaryBashers.Enemies.Enemy;
 import BinaryBashers.Enemies.EnemySpawner;
 import BinaryBashers.Enemies.ScoreManager;
+import BinaryBashers.Levels.LevelEndScene;
 import BinaryBashers.UI.HealthImage;
 import dev.WinterRose.SaxionEngine.*;
 import dev.WinterRose.SaxionEngine.ColorPallets.ColorPallet;
@@ -62,10 +63,9 @@ public class Player extends Renderer
         Sprite heartImage = new HealthImage(new Vector2(), new Vector2(1)).heartImage;
         final float heartScale = .8f;
         Vector2 effectiveScale = new Vector2(heartImage.getWidth() * heartScale, heartImage.getHeight() * heartScale);
+
         heart1 = new HealthImage(new Vector2(0 + effectiveScale.x, Painter.renderHeight - effectiveScale.y), new Vector2(heartScale));
-
         heart2 = new HealthImage(new Vector2(heart1.getPosition().x + effectiveScale.x + 3, heart1.getPosition().y), new Vector2(heartScale));
-
         heart3 = new HealthImage(new Vector2(heart2.getPosition().x + effectiveScale.x + 3, heart2.getPosition().y), new Vector2(heartScale));
 
         if (heart1 != null) heart1.heartImage = SpritePalletChanger.changePallet(heart1.heartImage, owner.getScene().getScenePallet());
@@ -127,6 +127,22 @@ public class Player extends Renderer
         for (Enemy e : es)
             remainingEnemyAnswers.append("%s = %s".formatted(e.problem(), e.answer()) + "\n");
 
+        // when its in the endless level, when the player dies he should not just be told he died and thats that, he should have the chance to save their score
+        if(owner.getScene().name.equals("EndlessLevel"))
+        {
+            var box = new ConfirmationDialogBox("DEDE", "You died. Score: " + scoreManager.getCurrentScore() +"\n\n" + remainingEnemyAnswers
+                    + "\n\nSince that you were playing the Endless level, you have the chance to save your score even though you died.", confirmationDialogBox -> {
+                confirmationDialogBox.setPlaySounds(false);
+                DialogBoxManager.getInstance().clearAll(true);
+                LevelEndScene.setNextAndLoad(4, owner.getScene().getScenePallet());
+            });
+
+            box.setShowCancelButton(false);
+            box.getConfirmButton().text = new DefaultTextProvider("Continue");
+
+            DialogBoxManager.getInstance().enqueue(box);
+            return;
+        }
 
         var box = new ConfirmationDialogBox("DEDE", "You died. Score: " + scoreManager.getCurrentScore() +"\n\n" + remainingEnemyAnswers, confirmationDialogBox -> {
             confirmationDialogBox.setPlaySounds(false);

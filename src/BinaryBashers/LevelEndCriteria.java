@@ -22,8 +22,6 @@ public class LevelEndCriteria extends Behavior
     {
         this.enemiesToKill = enemiesToKill;
         this.level = level;
-
-
     }
 
     public LevelEndCriteria(int enemiesToKill, int level, int enemiesUntilPalletSwitch, ColorPallet altPallet)

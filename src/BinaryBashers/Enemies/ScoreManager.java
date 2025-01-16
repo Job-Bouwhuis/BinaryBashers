@@ -1,17 +1,20 @@
 package BinaryBashers.Enemies;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ScoreManager
 {
     private static final String DIRECTORY_PATH = "resources/highScores";
-    private static final String FILE_NAME_TEMPLATE = DIRECTORY_PATH + "/level_%d_highscores.txt";
+    private static final String FILE_NAME_TEMPLATE = DIRECTORY_PATH + "/level_%d_highscores.scores";
     private static ScoreManager instance;
     private int currentScore;
     private String currentPlayerName;
     private Map<Integer, ArrayList<PlayerScore>> levelHighScores;
-    private int maxScores = 100; // Default maximum number of scores
+    private int maxScores = 100;
 
     private ScoreManager()
     {
@@ -87,7 +90,6 @@ public class ScoreManager
             highScores.add(new PlayerScore(currentPlayerName, currentScore));
             highScores.sort((score1, score2) -> Integer.compare(score2.score, score1.score));
 
-            // Trim to maxScores
             if (highScores.size() > maxScores)
             {
                 highScores = new ArrayList<>(highScores.subList(0, maxScores));
@@ -123,17 +125,6 @@ public class ScoreManager
         }
     }
 
-    private void initializeHighScores(int level)
-    {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(String.format(FILE_NAME_TEMPLATE, level))))
-        {
-        }
-        catch (IOException e)
-        {
-            System.err.println("Failed to initialize high scores for level " + level + ": " + e.getMessage());
-        }
-    }
-
     private void loadHighScores(int level)
     {
         levelHighScores.remove(level);
@@ -143,7 +134,15 @@ public class ScoreManager
 
         if (!file.exists())
         {
-            initializeHighScores(level);
+            try
+            {
+                if (!file.createNewFile())
+                    System.out.println("Error creating scores file");
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException(e);
+            }
         }
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file)))
@@ -160,21 +159,7 @@ public class ScoreManager
                 }
             }
 
-            // Sort scores manually in descending order using a for loop
             highScores.sort(Comparator.comparingInt(score2 -> score2.score));
-
-            for (int i = 0; i < highScores.size() - 1; i++)
-            {
-                for (int j = i + 1; j < highScores.size(); j++)
-                {
-                    if (highScores.get(i).getScore() < highScores.get(j).getScore())
-                    {
-                        PlayerScore temp = highScores.get(i);
-                        highScores.set(i, highScores.get(j));
-                        highScores.set(j, temp);
-                    }
-                }
-            }
 
             levelHighScores.put(level, highScores);
         }
@@ -206,7 +191,7 @@ public class ScoreManager
 
         for (PlayerScore score : scores)
         {
-            if(score.name.equals(name))
+            if (score.name.equals(name))
             {
                 score.score = currentScore;
                 break;
@@ -219,7 +204,7 @@ public class ScoreManager
         saveHighScores(level);
     }
 
-    public static class PlayerScore implements Comparable<PlayerScore>
+    public static class PlayerScore
     {
         private final String name;
         private int score;
@@ -238,12 +223,6 @@ public class ScoreManager
         public int getScore()
         {
             return score;
-        }
-
-        @Override
-        public int compareTo(PlayerScore other)
-        {
-            return Integer.compare(other.score, this.score); // Descending order
         }
 
         @Override
