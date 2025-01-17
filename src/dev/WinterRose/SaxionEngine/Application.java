@@ -168,12 +168,6 @@ public abstract class Application
     {
         handleInputEvents();
 
-        boolean oHeld2 = Input.getKey(Keys.F11);
-        boolean oPressed2 = Input.getKeyDown(Keys.F11);
-        boolean oReleased2 = Input.getKeyUp(Keys.F11);
-
-        forceQuitDialog();
-
         long currentTime = System.nanoTime();
         float deltaTime = (currentTime - lastFrameTime) / 1_000_000_000.0f; // Convert nanoseconds to seconds
         lastFrameTime = currentTime;
@@ -211,22 +205,6 @@ public abstract class Application
 
         Input.update();
         finishedFrame = true;
-    }
-
-    /**
-     * This method is a hacky solution to the way the DialogBoxMan011ager is currently implemented.
-     * In a next sprint this will be fixed
-     */
-    private void forceQuitDialog()
-    {
-        if (Input.getKey(Keys.ALT) && Input.getKeyDown(Keys.F4))
-        {
-            ConfirmationDialogBox box = new ConfirmationDialogBox("Warning!", "Are you sure you want to force quit the game?\n" + "Any unsaved progress will be lost!", cdb -> {
-                if (cdb.getResult()) Application.current().closeGame();
-            });
-            box.getTitle().setColor(Application.current().getActiveScene().getScenePallet().getColorFromIndex(6));
-            DialogBoxManager.getInstance().enqueue(box);
-        }
     }
 
     public void closeGame()
