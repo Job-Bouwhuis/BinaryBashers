@@ -159,8 +159,6 @@ public class ScoreManager
                 }
             }
 
-            highScores.sort(Comparator.comparingInt(score2 -> score2.score));
-
             levelHighScores.put(level, highScores);
         }
         catch (IOException e)

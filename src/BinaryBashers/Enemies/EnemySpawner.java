@@ -7,24 +7,21 @@ import dev.WinterRose.SaxionEngine.DialogBoxes.DialogBoxManager;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class EnemySpawner<T extends Enemy> extends ActiveRenderer
 {
-    public Action<Integer> onEnemyCountChanged = new Action<>();
+    private static EnemySpawner instance;
     public final Action<Enemy> onEnemyKilled = new Action<>();
+    private final int ENDLESS_LEVEL_ENEMY_SWAP_AFTER_KILLS = 2;
+    public Action<Integer> onEnemyCountChanged = new Action<>();
+    public InputRenderer inputRenderer;
     private Class<?> enemyType;
     private Constructor<T> enemyConstructor;
     private ScoreManager scoreManager = ScoreManager.getInstance();
-    public InputRenderer inputRenderer;
-
-    private static EnemySpawner instance;
-
-    public static EnemySpawner getInstance()
-    {
-        return instance;
-    }
-
     private ArrayList<Enemy> enemies;
     private float spawnInterval = 14f;
     private float spawnTimer;
@@ -33,7 +30,6 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     private DifficultyGenerator difficultyGenerator = new DifficultyGenerator();
     private Boolean isInfiniteLevel;
     private int enemyCorpses;
-    private final int ENDLESS_LEVEL_ENEMY_SWAP_AFTER_KILLS = 2;
     private Class<?>[] endlessLevelEnemyTypes;
     private int currentEnemyTypeCounter;
     private Boolean showDecimal;
@@ -60,6 +56,17 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         spawnTimer = 5;
         showDecimal = true;
         instance = this;
+    }
+
+    public static EnemySpawner getInstance()
+    {
+        return instance;
+    }
+
+    public static int getRandomValue(int lowerBound, int upperBound)
+    {
+        Random random = new Random();
+        return random.nextInt(upperBound - lowerBound) + lowerBound;
     }
 
     @Override
@@ -96,8 +103,7 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     private void timeElapsed(Timer timer)
     {
         spawnEnemy();
-        if (enemies.size() > 0)
-            timer.setMaxTime(spawnInterval);
+        if (enemies.size() > 0) timer.setMaxTime(spawnInterval);
     }
 
     // Spawns an enemy with a random ID
@@ -118,9 +124,8 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         try
         {
             newEnemy = enemyConstructor.newInstance(randomId, enemyPos, difficultyGenerator.getDifficultyNumber(scoreManager.getCurrentScore()), showDecimal);
-            int length  = newEnemy.getInputLength();
-            if (length > inputRenderer.characterMax)
-                inputRenderer.characterMax = length;
+            int length = newEnemy.getInputLength();
+            if (length > inputRenderer.characterMax) inputRenderer.characterMax = length;
         }
         catch (InstantiationException | IllegalAccessException e)
         {
@@ -142,13 +147,39 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
         onEnemyCountChanged.invoke(enemies.size());
     }
 
-    private Vector2 getNewEnemyPosition()
-    {
-        int size = enemies.size();
-        if (size == 1) return Painter.renderCenter.subtract(new Vector2(Painter.renderCenter.x / 2, 0));
-        else if (size == 0) return Painter.renderCenter;
-        else if (size == 2) return Painter.renderCenter.add(new Vector2(Painter.renderCenter.x / 2, 0));
-        else throw new IllegalStateException("Invalid Position");
+    private Vector2 getNewEnemyPosition() {
+        Vector2[] positions = new Vector2[]{
+                Painter.renderCenter.subtract(new Vector2(Painter.renderCenter.x / 2, 0)),
+                Painter.renderCenter,
+                Painter.renderCenter.add(new Vector2(Painter.renderCenter.x / 2, 0))
+        };
+
+        Set<Vector2> occupiedPositions = enemies.stream()
+                .map(Enemy::getPosition)
+                .collect(Collectors.toSet());
+
+        Vector2 pos;
+        if (enemies.isEmpty()) {
+            pos = positions[1];
+        } else if (enemies.size() == 1 && !occupiedPositions.contains(positions[1])) {
+            pos = positions[1];
+        } else if (enemies.size() == 1) {
+            pos = occupiedPositions.contains(positions[0]) ? positions[2] : positions[0];
+        } else if (enemies.size() == 2) {
+            if (!occupiedPositions.contains(positions[1])) {
+                pos = positions[1];
+            } else if (!occupiedPositions.contains(positions[2])) {
+                pos = positions[2];
+            } else if (!occupiedPositions.contains(positions[0])) {
+                pos = positions[0];
+            } else {
+                throw new IllegalStateException("No available positions");
+            }
+        } else {
+            throw new IllegalStateException("Invalid number of enemies");
+        }
+
+        return pos;
     }
 
     public void checkAndKillEnemies(String input)
@@ -229,12 +260,6 @@ public class EnemySpawner<T extends Enemy> extends ActiveRenderer
     public void startRandomEnemyDamageAnimation()
     {
         enemies.get(getRandomValue(0, enemies.size())).getSprite().startAttackAnimation();
-    }
-
-    public static int getRandomValue(int lowerBound, int upperBound)
-    {
-        Random random = new Random();
-        return random.nextInt(upperBound - lowerBound) + lowerBound;
     }
 
     public void checkEnemyTypeSwitch()

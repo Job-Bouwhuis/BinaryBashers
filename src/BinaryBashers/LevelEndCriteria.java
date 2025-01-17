@@ -52,6 +52,7 @@ public class LevelEndCriteria extends Behavior
         {
             didMyColorPalletSwappingJob = true;
             Application.current().getActiveScene().setScenePallet(altPallet);
+            owner.getScene().setScenePalletUnAnnounced(new ColorPallet(new ColorPallet(), altPallet));
         }
     }
 }

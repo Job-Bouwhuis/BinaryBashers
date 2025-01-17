@@ -147,5 +147,10 @@ public class Scene
             object.updatePallete(newPallet);
         }
     }
+
+    public void setScenePalletUnAnnounced(ColorPallet newPallet)
+    {
+        scenePallet = newPallet;
+    }
 }
 

@@ -25,6 +25,14 @@ public class ColorPallet
         for (int i = 0; i < fromColors.length; i++)
             add(fromColors[i], toColors[i]);
     }
+
+    public ColorPallet(ColorPallet from, Sprite to)
+    {
+        Color[] toColors = to.getColorData();
+
+        for (int i = 0; i < toColors.length; i++)
+            add(from.getColorFromIndex(i), toColors[i]);
+    }
     public ColorPallet(Sprite to)
     {
         this(new Sprite("resources/colorPallets/main.png"), to);
@@ -32,6 +40,26 @@ public class ColorPallet
     public ColorPallet()
     {
         this(new Sprite("resources/colorPallets/main.png"), new Sprite("resources/colorPallets/main.png"));
+    }
+
+    /**
+     * Takes the from colors from the 'from' pallet, and the to colors from the 'to' pallet, and constructs a new color pallet from those
+     * @param from
+     * @param to
+     */
+    public ColorPallet(ColorPallet from, ColorPallet to)
+    {
+        ArrayList<Color> fromColors = new ArrayList<>();
+        ArrayList<Color> toColors = new ArrayList<>();
+
+        for (ColorMap colorMapping : from.colorMappings)
+            fromColors.add(colorMapping.from);
+
+        for (ColorMap colorMapping : to.colorMappings)
+            toColors.add(colorMapping.to);
+
+        for (int i = 0; i < toColors.size(); i++)
+            add(fromColors.get(i), toColors.get(i));
     }
 
     public void add(Color from, Color to)

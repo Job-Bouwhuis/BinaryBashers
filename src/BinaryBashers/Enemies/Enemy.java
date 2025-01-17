@@ -112,4 +112,9 @@ public abstract class Enemy
     }
 
     public abstract int getInputLength();
+
+    public Vector2 getPosition()
+    {
+        return enemyPosition;
+    }
 }
